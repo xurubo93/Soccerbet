@@ -1,0 +1,22 @@
+#The Soccerbet Tournament Entity local links
+tournament.view:
+  #class: Drupal\Core\Menu\LocalTaskDefault
+  #deriver: \Drupal\soccerbet\Plugin\Derivative\SoccerbetLocalTasks
+  route_name: entity.soccerbet_tournament.canonical
+  base_route: entity.soccerbet_tournament.canonical
+  title: View
+
+tournament.page_edit:
+  route_name: entity.soccerbet_tournament.edit_form
+  base_route: entity.soccerbet_tournament.canonical
+  title: Edit
+
+tournament.delete_confirm:
+  route_name:  entity.soccerbet_tournament.delete_form
+  base_route:  entity.soccerbet_tournament.canonical
+  title: Delete
+  weight: 10
+
+  #tournament.group:
+  #class: Drupyl\Core\Menu\LocalTaskDefault
+  #deriver: \Drupal\soccerbet\Plugin\Derivative\SoccerbetLocalTasks

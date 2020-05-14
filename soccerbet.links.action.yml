@@ -1,0 +1,25 @@
+#Soccerbet Tournament Entity action links
+soccerbet_tournament.tournament_add:
+  # Which route will be called by the link
+  route_name: soccerbet_tournament.tournament_add
+  title: 'Add Tournament'
+
+  # Where will the link appear, defined by route name.
+  appears_on:
+    - entity.soccerbet_tournament.collection
+    - entity.soccerbet_tournament.canonical
+
+#Adding a Team to a specific tournament
+soccerbet_tournament.tournament_team_relation_add:
+  #Which route will be called by this link
+  route_name: soccerbet_tournament.tournament_team_relation_add
+  title: 'Add a team to this tournament'
+  appears_on:
+    - entity.soccerbet_tournament.canonical
+
+#Adding a game to a specific tournament
+soccerbet_tournament.game_add:
+  route_name: soccerbet_tournament.game_add
+  title: 'Add a game to this tournament'
+  appears_on:
+    - entity.soccerbet_tournament.canonical

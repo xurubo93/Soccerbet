@@ -1,0 +1,44 @@
+<?php
+/**
+* @file
+* A description of what your module does.
+*/
+
+/**
+ * Implements hook_theme().
+ */
+function soccerbet_theme($existing, $type, $theme, $path) {
+  return array(
+    'soccerbet_tournament' => array(
+      'template' => 'soccerbet_tournament',
+      'variables' => array(
+        'logo' => NULL,
+        'name' => NULL,
+        'start_date' => NULL,
+        'end_date' => NULL,
+        'soccerbet_tournament_tables' => NULL,
+        'soccerbet_tournament_games' => NULL,
+      )
+    ),
+    'soccerbet_tournament_tables' => array(
+      'template' => 'tournament_tables',
+      'variables' => array(
+        'title' => NULL,
+        'tables' => NULL,
+      ),
+    ),
+    'soccerbet_tournament_table' => array(
+      'template' => 'tournament_table',
+      'variables' => array(
+        'group_name' => NULL,
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_tournament_games' => array(
+      'template' => 'tournament_games',
+      'variables' => array(
+        'table' => NULL,
+      )
+    )
+  );
+}

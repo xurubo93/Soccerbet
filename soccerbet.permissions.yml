@@ -1,0 +1,12 @@
+administer soccerbet:
+  title: 'Administer all components of the soccerbet module'
+  description: 'View, edit and delete all soccerbet parts regardless of permission restrictions.'
+administer games:
+  title: 'Administer games'
+  description: 'Update the game standings.'
+administer bets of your own group:
+  title: 'Administer bets of your group of tippers'
+  description: 'Update all bets of the users in your tippergroup.'
+administer users of your own group:
+  title: 'Administer the users in your group of tippers'
+  description: 'View, edit and delete and also insert users to your tippergroup'

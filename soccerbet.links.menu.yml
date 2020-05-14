@@ -1,0 +1,22 @@
+system.admin_soccerbet:
+  title: 'Soccerbet'
+  route_name: 'soccerbet.admin_soccerbet'
+  parent: 'system.admin'
+  description: 'Administer and configure your soccerbet system.'
+  weight: -9
+
+soccerbet.soccerbet_settings:
+  title: 'Configuration'
+  route_name: 'soccerbet.soccerbet_settings'
+  parent: 'system.admin_soccerbet'
+  description: 'Configure your Soccerbet settings and structure.'
+  weight: 10
+
+#Soccerbet Tournament Entity menu links
+entity.soccerbet_tournament.collection:
+  title: 'Tournaments'
+  route_name: entity.soccerbet_tournament.collection
+  description: Tournaments'
+  parent: 'system.admin_soccerbet'
+  weight: -20
+  menu_name: soccerbet
