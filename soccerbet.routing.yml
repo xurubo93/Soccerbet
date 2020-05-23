@@ -43,22 +43,22 @@ soccerbet_tournament.tournament_add:
   requirements:
     _entity_create_access: 'soccerbet_tournament'
 
-soccerbet_tournament.tournament_team_relation_add:
-  path: '/soccerbet/tournament/{soccerbet_tournament}/team/add'
-  defaults:
-    # Calls the form.add controller, defined in the soccerbet_tournament_team relation entity.
-    _entity_form: soccerbet_tournament_team.add
-    _title: 'Add a team to this tournmament'
-  requirements:
-    _entity_create_access: 'soccerbet_tournament_team'
+#soccerbet_tournament.tournament_team_relation_add:
+#  path: '/soccerbet/tournament/{soccerbet_tournament}/team/add'
+#  defaults:
+#    # Calls the form.add controller, defined in the soccerbet_tournament_team relation entity.
+#    _entity_form: soccerbet_tournament_team.add
+#    _title: 'Add a team to this tournmament'
+#  requirements:
+#    _entity_create_access: 'soccerbet_tournament_team'
 
-soccerbet_tournament.game_add:
-  path: '/soccerbet/tournament/{soccerbet_tournament}/game/add'
-  defaults:
-    _entity_form: soccerbet_game.add
-    _title: 'Add a game to this tournament'
-  requirements:
-    _entity_create_access: 'soccerbet_game'
+#soccerbet_tournament.game_add:
+#  path: '/soccerbet/tournament/{soccerbet_tournament}/game/add'
+#  defaults:
+#    _entity_form: soccerbet_game.add
+#    _title: 'Add a game to this tournament'
+#  requirements:
+#    _entity_create_access: 'soccerbet_game'
 
 entity.soccerbet_tournament.edit_form:
   path: '/soccerbet/tournament/{soccerbet_tournament}/edit'

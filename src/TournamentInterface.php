@@ -41,7 +41,7 @@ interface TournamentInterface extends ContentEntityInterface, EntityChangedInter
    * @return
    *   The image object of the tournaments logo
    **/
-  public function getLogo();
+  //public function getLogo();
 
   /**
    * Sets the Logo of this tournament.
@@ -52,7 +52,7 @@ interface TournamentInterface extends ContentEntityInterface, EntityChangedInter
    * @return $this
    *   The class instance that this method is called on.
    */
-  public function setLogo(ImageItem $image);
+  //public function setLogo(ImageItem $image);
 
   /**
    * Returns the tournament's start date.

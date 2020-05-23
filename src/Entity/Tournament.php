@@ -37,12 +37,14 @@ use Drupal\soccerbet\TournamentInterface;
  *     },
  *     "access" = "Drupal\soccerbet\Entity\Access\TournamentAccessControlHandler",
  *   },
- *   base_table = "soccerbet__tournament",
+ *   base_table = "soccerbet_tournament",
+ *   data_table = "soccerbet_tournament_field_data",
  *   admin_permission = "administer soccerbet",
  *   translateable = TRUE,
  *   entity_keys = {
  *     "id" = "tournament_id",
  *     "label" = "name",
+ *     "langcode" = "langcode",
  *   },
  *   links = {
  *     "canonical" = "/soccerbet/tournament/{soccerbet_tournament}",
@@ -278,6 +280,8 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
 
+    $fields = parent::baseFieldDefinitions($entity_type);
+
     // Standard field, used as unique if primary index.
     $fields['tournament_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
@@ -310,7 +314,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['logo'] = BaseFieldDefinition::create('image')
+    /*$fields['logo'] = BaseFieldDefinition::create('image')
       ->setLabel(t('Logo'))
       ->setDescription(t('The logo of this tournament'))
       ->setSetting('target_type', 'file')
@@ -324,7 +328,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
         'label' => 'hidden',
         'type' => 'image',
         'weight' => -7,
-      ));
+      ));*/
 
     $fields['start_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('Startdate'))

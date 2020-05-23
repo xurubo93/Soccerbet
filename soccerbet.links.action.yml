@@ -10,16 +10,16 @@ soccerbet_tournament.tournament_add:
     - entity.soccerbet_tournament.canonical
 
 #Adding a Team to a specific tournament
-soccerbet_tournament.tournament_team_relation_add:
+#soccerbet_tournament.tournament_team_relation_add:
   #Which route will be called by this link
-  route_name: soccerbet_tournament.tournament_team_relation_add
-  title: 'Add a team to this tournament'
-  appears_on:
-    - entity.soccerbet_tournament.canonical
+#  route_name: soccerbet_tournament.tournament_team_relation_add
+#  title: 'Add a team to this tournament'
+#  appears_on:
+#    - entity.soccerbet_tournament.canonical
 
 #Adding a game to a specific tournament
-soccerbet_tournament.game_add:
-  route_name: soccerbet_tournament.game_add
-  title: 'Add a game to this tournament'
-  appears_on:
-    - entity.soccerbet_tournament.canonical
+#soccerbet_tournament.game_add:
+#  route_name: soccerbet_tournament.game_add
+#  title: 'Add a game to this tournament'
+#  appears_on:
+#    - entity.soccerbet_tournament.canonical
