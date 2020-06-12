@@ -314,22 +314,6 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    /*$fields['logo'] = BaseFieldDefinition::create('image')
-      ->setLabel(t('Logo'))
-      ->setDescription(t('The logo of this tournament'))
-      ->setSetting('target_type', 'file')
-      ->setTranslatable(FALSE)
-      ->setDisplayOptions('form', array(
-        'label' => 'hidden',
-        'type' => 'image',
-        'weight' => -7,
-      ))
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'image',
-        'weight' => -7,
-      ));*/
-
     $fields['start_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('Startdate'))
       ->setDescription(t('The startdate of this tournament.'))
