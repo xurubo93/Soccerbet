@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\soccerbet\TournamentAccessControlHandler
+ * Contains \Drupal\soccerbet\UsergroupAccessControlHandler
  */
 
 namespace Drupal\soccerbet\Entity\Access;
@@ -13,11 +13,11 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Access controller for the soccerbet_tournament entity.
+ * Access controller for the soccerbet_usergroup entity.
  *
- * @see \Drupal\soccerbet\Entity\Tournament.
+ * @see \Drupal\soccerbet\Entity\Usergroup.
  */
-class TournamentAccessControlHandler extends EntityAccessControlHandler {
+class UsergroupAccessControlHandler extends EntityAccessControlHandler {
 
   /**
    * {@inheritdoc}
@@ -28,13 +28,13 @@ class TournamentAccessControlHandler extends EntityAccessControlHandler {
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     switch ($operation) {
       case 'view':
-        return AccessResult::allowedIfHasPermission($account, 'view tournament entity');
+        return AccessResult::allowedIfHasPermission($account, 'view usergroup entity');
 
       case 'edit':
-        return AccessResult::allowedIfHasPermission($account, 'edit tournament entity');
+        return AccessResult::allowedIfHasPermission($account, 'edit usergroup entity');
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete tournament entity');
+        return AccessResult::allowedIfHasPermission($account, 'delete usergroup entity');
     }
     return AccessResult::allowed();
   }
@@ -46,7 +46,7 @@ class TournamentAccessControlHandler extends EntityAccessControlHandler {
    * will be created during the 'add' process.
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add tournament entity');
+    return AccessResult::allowedIfHasPermission($account, 'add usergroup entity');
   }
 
 }

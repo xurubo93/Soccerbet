@@ -17,7 +17,6 @@ function soccerbet_theme($existing, $type, $theme, $path) {
         'start_date' => NULL,
         'end_date' => NULL,
         'soccerbet_tournament_tables' => NULL,
-        'soccerbet_tournament_games' => NULL,
       )
     ),
     'soccerbet_tournament_tables' => array(
@@ -34,11 +33,163 @@ function soccerbet_theme($existing, $type, $theme, $path) {
         'table' => NULL,
       ),
     ),
-    'soccerbet_tournament_games' => array(
-      'template' => 'tournament_games',
+
+        'soccerbet_tournamentgroup' => array(
+    'template' => 'soccerbet_tournamentgroup',
+    'variables' => array(
+      'name' => NULL,
+      'soccerbet_tournamentgroup_tables' => NULL,
+    ),
+  ),
+    'soccerbet_tournamentgroup_tables' => array(
+    'template' => 'tournamentgroup_tables',
+    'variables' => array(
+      'title' => NULL,
+      'tables' => NULL,
+    ),
+  ),
+    'soccerbet_tournamentgroup_table' => array(
+    'template' => 'tournamentgroup_table',
+    'variables' => array(
+      'group_name' => NULL,
+      'table' => NULL,
+    ),
+  ),
+
+    'soccerbet_game' => array(
+      'template' => 'soccerbet_game',
+      'variables' => array(
+        'name' => NULL,
+        'game_location' => NULL,
+        'start_time' => NULL,
+        'score_first_team' => NULL,
+        'score_second_team' => NULL,
+        'KO_game' => NULL,
+        'group_game' => NULL,
+        'soccerbet_game_tables' => NULL,
+      ),
+    ),
+    'soccerbet_game_tables' => array(
+      'template' => 'game_tables',
+      'variables' => array(
+        'title' => NULL,
+        'tables' => NULL,
+      ),
+    ),
+    'soccerbet_game_table' => array(
+      'template' => 'game_table',
+      'variables' => array(
+        'group_name' => NULL,
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_usergroup' => array(
+      'template' => 'soccerbet_usergroup',
+      'variables' => array(
+        'usergroup_name' => NULL,
+        'soccerbet_usergroup_tables' => NULL,
+      )
+    ),
+    'soccerbet_usergroup_tables' => array(
+      'template' => 'usergroup_tables',
+      'variables' => array(
+        'title' => NULL,
+        'tables' => NULL,
+      ),
+    ),
+    'soccerbet_usergroup_table' => array(
+      'template' => 'usergroup_table',
+      'variables' => array(
+        'group_name' => NULL,
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_usergroup_games' => array(
+      'template' => 'usergroup_games',
+      'variables' => array(
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_team' => array(
+      'template' => 'soccerbet_team',
+      'variables' => array(
+        'team_name' => NULL,
+        'soccerbet_team_tables' => NULL,
+      )
+    ),
+    'soccerbet_team_tables' => array(
+      'template' => 'team_tables',
+      'variables' => array(
+        'title' => NULL,
+        'tables' => NULL,
+      ),
+    ),
+    'soccerbet_team_table' => array(
+      'template' => 'team_table',
+      'variables' => array(
+        'group_name' => NULL,
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_team_games' => array(
+      'template' => 'team_games',
+      'variables' => array(
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_tip' => array(
+      'template' => 'soccerbet_tip',
+      'variables' => array(
+        'tip_team_A' => NULL,
+        'tip_team_B' => NULL,
+        'soccerbet_tip_tables' => NULL,
+      )
+    ),
+    'soccerbet_tip_tables' => array(
+      'template' => 'tip_tables',
+      'variables' => array(
+        'title' => NULL,
+        'tables' => NULL,
+      ),
+    ),
+    'soccerbet_tip_table' => array(
+      'template' => 'tip_table',
+      'variables' => array(
+        'group_name' => NULL,
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_tip_games' => array(
+      'template' => 'tip_games',
       'variables' => array(
         'table' => NULL,
       )
+    ),
+        'soccerbet_participant' => array(
+    'template' => 'soccerbet_participant',
+    'variables' => array(
+      'soccerbet_participant_tables' => NULL,
     )
+  ),
+    'soccerbet_participant_tables' => array(
+    'template' => 'participant_tables',
+    'variables' => array(
+      'title' => NULL,
+      'tables' => NULL,
+    ),
+  ),
+    'soccerbet_participant_table' => array(
+    'template' => 'participant_table',
+    'variables' => array(
+      'group_name' => NULL,
+      'table' => NULL,
+    ),
+  ),
+    'soccerbet_participant_games' => array(
+    'template' => 'participant_games',
+    'variables' => array(
+      'table' => NULL,
+    )
+  )
   );
 }

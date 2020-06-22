@@ -15,12 +15,12 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 
-class TournamentViewBuilder extends EntityViewBuilder {
+class GameViewBuilder extends EntityViewBuilder {
 
   /**
-   * This hook is used to display the TournamentTeamRelations and the games beneath the tournament.
+   * This hook is used to display the TournamentTeamRelations and the game beneath the tournament.
    * jQuery Accordion is used for the groups.
-   * jQuery Tabs is used for separating the standings from the games.
+   * jQuery Tabs is used for separating the standings from the game.
    *
    */
   protected function alterBuild(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
@@ -39,8 +39,8 @@ class TournamentViewBuilder extends EntityViewBuilder {
       )
     );*/
 
-    /*$games = entity_load_multiple_by_properties('soccerbet_game', array('tournament_id' => $entity->id()));
-    $game_build = \Drupal::entityManager()->getViewBuilder('soccerbet_game')->viewMultiple($games);
+    /*$game = entity_load_multiple_by_properties('soccerbet_game', array('tournament_id' => $entity->id()));
+    $games_build = \Drupal::entityManager()->getViewBuilder('soccerbet_game')->viewMultiple($games);
 
     $build['#soccerbet_tournament_games'] = array(
       '#theme' => 'soccerbet_tournament_games',
@@ -51,10 +51,17 @@ class TournamentViewBuilder extends EntityViewBuilder {
         )
       )
     );*/
+
+    $build['#location'] = $build['location'];
     $build['#name'] = $build['name'];
-    $build['#start_date'] = Drupal::service('date.formatter')->format(strtotime($entity->start_date->value), 'custom', 'D, j. M Y', 0) ;
-    $build['#end_date'] = Drupal::service('date.formatter')->format(strtotime($entity->end_date->value), 'custom', 'D, j. M Y', 0);
-    $build['#attached']['library'][] = 'soccerbet/soccerbet.tournament';
+    $build['#start_time'] = Drupal::service('date.formatter')->format(strtotime($entity->start_time->value), 'custom', 'D, j. M Y', 0) ;
+    $build['#score_first_team'] = $build['score_first_team'];
+    $build['#score_second_team'] = $build['score_second_team'];
+    $build['#game_location'] = $build['game_location'];
+    $build['#KO_game'] = $build['KO_game'];
+    $build['#group_game'] = $build['group_game'];
+    $build['#attached']['library'][] = 'soccerbet/soccerbet.game';
+
     //kint($build);
   }
 }

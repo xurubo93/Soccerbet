@@ -9,85 +9,55 @@ namespace Drupal\soccerbet\Entity;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\image\Plugin\Field\FieldType\ImageItem;
-use Drupal\soccerbet\TournamentInterface;
+use Drupal\soccerbet\GameInterface;
 
 /**
- * Defines the Tournament entity.
+ * Defines the Game entity.
  *
- * @ingroup soccerbet_tournament
+ * @ingroup soccerbet_game
  *
  * @ContentEntityType(
- *   id = "soccerbet_tournament",
- *   label = @Translation("Tournament"),
- *   label_collection = @Translation("Tournaments"),
- *   label_singular = @Translation("tournament"),
- *   label_plural = @Translation("tournaments"),
+ *   id = "soccerbet_game",
+ *   label = @Translation("Game"),
+ *   label_collection = @Translation("Games"),
+ *   label_singular = @Translation("Game"),
+ *   label_plural = @Translation("Games"),
  *   label_count = @PluralTranslation(
- *     singular = "@count tournament",
- *     plural = "@count tournaments",
+ *     singular = "@count game",
+ *     plural = "@count games",
  *   ),
  *   handlers = {
- *     "view_builder" = "Drupal\soccerbet\Entity\Controller\TournamentViewBuilder",
- *     "list_builder" = "Drupal\soccerbet\Entity\Controller\TournamentListBuilder",
+ *     "view_builder" = "Drupal\soccerbet\Entity\Controller\GameViewBuilder",
+ *     "list_builder" = "Drupal\soccerbet\Entity\Controller\GameListBuilder",
  *     "form" = {
- *       "add" = "Drupal\soccerbet\Form\TournamentForm",
- *       "edit" = "Drupal\soccerbet\Form\TournamentForm",
- *       "delete" = "Drupal\soccerbet\Form\TournamentDeleteForm",
+ *       "add" = "Drupal\soccerbet\Form\GameForm",
+ *       "edit" = "Drupal\soccerbet\Form\GameForm",
+ *       "delete" = "Drupal\soccerbet\Form\GameDeleteForm",
  *     },
- *     "access" = "Drupal\soccerbet\Entity\Access\TournamentAccessControlHandler",
+ *     "access" = "Drupal\soccerbet\Entity\Access\GameAccessControlHandler",
  *   },
- *   base_table = "soccerbet_tournament",
- *   data_table = "soccerbet_tournament_field_data",
+ *   base_table = "soccerbet_game",
+ *   data_table = "soccerbet_game_field_data",
  *   admin_permission = "administer soccerbet",
  *   translateable = TRUE,
  *   entity_keys = {
- *     "id" = "tournament_id",
+ *     "id" = "game_id",
  *     "label" = "name",
  *     "langcode" = "langcode",
  *   },
  *   links = {
- *     "canonical" = "/soccerbet/tournament/{soccerbet_tournament}",
- *     "edit-form" = "/soccerbet/tournament/{soccerbet_tournament}/edit",
- *     "delete-form" = "/soccerbet/tournament/{soccerbet_tournament}/delete",
- *     "collection" = "/soccerbet/tournament/list"
+ *     "canonical" = "/soccerbet/game/{soccerbet_game}",
+ *     "edit-form" = "/soccerbet/game/{soccerbet_game}/edit",
+ *     "delete-form" = "/soccerbet/game/{soccerbet_game}/delete",
+ *     "collection" = "/soccerbet/games/list"
  *   }
  * )
  *
  */
-class Tournament extends ContentEntityBase implements TournamentInterface {
+class Game extends ContentEntityBase implements GameInterface {
 
-  /**
-   * Denotes that a tournament is active
-   */
-  const TOURNAMENT_IS_ACTIVE = 1;
 
-  /**
-   * Denotes that a tournament is inactive
-   */
-  const TOURNAMENT_IS_INACTIVE = 0;
-  /**
-   * @var \Drupal\Core\Field\FieldItemListInterface|mixed
-   */
-  private $logo;
-
-  /**
-   * Generates a form option array based on the number of groups defined in this tournament
-   *
-   * @return array $options
-   */
-  public function getGroupOptions() {
-    $group_count = $this->getGroupCount();
-    $options = array();
-
-    for ($i = 0; $i < $group_count; $i++) {
-      //The Capital A starts with the ASCII char 65
-      $options[chr(65+$i)] = chr(65+$i);
-    }
-    return $options;
-  }
-
-  /**
+   /**
    * {@inheritdoc}
    */
   public function getName() {
@@ -103,132 +73,137 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
   }
 
   /**
-   * {@inheritdoc}
+   *{@inheritdoc}
    */
-  public function getLogo() {
-    return $this->logo->entity;
+  public function getStartTime() {
+    return $this->get('start_time')->value;
   }
 
   /**
-   * {@inheritdoc}
+   *{@inheritdoc}
    */
-  public function setLogo(ImageItem $image) {
-    $this->set('logo', $image);
+  public function setStartTime($start_time) {
+    $this->set('start_time', $start_time);
     return $this;
   }
 
+
+
   /**
-   *{@inheritdoc}
+   * Generates a form option array to choose the number of a goals a team has made
+   *
+   * @return array $options
    */
-  public function getStartDate() {
-    return $this->get('start_date')->value;
+  public function getScoreFirstTeamOptions() {
+    $score_first_team = $this->getScoreFirstTeam();
+    $options = array();
+
+    for ($i = 0; $i < $score_first_team; $i++) {
+      //The Capital A starts with the ASCII char 65
+      $options[chr(65+$i)] = chr(65+$i);
+    }
+    return $options;
   }
 
   /**
    *{@inheritdoc}
    */
-  public function setStartDate($start_date) {
-    $this->set('start_date', $start_date);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getEndDate() {
-    return $this->get('end_date')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setEndDate($end_date) {
-    $this->set('end_date', $end_date);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function isActive() {
-    return (bool )$this->get('active')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getStatus() {
-    return $this->get('active')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setActive($status) {
-    $this->set('active', $status ? Tournament::TOURNAMENT_IS_ACTIVE : Tournament::TOURNAMENT_IS_INACTIVE);
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getGroupCount() {
-    return $this->get('group_count')->value;
+  public function getScoreFirstTeam() {
+    return $this->get('score_first_team')->value;
   }
 
   /**
    *{@inheritdoc}
    *
    */
-  public function setGroupCount($group_count) {
-    $this->set('group_count', $group_count);
+  public function setScoreFirstTeam($score_first_team) {
+    $this->set('score_first_team', $score_first_team);
     return $this;
   }
 
+
   /**
-   *{@inheritdoc}
+   * Generates a form option array to choose the number of a goals a team has made
+   *
+   * @return array $options
    */
-  public function getTipperInFirstPlace() {
-    return $this->get('tipper_id_in_first_place')->entity;
+  public function getScoreSecondTeamOptions() {
+    $score_second_team = $this->getScoreSecondTeam();
+    $options = array();
+
+    for ($i = 0; $i < $score_second_team; $i++) {
+      //The Capital A starts with the ASCII char 65
+      $options[chr(65+$i)] = chr(65+$i);
+    }
+    return $options;
   }
+
 
   /**
    *{@inheritdoc}
    */
-  public function setTipperInFirstPlace($tipper_id) {
-    $this->set('tipper_id_in_first_place', $tipper_id);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getTipperInSecondPlace() {
-    return $this->get('tipper_id_in_second_place')->entity;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setTipperInScondPlace($tipper_id) {
-    $this->set('tipper_id_in_second_place', $tipper_id);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getTipperInThirdPlace() {
-    return $this->get('tipper_id_in_third_place')->entity;
+  public function getScoreSecondTeam() {
+    return $this->get('score_second_team')->value;
   }
 
   /**
    *{@inheritdoc}
    *
    */
-  public function setTipperInThirdPlace($tipper_id) {
-    $this->set('tipper_id_in_third_place', $tipper_id);
+  public function setScoreSecondTeam($score_second_team) {
+    $this->set('score_second_team', $score_second_team);
     return $this;
   }
+
+  /**
+   *{@inheritdoc}
+   */
+  public function getGameLocation() {
+    return $this->get('game_location')->value;
+  }
+
+  /**
+   *{@inheritdoc}
+   *
+   */
+  public function setGameLocation($game_location) {
+    $this->set('game_location', $game_location);
+    return $this;
+  }
+
+
+  /**
+   *{@inheritdoc}
+   */
+  public function getKOGame() {
+    return $this->get('KO_game')->value;
+  }
+
+  /**
+   *{@inheritdoc}
+   *
+   */
+  public function setKOGame($KO_game) {
+    $this->set('KO_game', $KO_game);
+    return $this;
+  }
+
+  /**
+   *{@inheritdoc}
+   */
+  public function getGroupGame() {
+    return $this->get('group_game')->value;
+  }
+
+  /**
+   *{@inheritdoc}
+   *
+   */
+  public function setGroupGame($group_game) {
+    $this->set('group_game', $group_game);
+    return $this;
+  }
+
 
   /**
    *{@inheritdoc}
@@ -254,7 +229,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
 
   /**
    * @param int $changed
-   * @return $this|Tournament
+   * @return $this|Game
    */
   public function setChangedTime($changed) {
     $this->set('changed', $changed);
@@ -283,19 +258,15 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     // Standard field, used as unique if primary index.
-    $fields['tournament_id'] = BaseFieldDefinition::create('integer')
+    $fields['game_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
-      ->setDescription(t('The entity_id of the tournament.'))
+      ->setDescription(t('The entity_id of the game.'))
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
 
-    // Name field for the tournament.
-    // We set display options for the view as well as the form.
-    // Users with correct privileges can change the view and edit configuration.
-
     $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Tournament Name'))
-      ->setDescription(t('The name of the Tournament.'))
+      ->setLabel(t('Game Name'))
+      ->setDescription(t('The name of the Game.'))
       ->setSettings(array(
         'default_value' => '',
         'max_length' => 64,
@@ -314,62 +285,11 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['start_date'] = BaseFieldDefinition::create('datetime')
-      ->setLabel(t('Startdate'))
-      ->setDescription(t('The startdate of this tournament.'))
-      ->setSettings(array(
-        'datetime_type' => 'date'
-      ))
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'date',
-        'weight' => -5,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'date',
-        'weight' => -5,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
 
-    $fields['end_date'] = BaseFieldDefinition::create('datetime')
-      ->setLabel(t('Enddate'))
-      ->setDescription(t('The enddate of this tournament.'))
-      ->setSettings(array(
-        'datetime_type' => 'date',
-      ))
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'date',
-        'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'date',
-        'weight' => -4,
-      ))
-      ->setDisplayConfigurable('view', TRUE)
-      ->setDisplayConfigurable('form', TRUE);
-
-    $fields['active'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Tournament status'))
-      ->setDescription(t('A boolean indicating whether the tournament is active.'))
-      ->setDefaultValue(FALSE)
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'radios',
-        'weight' => -3,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'radios',
-        'weight' => -3,
-      ))
-      ->setDisplayConfigurable('view', TRUE)
-      ->setDisplayConfigurable('form', TRUE);
-
-    $fields['group_count'] = BaseFieldDefinition::create('list_integer')
-      ->setLabel(t('Group count'))
-      ->setDescription(t('The number of groups in the preliminary round of this tournament.'))
-      ->setDefaultValue(8)
+    $fields['score_first_team'] = BaseFieldDefinition::create('list_integer')
+      ->setLabel(t('score first team'))
+      ->setDescription(t('The number of goals made by the first team.'))
+      ->setDefaultValue(0)
       ->setSettings(array(
         'allowed_values' => array(
           1 => 1,
@@ -402,6 +322,83 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
       ))
       ->setDisplayConfigurable('view', TRUE)
       ->setDisplayConfigurable('form', TRUE);
+
+    $fields['score_second_team'] = BaseFieldDefinition::create('list_integer')
+      ->setLabel(t('score second team'))
+      ->setDescription(t('The number of goals made by the first team.'))
+      ->setDefaultValue(0)
+      ->setSettings(array(
+        'allowed_values' => array(
+          1 => 1,
+          2 => 2,
+          3 => 3,
+          4 => 4,
+          5 => 5,
+          6 => 6,
+          7 => 7,
+          8 => 8,
+          9 => 9,
+          10 => 10,
+          11 => 11,
+          12 => 12,
+          13 => 13,
+          14 => 14,
+          15 => 15,
+          16 => 16,
+        )
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'hidden',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'label' => 'above',
+        'type' => 'options_select',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayConfigurable('form', TRUE);
+
+
+    $fields['start_time'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('Starttime'))
+      ->setDescription(t('The starttime of this game.'))
+      ->setSettings(array(
+        'datetime_type' => 'date'
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'date',
+        'weight' => -5,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'date',
+        'weight' => -5,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['game_location'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('game location'))
+      ->setDescription(t('The location of this game.'))
+      ->setSettings(array(
+        'default_value' => '',
+        'max_length' => 64,
+        'text_processing' => 0,
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'date',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'date',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayConfigurable('form', TRUE);
+
 
     /**
      * This has to be activated, when the group and tipper implementation has finished
@@ -475,17 +472,17 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('User ID'))
-      ->setDescription(t('The user ID of the tournament creator.'))
+      ->setDescription(t('The user ID of the game creator.'))
       ->setSetting('target_type', 'user')
       ->setDefaultValue(0);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
-      ->setDescription(t('The time that the tournament was created.'));
+      ->setDescription(t('The time that the game was created.'));
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
-      ->setDescription(t('The time that the tournament was last edited.'));
+      ->setDescription(t('The time that the game was last edited.'));
 
     return $fields;
   }

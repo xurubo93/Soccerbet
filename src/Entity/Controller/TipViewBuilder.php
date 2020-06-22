@@ -15,7 +15,7 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 
-class TournamentViewBuilder extends EntityViewBuilder {
+class TipViewBuilder extends EntityViewBuilder {
 
   /**
    * This hook is used to display the TournamentTeamRelations and the games beneath the tournament.
@@ -51,9 +51,8 @@ class TournamentViewBuilder extends EntityViewBuilder {
         )
       )
     );*/
-    $build['#name'] = $build['name'];
-    $build['#start_date'] = Drupal::service('date.formatter')->format(strtotime($entity->start_date->value), 'custom', 'D, j. M Y', 0) ;
-    $build['#end_date'] = Drupal::service('date.formatter')->format(strtotime($entity->end_date->value), 'custom', 'D, j. M Y', 0);
+    $build['#tip_team_A'] = $build['tip_team_A'];
+    $build['#tip_team_B'] = $build['tip_team_B'];
     $build['#attached']['library'][] = 'soccerbet/soccerbet.tournament';
     //kint($build);
   }

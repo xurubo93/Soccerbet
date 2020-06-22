@@ -10,19 +10,18 @@ use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
- * Form controller for the soccerbet_tournament entity edit forms.
+ * Form controller for the soccerbet_team entity edit forms.
  *
  * @ingroup soccerbet
  */
-class TournamentForm extends ContentEntityForm {
+class TeamForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    /* @var $entity \Drupal\soccerbet\Entity\Tournament */
+    /* @var $entity \Drupal\soccerbet\Entity\Team */
     $form = parent::buildForm($form, $form_state);
-
     /*$entity = $this->entity;
 
     $form['langcode'] = array(
@@ -38,7 +37,7 @@ class TournamentForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    $form_state->setRedirect('entity.soccerbet_tournament.collection');
+    $form_state->setRedirect('entity.soccerbet_team.collection');
     $entity = $this->getEntity();
     $entity->save();
   }

@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\soccerbet\TournamentAccessControlHandler
+ * Contains \Drupal\soccerbet\gameAccessControlHandler
  */
 
 namespace Drupal\soccerbet\Entity\Access;
@@ -13,11 +13,11 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * Access controller for the soccerbet_tournament entity.
+ * Access controller for the soccerbet_Game entity.
  *
- * @see \Drupal\soccerbet\Entity\Tournament.
+ * @see \Drupal\soccerbet\Entity\Game.
  */
-class TournamentAccessControlHandler extends EntityAccessControlHandler {
+class GameAccessControlHandler extends EntityAccessControlHandler {
 
   /**
    * {@inheritdoc}
@@ -28,13 +28,13 @@ class TournamentAccessControlHandler extends EntityAccessControlHandler {
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     switch ($operation) {
       case 'view':
-        return AccessResult::allowedIfHasPermission($account, 'view tournament entity');
+        return AccessResult::allowedIfHasPermission($account, 'view game entity');
 
       case 'edit':
-        return AccessResult::allowedIfHasPermission($account, 'edit tournament entity');
+        return AccessResult::allowedIfHasPermission($account, 'edit game entity');
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete tournament entity');
+        return AccessResult::allowedIfHasPermission($account, 'delete game entity');
     }
     return AccessResult::allowed();
   }
@@ -46,7 +46,7 @@ class TournamentAccessControlHandler extends EntityAccessControlHandler {
    * will be created during the 'add' process.
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add tournament entity');
+    return AccessResult::allowedIfHasPermission($account, 'add game entity');
   }
 
 }

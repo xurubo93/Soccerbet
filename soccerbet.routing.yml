@@ -77,3 +77,376 @@ entity.soccerbet_tournament.delete_form:
     _title: 'Delete Tournament'
   requirements:
     _entity_access: 'soccerbet_tournament.delete'
+
+entity.soccerbet_tournamentgroup.canonical:
+  path: '/soccerbet/tournamentgroup/{soccerbet_tournamentgroup}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the tournamentgroup entity
+    _entity_view: 'soccerbet_tournamentgroup'
+    _title: 'Tournamentgroup Content'
+  requirements:
+    # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'soccerbet_tournamentgroup.view'
+
+entity.soccerbet_tournamentgroup.collection:
+  path: '/soccerbet/tournamentgroup/list'
+  defaults:
+    # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'soccerbet_tournamentgroup'
+    _title: 'Tournamentgroup List'
+  requirements:
+    # Checks for permission directly.
+    _permission: 'view tournamentgroup entity'
+
+soccerbet_tournamentgroup.tournamentgroup_add:
+  path: '/soccerbet/tournamentgroup/add'
+  defaults:
+    # Calls the form.add controller, defined in the tournamentgroup entity.
+    _entity_form: soccerbet_tournamentgroup.add
+    _title: 'Add Tournamentgroup'
+  requirements:
+    _entity_create_access: 'soccerbet_tournamentgroup'
+
+
+entity.soccerbet_tournamentgroup.edit_form:
+  path: '/soccerbet/tournamentgroup/{soccerbet_tournamentgroup}/edit'
+  defaults:
+    # Calls the form.edit controller, defined in the tournamentgroup entity.
+    _entity_form: soccerbet_tournamentgroup.edit
+    _title: 'Edit Tournamentgroup'
+  requirements:
+    _entity_access: 'soccerbet_tournamentgroup.edit'
+
+entity.soccerbet_tournamentgroup.delete_form:
+  path: '/soccerbet/tournamentgroup/{soccerbet_tournamentgroup}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the tournamentgroup entity.
+    _entity_form: soccerbet_tournamentgroup.delete
+    _title: 'Delete Tournamentgroup'
+  requirements:
+    _entity_access: 'soccerbet_tournamentgroup.delete'
+
+
+entity.soccerbet_game.canonical:
+  path: '/soccerbet/game/{soccerbet_game}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the game entity
+    _entity_view: 'soccerbet_game'
+    _title: 'game Content'
+  requirements:
+    # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'soccerbet_game.view'
+
+entity.soccerbet_game.collection:
+  path: '/soccerbet/game/list'
+  defaults:
+    # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'soccerbet_game'
+    _title: 'game List'
+  requirements:
+    # Checks for permission directly.
+    _permission: 'view game entity'
+
+soccerbet_game.game_add:
+  path: '/soccerbet/game/add'
+  defaults:
+    # Calls the form.add controller, defined in the game entity.
+    _entity_form: soccerbet_game.add
+    _title: 'Add game'
+  requirements:
+    _entity_create_access: 'soccerbet_game'
+
+#soccerbet_game.game_team_relation_add:
+#  path: '/soccerbet/game/{soccerbet_game}/team/add'
+#  defaults:
+#    # Calls the form.add controller, defined in the soccerbet_game_team relation entity.
+#    _entity_form: soccerbet_game_team.add
+#    _title: 'Add a team to this tournament'
+#  requirements:
+#    _entity_create_access: 'soccerbet_game_team'
+
+#soccerbet_game.game_add:
+#  path: '/soccerbet/game/{soccerbet_game}/game/add'
+#  defaults:
+#    _entity_form: soccerbet_game.add
+#    _title: 'Add a game to this game'
+#  requirements:
+#    _entity_create_access: 'soccerbet_game'
+
+entity.soccerbet_game.edit_form:
+  path: '/soccerbet/game/{soccerbet_game}/edit'
+  defaults:
+    # Calls the form.edit controller, defined in the game entity.
+    _entity_form: soccerbet_game.edit
+    _title: 'Edit game'
+  requirements:
+    _entity_access: 'soccerbet_game.edit'
+
+entity.soccerbet_game.delete_form:
+  path: '/soccerbet/game/{soccerbet_game}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the game entity.
+    _entity_form: soccerbet_game.delete
+    _title: 'Delete game'
+  requirements:
+    _entity_access: 'soccerbet_game.delete'
+
+
+entity.soccerbet_usergroup.canonical:
+  path: '/soccerbet/usergroup/{soccerbet_usergroup}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the usergroup entity
+    _entity_view: 'soccerbet_usergroup'
+    _title: 'Usergroup Content'
+  requirements:
+    # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'soccerbet_usergroup.view'
+
+entity.soccerbet_usergroup.collection:
+  path: '/soccerbet/usergroup/list'
+  defaults:
+    # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'soccerbet_usergroup'
+    _title: 'Usergroup List'
+  requirements:
+    # Checks for permission directly.
+    _permission: 'view usergroup entity'
+
+soccerbet_usergroup.usergroup_add:
+  path: '/soccerbet/usergroup/add'
+  defaults:
+    # Calls the form.add controller, defined in the usergroup entity.
+    _entity_form: soccerbet_usergroup.add
+    _title: 'Add Usergroup'
+  requirements:
+    _entity_create_access: 'soccerbet_usergroup'
+
+#soccerbet_usergroup.usergroup_team_relation_add:
+#  path: '/soccerbet/usergroup/{soccerbet_usergroup}/team/add'
+#  defaults:
+#    # Calls the form.add controller, defined in the soccerbet_usergroup_team relation entity.
+#    _entity_form: soccerbet_usergroup_team.add
+#    _title: 'Add a team to this tournmament'
+#  requirements:
+#    _entity_create_access: 'soccerbet_usergroup_team'
+
+#soccerbet_usergroup.game_add:
+#  path: '/soccerbet/usergroup/{soccerbet_usergroup}/game/add'
+#  defaults:
+#    _entity_form: soccerbet_game.add
+#    _title: 'Add a game to this usergroup'
+#  requirements:
+#    _entity_create_access: 'soccerbet_game'
+
+entity.soccerbet_usergroup.edit_form:
+  path: '/soccerbet/usergroup/{soccerbet_usergroup}/edit'
+  defaults:
+    # Calls the form.edit controller, defined in the usergroup entity.
+    _entity_form: soccerbet_usergroup.edit
+    _title: 'Edit Usergroup'
+  requirements:
+    _entity_access: 'soccerbet_usergroup.edit'
+
+entity.soccerbet_usergroup.delete_form:
+  path: '/soccerbet/usergroup/{soccerbet_usergroup}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the usergroup entity.
+    _entity_form: soccerbet_usergroup.delete
+    _title: 'Delete Usergroup'
+  requirements:
+    _entity_access: 'soccerbet_usergroup.delete'
+
+
+entity.soccerbet_team.canonical:
+  path: '/soccerbet/team/{soccerbet_team}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the team entity
+    _entity_view: 'soccerbet_team'
+    _title: 'Team Content'
+  requirements:
+    # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'soccerbet_team.view'
+
+entity.soccerbet_team.collection:
+  path: '/soccerbet/team/list'
+  defaults:
+    # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'soccerbet_team'
+    _title: 'Team List'
+  requirements:
+    # Checks for permission directly.
+    _permission: 'view team entity'
+
+soccerbet_team.team_add:
+  path: '/soccerbet/team/add'
+  defaults:
+    # Calls the form.add controller, defined in the team entity.
+    _entity_form: soccerbet_team.add
+    _title: 'Add Team'
+  requirements:
+    _entity_create_access: 'soccerbet_team'
+
+#soccerbet_team.team_team_relation_add:
+#  path: '/soccerbet/team/{soccerbet_team}/team/add'
+#  defaults:
+#    # Calls the form.add controller, defined in the soccerbet_team_team relation entity.
+#    _entity_form: soccerbet_team_team.add
+#    _title: 'Add a team to this tournmament'
+#  requirements:
+#    _entity_create_access: 'soccerbet_team_team'
+
+#soccerbet_team.game_add:
+#  path: '/soccerbet/team/{soccerbet_team}/game/add'
+#  defaults:
+#    _entity_form: soccerbet_game.add
+#    _title: 'Add a game to this team'
+#  requirements:
+#    _entity_create_access: 'soccerbet_game'
+
+entity.soccerbet_team.edit_form:
+  path: '/soccerbet/team/{soccerbet_team}/edit'
+  defaults:
+    # Calls the form.edit controller, defined in the team entity.
+    _entity_form: soccerbet_team.edit
+    _title: 'Edit Team'
+  requirements:
+    _entity_access: 'soccerbet_team.edit'
+
+entity.soccerbet_team.delete_form:
+  path: '/soccerbet/team/{soccerbet_team}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the team entity.
+    _entity_form: soccerbet_team.delete
+    _title: 'Delete Team'
+  requirements:
+    _entity_access: 'soccerbet_team.delete'
+
+
+entity.soccerbet_tip.canonical:
+  path: '/soccerbet/tip/{soccerbet_tip}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the tip entity
+    _entity_view: 'soccerbet_tip'
+    _title: 'Tip Content'
+  requirements:
+    # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'soccerbet_tip.view'
+
+entity.soccerbet_tip.collection:
+  path: '/soccerbet/tip/list'
+  defaults:
+    # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'soccerbet_tip'
+    _title: 'Tip List'
+  requirements:
+    # Checks for permission directly.
+    _permission: 'view tip entity'
+
+soccerbet_tip.tip_add:
+  path: '/soccerbet/tip/add'
+  defaults:
+    # Calls the form.add controller, defined in the tip entity.
+    _entity_form: soccerbet_tip.add
+    _title: 'Add Tip'
+  requirements:
+    _entity_create_access: 'soccerbet_tip'
+
+#soccerbet_tip.tip_team_relation_add:
+#  path: '/soccerbet/tip/{soccerbet_tip}/team/add'
+#  defaults:
+#    # Calls the form.add controller, defined in the soccerbet_tip_team relation entity.
+#    _entity_form: soccerbet_tip_team.add
+#    _title: 'Add a team to this tournmament'
+#  requirements:
+#    _entity_create_access: 'soccerbet_tip_team'
+
+#soccerbet_tip.game_add:
+#  path: '/soccerbet/tip/{soccerbet_tip}/game/add'
+#  defaults:
+#    _entity_form: soccerbet_game.add
+#    _title: 'Add a game to this tip'
+#  requirements:
+#    _entity_create_access: 'soccerbet_game'
+
+entity.soccerbet_tip.edit_form:
+  path: '/soccerbet/tip/{soccerbet_tip}/edit'
+  defaults:
+    # Calls the form.edit controller, defined in the tip entity.
+    _entity_form: soccerbet_tip.edit
+    _title: 'Edit Tip'
+  requirements:
+    _entity_access: 'soccerbet_tip.edit'
+
+entity.soccerbet_tip.delete_form:
+  path: '/soccerbet/tip/{soccerbet_tip}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the tip entity.
+    _entity_form: soccerbet_tip.delete
+    _title: 'Delete Tip'
+  requirements:
+    _entity_access: 'soccerbet_tip.delete'
+
+
+entity.soccerbet_participant.canonical:
+  path: '/soccerbet/participant/{soccerbet_participant}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the participant entity
+    _entity_view: 'soccerbet_participant'
+    _title: 'Participant Content'
+  requirements:
+    # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'soccerbet_participant.view'
+
+entity.soccerbet_participant.collection:
+  path: '/soccerbet/participant/list'
+  defaults:
+    # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'soccerbet_participant'
+    _title: 'Participant List'
+  requirements:
+    # Checks for permission directly.
+    _permission: 'view participant entity'
+
+soccerbet_participant.participant_add:
+  path: '/soccerbet/participant/add'
+  defaults:
+    # Calls the form.add controller, defined in the participant entity.
+    _entity_form: soccerbet_participant.add
+    _title: 'Add Participant'
+  requirements:
+    _entity_create_access: 'soccerbet_participant'
+
+#soccerbet_participant.participant_team_relation_add:
+#  path: '/soccerbet/participant/{soccerbet_participant}/team/add'
+#  defaults:
+#    # Calls the form.add controller, defined in the soccerbet_participant_team relation entity.
+#    _entity_form: soccerbet_participant_team.add
+#    _title: 'Add a team to this tournmament'
+#  requirements:
+#    _entity_create_access: 'soccerbet_participant_team'
+
+#soccerbet_participant.game_add:
+#  path: '/soccerbet/participant/{soccerbet_participant}/game/add'
+#  defaults:
+#    _entity_form: soccerbet_game.add
+#    _title: 'Add a game to this participant'
+#  requirements:
+#    _entity_create_access: 'soccerbet_game'
+
+entity.soccerbet_participant.edit_form:
+  path: '/soccerbet/participant/{soccerbet_participant}/edit'
+  defaults:
+    # Calls the form.edit controller, defined in the participant entity.
+    _entity_form: soccerbet_participant.edit
+    _title: 'Edit Participant'
+  requirements:
+    _entity_access: 'soccerbet_participant.edit'
+
+entity.soccerbet_participant.delete_form:
+  path: '/soccerbet/participant/{soccerbet_participant}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the participant entity.
+    _entity_form: soccerbet_participant.delete
+    _title: 'Delete Participant'
+  requirements:
+    _entity_access: 'soccerbet_participant.delete'

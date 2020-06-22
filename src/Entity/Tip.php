@@ -10,227 +10,86 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
-use Drupal\soccerbet\TournamentInterface;
+use Drupal\soccerbet\TipInterface;
 
 /**
- * Defines the Tournament entity.
+ * Defines the Tip entity.
  *
- * @ingroup soccerbet_tournament
+ * @ingroup soccerbet_tip
  *
  * @ContentEntityType(
- *   id = "soccerbet_tournament",
- *   label = @Translation("Tournament"),
- *   label_collection = @Translation("Tournaments"),
- *   label_singular = @Translation("tournament"),
- *   label_plural = @Translation("tournaments"),
+ *   id = "soccerbet_tip",
+ *   label = @Translation("Tip"),
+ *   label_collection = @Translation("Tips"),
+ *   label_singular = @Translation("tip"),
+ *   label_plural = @Translation("tips"),
  *   label_count = @PluralTranslation(
- *     singular = "@count tournament",
- *     plural = "@count tournaments",
+ *     singular = "@count tip",
+ *     plural = "@count tips",
  *   ),
  *   handlers = {
- *     "view_builder" = "Drupal\soccerbet\Entity\Controller\TournamentViewBuilder",
- *     "list_builder" = "Drupal\soccerbet\Entity\Controller\TournamentListBuilder",
+ *     "view_builder" = "Drupal\soccerbet\Entity\Controller\TipViewBuilder",
+ *     "list_builder" = "Drupal\soccerbet\Entity\Controller\TipListBuilder",
  *     "form" = {
- *       "add" = "Drupal\soccerbet\Form\TournamentForm",
- *       "edit" = "Drupal\soccerbet\Form\TournamentForm",
- *       "delete" = "Drupal\soccerbet\Form\TournamentDeleteForm",
+ *       "add" = "Drupal\soccerbet\Form\TipForm",
+ *       "edit" = "Drupal\soccerbet\Form\TipForm",
+ *       "delete" = "Drupal\soccerbet\Form\TipDeleteForm",
  *     },
- *     "access" = "Drupal\soccerbet\Entity\Access\TournamentAccessControlHandler",
+ *     "access" = "Drupal\soccerbet\Entity\Access\TipAccessControlHandler",
  *   },
- *   base_table = "soccerbet_tournament",
- *   data_table = "soccerbet_tournament_field_data",
+ *   base_table = "soccerbet_tip",
+ *   data_table = "soccerbet_tip_field_data",
  *   admin_permission = "administer soccerbet",
  *   translateable = TRUE,
  *   entity_keys = {
- *     "id" = "tournament_id",
+ *     "id" = "tip_id",
  *     "label" = "name",
  *     "langcode" = "langcode",
  *   },
  *   links = {
- *     "canonical" = "/soccerbet/tournament/{soccerbet_tournament}",
- *     "edit-form" = "/soccerbet/tournament/{soccerbet_tournament}/edit",
- *     "delete-form" = "/soccerbet/tournament/{soccerbet_tournament}/delete",
- *     "collection" = "/soccerbet/tournament/list"
+ *     "canonical" = "/soccerbet/tip/{soccerbet_tip}",
+ *     "edit-form" = "/soccerbet/tip/{soccerbet_tip}/edit",
+ *     "delete-form" = "/soccerbet/tip/{soccerbet_tip}/delete",
+ *     "collection" = "/soccerbet/tip/list"
  *   }
  * )
  *
  */
-class Tournament extends ContentEntityBase implements TournamentInterface {
+class Tip extends ContentEntityBase implements TipInterface {
+
 
   /**
-   * Denotes that a tournament is active
+   * {@inheritdoc}
    */
-  const TOURNAMENT_IS_ACTIVE = 1;
+  public function getTipTeamA() {
+    return $this->get('tip_team_A')->value;
+  }
 
   /**
-   * Denotes that a tournament is inactive
+   * {@inheritdoc}
    */
-  const TOURNAMENT_IS_INACTIVE = 0;
-  /**
-   * @var \Drupal\Core\Field\FieldItemListInterface|mixed
-   */
-  private $logo;
+  public function setTipTeamA($tip_team_A) {
+    $this->set('tip_team_A', $tip_team_A);
+    return $this;
+  }
 
-  /**
-   * Generates a form option array based on the number of groups defined in this tournament
-   *
-   * @return array $options
-   */
-  public function getGroupOptions() {
-    $group_count = $this->getGroupCount();
-    $options = array();
 
-    for ($i = 0; $i < $group_count; $i++) {
-      //The Capital A starts with the ASCII char 65
-      $options[chr(65+$i)] = chr(65+$i);
+    /**
+     * {@inheritdoc}
+     */
+    public function getTipTeamB() {
+        return $this->get('tip_team_B')->value;
     }
-    return $options;
-  }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getName() {
-    return $this->get('name')->value;
-  }
+    /**
+     * {@inheritdoc}
+     */
+    public function setTipTeamB($tip_team_B) {
+        $this->set('tip_team_B', $tip_team_B);
+        return $this;
+    }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function setName($name) {
-    $this->set('name', $name);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getLogo() {
-    return $this->logo->entity;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setLogo(ImageItem $image) {
-    $this->set('logo', $image);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getStartDate() {
-    return $this->get('start_date')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setStartDate($start_date) {
-    $this->set('start_date', $start_date);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getEndDate() {
-    return $this->get('end_date')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setEndDate($end_date) {
-    $this->set('end_date', $end_date);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function isActive() {
-    return (bool )$this->get('active')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getStatus() {
-    return $this->get('active')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setActive($status) {
-    $this->set('active', $status ? Tournament::TOURNAMENT_IS_ACTIVE : Tournament::TOURNAMENT_IS_INACTIVE);
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getGroupCount() {
-    return $this->get('group_count')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   *
-   */
-  public function setGroupCount($group_count) {
-    $this->set('group_count', $group_count);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getTipperInFirstPlace() {
-    return $this->get('tipper_id_in_first_place')->entity;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setTipperInFirstPlace($tipper_id) {
-    $this->set('tipper_id_in_first_place', $tipper_id);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getTipperInSecondPlace() {
-    return $this->get('tipper_id_in_second_place')->entity;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setTipperInScondPlace($tipper_id) {
-    $this->set('tipper_id_in_second_place', $tipper_id);
-    return $this;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getTipperInThirdPlace() {
-    return $this->get('tipper_id_in_third_place')->entity;
-  }
-
-  /**
-   *{@inheritdoc}
-   *
-   */
-  public function setTipperInThirdPlace($tipper_id) {
-    $this->set('tipper_id_in_third_place', $tipper_id);
-    return $this;
-  }
-
-  /**
+    /**
    *{@inheritdoc}
    */
   public function getCreatedTime() {
@@ -254,7 +113,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
 
   /**
    * @param int $changed
-   * @return $this|Tournament
+   * @return $this|Tip
    */
   public function setChangedTime($changed) {
     $this->set('changed', $changed);
@@ -283,19 +142,19 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     // Standard field, used as unique if primary index.
-    $fields['tournament_id'] = BaseFieldDefinition::create('integer')
+    $fields['tip_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
-      ->setDescription(t('The entity_id of the tournament.'))
+      ->setDescription(t('The entity_id of the tip.'))
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
 
-    // Name field for the tournament.
+    // Name field for the tip.
     // We set display options for the view as well as the form.
     // Users with correct privileges can change the view and edit configuration.
 
     $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Tournament Name'))
-      ->setDescription(t('The name of the Tournament.'))
+      ->setLabel(t('Tip Name'))
+      ->setDescription(t('The name of the Tip.'))
       ->setSettings(array(
         'default_value' => '',
         'max_length' => 64,
@@ -314,9 +173,25 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
+    /*$fields['logo'] = BaseFieldDefinition::create('image')
+      ->setLabel(t('Logo'))
+      ->setDescription(t('The logo of this tip'))
+      ->setSetting('target_type', 'file')
+      ->setTranslatable(FALSE)
+      ->setDisplayOptions('form', array(
+        'label' => 'hidden',
+        'type' => 'image',
+        'weight' => -7,
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'image',
+        'weight' => -7,
+      ));*/
+
     $fields['start_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('Startdate'))
-      ->setDescription(t('The startdate of this tournament.'))
+      ->setDescription(t('The startdate of this tip.'))
       ->setSettings(array(
         'datetime_type' => 'date'
       ))
@@ -334,7 +209,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
 
     $fields['end_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('Enddate'))
-      ->setDescription(t('The enddate of this tournament.'))
+      ->setDescription(t('The enddate of this tip.'))
       ->setSettings(array(
         'datetime_type' => 'date',
       ))
@@ -351,8 +226,8 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['active'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Tournament status'))
-      ->setDescription(t('A boolean indicating whether the tournament is active.'))
+      ->setLabel(t('Tip status'))
+      ->setDescription(t('A boolean indicating whether the tip is active.'))
       ->setDefaultValue(FALSE)
       ->setDisplayOptions('view', array(
         'label' => 'above',
@@ -368,7 +243,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
 
     $fields['group_count'] = BaseFieldDefinition::create('list_integer')
       ->setLabel(t('Group count'))
-      ->setDescription(t('The number of groups in the preliminary round of this tournament.'))
+      ->setDescription(t('The number of groups in the preliminary round of this tip.'))
       ->setDefaultValue(8)
       ->setSettings(array(
         'allowed_values' => array(
@@ -408,7 +283,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
      *
      * $fields['tipper_id_first_place'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('First place tipper'))
-      ->setDescription(t('The Name of the tipper who won this tournament.'))
+      ->setDescription(t('The Name of the tipper who won this tip.'))
       ->setSetting('target_type', 'soccerbet_tipper')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
@@ -430,7 +305,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
 
     $fields['tipper_id_second_place'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Second place tipper'))
-      ->setDescription(t('The Name of the tipper who came second in this tournament.'))
+      ->setDescription(t('The Name of the tipper who came second in this tip.'))
       ->setSetting('target_type', 'soccerbet_tipper')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
@@ -452,7 +327,7 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
 
     $fields['tipper_id_third_place'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Third place tipper'))
-      ->setDescription(t('The Name of the tipper who came third in this tournament.'))
+      ->setDescription(t('The Name of the tipper who came third in this tip.'))
       ->setSetting('target_type', 'soccerbet_tipper')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
@@ -475,17 +350,17 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('User ID'))
-      ->setDescription(t('The user ID of the tournament creator.'))
+      ->setDescription(t('The user ID of the tip creator.'))
       ->setSetting('target_type', 'user')
       ->setDefaultValue(0);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
-      ->setDescription(t('The time that the tournament was created.'));
+      ->setDescription(t('The time that the tip was created.'));
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
-      ->setDescription(t('The time that the tournament was last edited.'));
+      ->setDescription(t('The time that the tip was last edited.'));
 
     return $fields;
   }
