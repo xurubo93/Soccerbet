@@ -16,37 +16,6 @@ use Drupal\image\Plugin\Field\FieldType\ImageItem;
  */
 interface UsergroupInterface extends ContentEntityInterface, EntityChangedInterface {
 
-  /**
-   * Returns the name of the tournament.
-   *
-   * @return string
-   *   The name of the tournament.
-   */
-  public function getUsergroupName();
-
-  /**
-   * Sets the name of the tournament.
-   *
-   * @param string $usergroup_name
-   *   The name of the tournament.
-   *
-   * @return $this
-   *   The class instance that this method is called on.
-   */
-  public function setUsergroupName($usergroup_name);
-
-
-  public function getCreatedTime();
-
-  /**
-   * Sets the creation date of the tournament.
-   *
-   * @param int $created
-   *   The timestamp of when the tournament was created.
-   *
-   * @return $this
-   *   The class instance that this method is called on.
-   */
   public function setCreatedTime($created);
 
   /**

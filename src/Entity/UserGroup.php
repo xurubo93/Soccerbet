@@ -10,52 +10,51 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
-use Drupal\soccerbet\ParticipantInterface;
+use Drupal\soccerbet\UsergroupInterface;
 
 /**
- * Defines the Participant entity.
+ * Defines the Usergroup entity.
  *
- * @ingroup soccerbet_participant
+ * @ingroup soccerbet_usergroup
  *
  * @ContentEntityType(
- *   id = "soccerbet_participant",
- *   label = @Translation("Participant"),
- *   label_collection = @Translation("Participants"),
- *   label_singular = @Translation("participant"),
- *   label_plural = @Translation("participants"),
+ *   id = "soccerbet_usergroup",
+ *   label = @Translation("Usergroup"),
+ *   label_collection = @Translation("Usergroups"),
+ *   label_singular = @Translation("usergroup"),
+ *   label_plural = @Translation("usergroups"),
  *   label_count = @PluralTranslation(
- *     singular = "@count participant",
- *     plural = "@count participants",
+ *     singular = "@count usergroup",
+ *     plural = "@count usergroups",
  *   ),
  *   handlers = {
- *     "view_builder" = "Drupal\soccerbet\Entity\Controller\ParticipantViewBuilder",
- *     "list_builder" = "Drupal\soccerbet\Entity\Controller\ParticipantListBuilder",
+ *     "view_builder" = "Drupal\soccerbet\Entity\Controller\UsergroupViewBuilder",
+ *     "list_builder" = "Drupal\soccerbet\Entity\Controller\UsergroupListBuilder",
  *     "form" = {
- *       "add" = "Drupal\soccerbet\Form\ParticipantForm",
- *       "edit" = "Drupal\soccerbet\Form\ParticipantForm",
- *       "delete" = "Drupal\soccerbet\Form\ParticipantDeleteForm",
+ *       "add" = "Drupal\soccerbet\Form\UsergroupForm",
+ *       "edit" = "Drupal\soccerbet\Form\UsergroupForm",
+ *       "delete" = "Drupal\soccerbet\Form\UsergroupDeleteForm",
  *     },
- *     "access" = "Drupal\soccerbet\Entity\Access\ParticipantAccessControlHandler",
+ *     "access" = "Drupal\soccerbet\Entity\Access\UsergroupAccessControlHandler",
  *   },
- *   base_table = "soccerbet_participant",
- *   data_table = "soccerbet_participant_field_data",
+ *   base_table = "soccerbet_usergroup",
+ *   data_table = "soccerbet_usergroup_field_data",
  *   admin_permission = "administer soccerbet",
  *   translateable = TRUE,
  *   entity_keys = {
- *     "id" = "participant_id",
+ *     "id" = "usergroup_id",
  *     "langcode" = "langcode",
  *   },
  *   links = {
- *     "canonical" = "/soccerbet/participant/{soccerbet_participant}",
- *     "edit-form" = "/soccerbet/participant/{soccerbet_participant}/edit",
- *     "delete-form" = "/soccerbet/participant/{soccerbet_participant}/delete",
- *     "collection" = "/soccerbet/participant/list"
+ *     "canonical" = "/soccerbet/usergroup/{soccerbet_usergroup}",
+ *     "edit-form" = "/soccerbet/usergroup/{soccerbet_usergroup}/edit",
+ *     "delete-form" = "/soccerbet/usergroup/{soccerbet_usergroup}/delete",
+ *     "collection" = "/soccerbet/usergroup/list"
  *   }
  * )
  *
  */
-class Participant extends ContentEntityBase implements ParticipantInterface {
-
+class Usergroup extends ContentEntityBase implements UsergroupInterface {
 
   /**
    *{@inheritdoc}
@@ -81,7 +80,7 @@ class Participant extends ContentEntityBase implements ParticipantInterface {
 
   /**
    * @param int $changed
-   * @return $this|Participant
+   * @return $this|Usergroup
    */
   public function setChangedTime($changed) {
     $this->set('changed', $changed);
@@ -110,23 +109,22 @@ class Participant extends ContentEntityBase implements ParticipantInterface {
     $fields = parent::baseFieldDefinitions($entity_type);
 
     // Standard field, used as unique if primary index.
-    $fields['participant_id'] = BaseFieldDefinition::create('integer')
+    $fields['usergroup_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
-      ->setDescription(t('The entity_id of the participant.'))
+      ->setDescription(t('The entity_id of the usergroup.'))
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
 
-    // Name field for the participant.
+    // Name field for the user.
     // We set display options for the view as well as the form.
     // Users with correct privileges can change the view and edit configuration.
-
 
     /**
      * This has to be activated, when the group and tipper implementation has finished
      *
      * $fields['tipper_id_first_place'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('First place tipper'))
-      ->setDescription(t('The Name of the tipper who won this participant.'))
+      ->setDescription(t('The Name of the tipper who won this user.'))
       ->setSetting('target_type', 'soccerbet_tipper')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
@@ -148,7 +146,7 @@ class Participant extends ContentEntityBase implements ParticipantInterface {
 
     $fields['tipper_id_second_place'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Second place tipper'))
-      ->setDescription(t('The Name of the tipper who came second in this participant.'))
+      ->setDescription(t('The Name of the tipper who came second in this user.'))
       ->setSetting('target_type', 'soccerbet_tipper')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
@@ -170,7 +168,7 @@ class Participant extends ContentEntityBase implements ParticipantInterface {
 
     $fields['tipper_id_third_place'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Third place tipper'))
-      ->setDescription(t('The Name of the tipper who came third in this participant.'))
+      ->setDescription(t('The Name of the tipper who came third in this user.'))
       ->setSetting('target_type', 'soccerbet_tipper')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
@@ -193,17 +191,17 @@ class Participant extends ContentEntityBase implements ParticipantInterface {
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('User ID'))
-      ->setDescription(t('The user ID of the participant creator.'))
+      ->setDescription(t('The user ID of the user creator.'))
       ->setSetting('target_type', 'user')
       ->setDefaultValue(0);
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
-      ->setDescription(t('The time that the participant was created.'));
+      ->setDescription(t('The time that the user was created.'));
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
-      ->setDescription(t('The time that the participant was last edited.'));
+      ->setDescription(t('The time that the user was last edited.'));
 
     return $fields;
   }

@@ -43,7 +43,6 @@ use Drupal\soccerbet\TipInterface;
  *   translateable = TRUE,
  *   entity_keys = {
  *     "id" = "tip_id",
- *     "label" = "name",
  *     "langcode" = "langcode",
  *   },
  *   links = {
@@ -148,70 +147,33 @@ class Tip extends ContentEntityBase implements TipInterface {
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
 
-    // Name field for the tip.
-    // We set display options for the view as well as the form.
-    // Users with correct privileges can change the view and edit configuration.
-
-    $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Tip Name'))
-      ->setDescription(t('The name of the Tip.'))
+    $fields['tip_team_A'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('tip team A'))
+      ->setDescription(t('The tip for team A.'))
       ->setSettings(array(
         'default_value' => '',
         'max_length' => 64,
         'text_processing' => 0,
       ))
       ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'string',
-        'weight' => -6,
-      ))
-      ->setDisplayOptions('form', array(
-        'label' => 'hidden',
-        'type' => 'string_textfield',
-        'weight' => -6,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
-    /*$fields['logo'] = BaseFieldDefinition::create('image')
-      ->setLabel(t('Logo'))
-      ->setDescription(t('The logo of this tip'))
-      ->setSetting('target_type', 'file')
-      ->setTranslatable(FALSE)
-      ->setDisplayOptions('form', array(
-        'label' => 'hidden',
-        'type' => 'image',
-        'weight' => -7,
-      ))
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'image',
-        'weight' => -7,
-      ));*/
-
-    $fields['start_date'] = BaseFieldDefinition::create('datetime')
-      ->setLabel(t('Startdate'))
-      ->setDescription(t('The startdate of this tip.'))
-      ->setSettings(array(
-        'datetime_type' => 'date'
-      ))
-      ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'date',
-        'weight' => -5,
+        'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'date',
-        'weight' => -5,
+        'weight' => -4,
       ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayConfigurable('form', TRUE);
 
-    $fields['end_date'] = BaseFieldDefinition::create('datetime')
-      ->setLabel(t('Enddate'))
-      ->setDescription(t('The enddate of this tip.'))
+    $fields['tip_team_B'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('tip team B'))
+      ->setDescription(t('The tip for team B.'))
       ->setSettings(array(
-        'datetime_type' => 'date',
+        'default_value' => '',
+        'max_length' => 64,
+        'text_processing' => 0,
       ))
       ->setDisplayOptions('view', array(
         'label' => 'above',
@@ -224,59 +186,9 @@ class Tip extends ContentEntityBase implements TipInterface {
       ))
       ->setDisplayConfigurable('view', TRUE)
       ->setDisplayConfigurable('form', TRUE);
-
-    $fields['active'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Tip status'))
-      ->setDescription(t('A boolean indicating whether the tip is active.'))
-      ->setDefaultValue(FALSE)
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'radios',
-        'weight' => -3,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'radios',
-        'weight' => -3,
-      ))
-      ->setDisplayConfigurable('view', TRUE)
-      ->setDisplayConfigurable('form', TRUE);
-
-    $fields['group_count'] = BaseFieldDefinition::create('list_integer')
-      ->setLabel(t('Group count'))
-      ->setDescription(t('The number of groups in the preliminary round of this tip.'))
-      ->setDefaultValue(8)
-      ->setSettings(array(
-        'allowed_values' => array(
-          1 => 1,
-          2 => 2,
-          3 => 3,
-          4 => 4,
-          5 => 5,
-          6 => 6,
-          7 => 7,
-          8 => 8,
-          9 => 9,
-          10 => 10,
-          11 => 11,
-          12 => 12,
-          13 => 13,
-          14 => 14,
-          15 => 15,
-          16 => 16,
-        )
-      ))
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'hidden',
-        'weight' => 0,
-      ))
-      ->setDisplayOptions('form', array(
-        'label' => 'above',
-        'type' => 'options_select',
-        'weight' => 0,
-      ))
-      ->setDisplayConfigurable('view', TRUE)
-      ->setDisplayConfigurable('form', TRUE);
+    // Name field for the tip.
+    // We set display options for the view as well as the form.
+    // Users with correct privileges can change the view and edit configuration.
 
     /**
      * This has to be activated, when the group and tipper implementation has finished
