@@ -51,7 +51,6 @@ class UsergroupViewBuilder extends EntityViewBuilder {
         )
       )
     );*/
-    $build['#usergroup_name'] = $build['usergroup_name'];
     $build['#attached']['library'][] = 'soccerbet/soccerbet.usergroup';
     //kint($build);
   }

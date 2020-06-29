@@ -45,7 +45,6 @@ class UsergroupListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     $header['usergroup_id'] = $this->t('Usergroup ID');
-    $header['usergroup_name'] = $this->t('Usergroup Name');
     return $header + parent::buildHeader();
   }
 
@@ -55,7 +54,6 @@ class UsergroupListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\soccerbet\Entity\Usergroup */
     $row['usergroup_id'] = $entity->id();
-    $row['usergroup_name'] = $entity->usergroup_name->value;
     return $row + parent::buildRow($entity);
   }
 }

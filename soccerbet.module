@@ -59,11 +59,12 @@ function soccerbet_theme($existing, $type, $theme, $path) {
     'soccerbet_game' => array(
       'template' => 'soccerbet_game',
       'variables' => array(
-        'name' => NULL,
         'game_location' => NULL,
         'start_time' => NULL,
         'score_first_team' => NULL,
         'score_second_team' => NULL,
+        'first_team' => NULL,
+        'second_team' => NULL,
         'KO_game' => NULL,
         'group_game' => NULL,
         'soccerbet_game_tables' => NULL,
@@ -86,7 +87,6 @@ function soccerbet_theme($existing, $type, $theme, $path) {
     'soccerbet_usergroup' => array(
       'template' => 'soccerbet_usergroup',
       'variables' => array(
-        'usergroup_name' => NULL,
         'soccerbet_usergroup_tables' => NULL,
       )
     ),
