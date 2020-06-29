@@ -10,6 +10,7 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\soccerbet\GameInterface;
+use Drupal\soccerbet\TeamInterface;
 
 /**
  * Defines the Game entity.
@@ -42,7 +43,6 @@ use Drupal\soccerbet\GameInterface;
  *   translateable = TRUE,
  *   entity_keys = {
  *     "id" = "game_id",
- *     "label" = "name",
  *     "langcode" = "langcode",
  *   },
  *   links = {
@@ -55,22 +55,6 @@ use Drupal\soccerbet\GameInterface;
  *
  */
 class Game extends ContentEntityBase implements GameInterface {
-
-
-   /**
-   * {@inheritdoc}
-   */
-  public function getName() {
-    return $this->get('name')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setName($name) {
-    $this->set('name', $name);
-    return $this;
-  }
 
   /**
    *{@inheritdoc}
@@ -86,8 +70,6 @@ class Game extends ContentEntityBase implements GameInterface {
     $this->set('start_time', $start_time);
     return $this;
   }
-
-
 
   /**
    * Generates a form option array to choose the number of a goals a team has made
@@ -121,23 +103,37 @@ class Game extends ContentEntityBase implements GameInterface {
     return $this;
   }
 
-
   /**
-   * Generates a form option array to choose the number of a goals a team has made
-   *
-   * @return array $options
+   *{@inheritdoc}
    */
-  public function getScoreSecondTeamOptions() {
-    $score_second_team = $this->getScoreSecondTeam();
-    $options = array();
-
-    for ($i = 0; $i < $score_second_team; $i++) {
-      //The Capital A starts with the ASCII char 65
-      $options[chr(65+$i)] = chr(65+$i);
-    }
-    return $options;
+  public function getFirstTeam() {
+    return $this->get('game_first_team')->entity;
   }
 
+  /**
+   * @param TeamInterface $game_first_team
+   * @return $this|Game
+   */
+  public function setFirstTeam(TeamInterface $game_first_team) {
+    $this->set('game_first_team', $game_first_team);
+    return $this;
+  }
+
+  /**
+   * @return Team
+   */
+  public function getSecondTeam() {
+    return $this->get('game_second_team')->entity;
+  }
+
+  /**
+   * @param TeamInterface $game_second_team
+   * @return $this|mixed
+   */
+  public function setSecondTeam(TeamInterface $game_second_team) {
+    $this->set('game_second_team', $game_second_team);
+    return $this;
+  }
 
   /**
    *{@inheritdoc}
@@ -170,40 +166,16 @@ class Game extends ContentEntityBase implements GameInterface {
     $this->set('game_location', $game_location);
     return $this;
   }
-
-
   /**
    *{@inheritdoc}
    */
-  public function getKOGame() {
-    return $this->get('KO_game')->value;
+  public function getGameType() {
+    return $this->get('game_type')->label;
   }
 
-  /**
-   *{@inheritdoc}
-   *
-   */
-  public function setKOGame($KO_game) {
-    $this->set('KO_game', $KO_game);
-    return $this;
+  public function setGameType($game_type) {
+    $this->set('game_type', $game_type);
   }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function getGroupGame() {
-    return $this->get('group_game')->value;
-  }
-
-  /**
-   *{@inheritdoc}
-   *
-   */
-  public function setGroupGame($group_game) {
-    $this->set('group_game', $group_game);
-    return $this;
-  }
-
 
   /**
    *{@inheritdoc}
@@ -263,28 +235,6 @@ class Game extends ContentEntityBase implements GameInterface {
       ->setDescription(t('The entity_id of the game.'))
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
-
-    $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Game Name'))
-      ->setDescription(t('The name of the Game.'))
-      ->setSettings(array(
-        'default_value' => '',
-        'max_length' => 64,
-        'text_processing' => 0,
-      ))
-      ->setDisplayOptions('view', array(
-        'label' => 'hidden',
-        'type' => 'string',
-        'weight' => -6,
-      ))
-      ->setDisplayOptions('form', array(
-        'label' => 'hidden',
-        'type' => 'string_textfield',
-        'weight' => -6,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
 
     $fields['score_first_team'] = BaseFieldDefinition::create('list_integer')
       ->setLabel(t('score first team'))
@@ -399,14 +349,35 @@ class Game extends ContentEntityBase implements GameInterface {
       ->setDisplayConfigurable('view', TRUE)
       ->setDisplayConfigurable('form', TRUE);
 
+    $fields['game_type'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Game type'))
+      ->setDescription(t('The type of this game. (KO-Game, Group-Game,...)'))
+      ->setDefaultValue(8)
+      ->setSettings(array(
+        'allowed_values' => array(
+          'GR' => 'Group',
+          'KO' => 'KO-Game',
+        )
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'hidden',
+        'type' => 'hidden',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'label' => 'above',
+        'type' => 'options_select',
+        'weight' => 0,
+      ))
+      ->setDisplayConfigurable('view', TRUE)
+      ->setDisplayConfigurable('form', TRUE);
 
-    /**
-     * This has to be activated, when the group and tipper implementation has finished
-     *
-     * $fields['tipper_id_first_place'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('First place tipper'))
-      ->setDescription(t('The Name of the tipper who won this tournament.'))
-      ->setSetting('target_type', 'soccerbet_tipper')
+      //This has to be activated, when the group and tipper implementation has finished
+
+     $fields['game_first_team'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('First team'))
+      ->setDescription(t('The first team in this game, ususally called the home team.'))
+      ->setSetting('target_type', 'soccerbet_team')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
         'label' => 'above',
@@ -425,10 +396,10 @@ class Game extends ContentEntityBase implements GameInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['tipper_id_second_place'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Second place tipper'))
-      ->setDescription(t('The Name of the tipper who came second in this tournament.'))
-      ->setSetting('target_type', 'soccerbet_tipper')
+    $fields['game_second_team'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Second team'))
+      ->setDescription(t('The second team in this match, usually called the foreign team.'))
+      ->setSetting('target_type', 'soccerbet_team')
       ->setSetting('handler', 'default')
       ->setDisplayOptions('view', array(
         'label' => 'above',
@@ -446,29 +417,6 @@ class Game extends ContentEntityBase implements GameInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-    $fields['tipper_id_third_place'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Third place tipper'))
-      ->setDescription(t('The Name of the tipper who came third in this tournament.'))
-      ->setSetting('target_type', 'soccerbet_tipper')
-      ->setSetting('handler', 'default')
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'entity_reference',
-        'weight' => 12,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => 60,
-          'placeholder' => '',
-        ),
-        'weight' => 12,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-    */
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('User ID'))

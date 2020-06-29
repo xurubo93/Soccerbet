@@ -43,7 +43,7 @@ use Drupal\soccerbet\TeamInterface;
  *   translateable = TRUE,
  *   entity_keys = {
  *     "id" = "team_id",
- *     "label" = "name",
+ *     "label" = "team_name",
  *     "langcode" = "langcode",
  *   },
  *   links = {

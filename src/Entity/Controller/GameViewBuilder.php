@@ -53,9 +53,10 @@ class GameViewBuilder extends EntityViewBuilder {
     );*/
 
     $build['#location'] = $build['location'];
-    $build['#name'] = $build['name'];
     $build['#start_time'] = Drupal::service('date.formatter')->format(strtotime($entity->start_time->value), 'custom', 'D, j. M Y', 0) ;
+    $build['#first_team'] = $build['first_team'];
     $build['#score_first_team'] = $build['score_first_team'];
+    $build['#second_team'] = $build['second_team'];
     $build['#score_second_team'] = $build['score_second_team'];
     $build['#game_location'] = $build['game_location'];
     $build['#KO_game'] = $build['KO_game'];

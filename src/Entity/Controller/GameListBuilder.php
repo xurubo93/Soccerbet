@@ -45,13 +45,13 @@ class GameListBuilder extends EntityListBuilder {
    */
   public function buildHeader() {
     $header['game_id'] = $this->t('Game ID');
-    $header['name'] = $this->t('Name');
     $header['start_time'] = $this->t('Start Time');
     $header['game_location'] = $this->t('Game location');
-    $header['score_first_team'] = $this->t('scorefirst team');
-    $header['score_second_team'] = $this->t('score second team');
-    $header['KO_game'] = $this->t('K.O. game');
-    $header['group_game'] = $this->t('group game');
+    $header['game_first_team'] = $this->t('First Team');
+    $header['game_second_team'] = $this->t('Second Team');
+    $header['score_first_team'] = $this->t('Score first team');
+    $header['score_second_team'] = $this->t('Score second team');
+    $header['game_type'] = $this->t('Game Type');
     return $header + parent::buildHeader();
   }
 
@@ -61,13 +61,14 @@ class GameListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     /* @var $entity \Drupal\soccerbet\Entity\Game */
     $row['game_id'] = $entity->id();
-    $row['name'] = $entity->link();
     $row['start_time'] = $entity->start_time->value;
-    $row['game_location'] = $entity->game_location>value;
+    $row['game_location'] = $entity->game_location->value;
+    $row['game_first_team'] = $entity->getFirstTeam()->getTeamName();
+    $row['game_second_team'] = $entity->getSecondTeam()->getTeamName();
     $row['score_first_team'] = $entity->score_first_team->value;
     $row['score_second_team'] = $entity->score_second_team->value;
-    $row['KO_game'] = $entity->score_second_team->value;
-    $row['group_game'] = $entity->score_second_team->value;
+    $row['game_type'] = $entity->getGameType();
+    //kint($entity->getGameType());
     return $row + parent::buildRow($entity);
   }
 }

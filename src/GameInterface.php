@@ -9,6 +9,7 @@ namespace Drupal\soccerbet;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
+use Drupal\soccerbet\Entity\Team;
 
 /**
  * Provides an interface defining a game entity.
@@ -16,29 +17,13 @@ use Drupal\image\Plugin\Field\FieldType\ImageItem;
  */
 interface GameInterface extends ContentEntityInterface, EntityChangedInterface {
 
-
-    /**
-     * Returns the game's start time.
-     *
-     * @return integer
-     */
-    public function getName();
-    /**
-     * Sets the StartTime of game.
-     *
-     * @param int $name
-     *
-     * @return $this
-     */
-    public function setName($name);
-
-
-    /**
+   /**
    * Returns the game's start time.
    *
    * @return integer
    */
   public function getStartTime();
+
   /**
    * Sets the StartTime of game.
    *
@@ -48,7 +33,35 @@ interface GameInterface extends ContentEntityInterface, EntityChangedInterface {
    */
   public function setStartTime($start_time);
 
+  /**
+   * Returns the first team of the game
+   *
+   * @return Team
+   */
+  public function getFirstTeam();
 
+  /**
+   * Sets the first team of this game
+   *
+   * @param $game_first_team
+   * @return $this
+   */
+  public function setFirstTeam(TeamInterface $game_first_team);
+
+  /**
+   * Returns the second team of the game
+   *
+   * @return Team
+   */
+  public function getSecondTeam();
+
+  /**
+   * Sets the second team of this game
+   *
+   * @param $game_second_team
+   * @return mixed
+   */
+  public function setSecondTeam(TeamInterface $game_second_team);
 
   /**
    * Returns the score of the first team.
@@ -91,6 +104,7 @@ interface GameInterface extends ContentEntityInterface, EntityChangedInterface {
    * @return string
    */
   public function getGameLocation();
+
   /**
    *
    * @param string $game_location
@@ -105,33 +119,17 @@ interface GameInterface extends ContentEntityInterface, EntityChangedInterface {
    *
    * @return string
    */
-  public function getKOGame();
+  public function getGameType();
+
   /**
    *
-   * @param string $KO_game
+   * @param string $game_type
    *
-   * @return $this
+   * @return $string
    *   The class instance that this method is called on.
    */
-  public function setGroupGame($group_game);
 
-  /**
-   * Returns the type of the game.
-   *
-   * @return string
-   */
-  public function getGroupGame();
-  /**
-   *
-   * @param string $group_game
-   *
-   * @return $this
-   *   The class instance that this method is called on.
-   */
-  public function setKOGame($group_game);
-
-
-
+  public function setGameType($game_type);
 
   /**
    * Returns the time that the game was created.
