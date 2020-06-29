@@ -12,7 +12,6 @@ function soccerbet_theme($existing, $type, $theme, $path) {
     'soccerbet_tournament' => array(
       'template' => 'soccerbet_tournament',
       'variables' => array(
-        'logo' => NULL,
         'name' => NULL,
         'start_date' => NULL,
         'end_date' => NULL,
@@ -63,8 +62,6 @@ function soccerbet_theme($existing, $type, $theme, $path) {
         'start_time' => NULL,
         'score_first_team' => NULL,
         'score_second_team' => NULL,
-        'first_team' => NULL,
-        'second_team' => NULL,
         'KO_game' => NULL,
         'group_game' => NULL,
         'soccerbet_game_tables' => NULL,
