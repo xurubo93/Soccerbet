@@ -31,7 +31,7 @@ class ParticipantGroupRelationDeleteForm extends ContentEntityConfirmFormBase {
    * If the delete command is canceled, return to the contact list.
    */
   public function getCancelURL() {
-    return new Url('entity.soccerbet_participant.collection');
+    return new Url('entity.soccerbet_participant_group.collection');
   }
 
   /**

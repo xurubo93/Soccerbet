@@ -24,7 +24,7 @@ class ParticipantGroupRelationForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $status = parent::save($form, $form_state);
 
-    $form_state->setRedirect('entity.soccerbet_participant.collection');
+    $form_state->setRedirect('entity.soccerbet_participant_group.collection');
 
     return $status;
   }
