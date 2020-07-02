@@ -187,6 +187,32 @@ function soccerbet_theme($existing, $type, $theme, $path) {
     'variables' => array(
       'table' => NULL,
     )
-  )
+  ),
+    'soccerbet_participant_group_relation' => array(
+      'template' => 'soccerbet_participant_group_relation',
+      'variables' => array(
+        'soccerbet_participant_group_relation_tables' => NULL,
+      )
+    ),
+    'soccerbet_participant_group_relation_tables' => array(
+      'template' => 'soccerbet_participant_group_relation_tables',
+      'variables' => array(
+        'title' => NULL,
+        'tables' => NULL,
+      ),
+    ),
+    'soccerbet_participant_group_relation_table' => array(
+      'template' => 'soccerbet_participant_group_relation_table',
+      'variables' => array(
+        'group_name' => NULL,
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_participant_group_relation_games' => array(
+      'template' => 'soccerbet_participant_group_relation_games',
+      'variables' => array(
+        'table' => NULL,
+      )
+    )
   );
 }

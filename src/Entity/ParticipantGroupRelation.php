@@ -17,31 +17,31 @@ use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\soccerbet\ParticipantInterface;
-use Drupal\soccerbet\TippergroupInterface;
-use Drupal\soccerbet\TipperGroupRelationInterface;
+use Drupal\soccerbet\ParticipantGroupInterface;
+use Drupal\soccerbet\ParticipantGroupRelationInterface;
 use Drupal\soccerbet\TipperInterface;
 use Drupal\soccerbet\TournamentInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the Tipper-Group entity Relation class. This is actually an associative relation between the tipper
+ * Defines the Participant-Group entity Relation class. This is actually an associative relation between the participant
  * and a group
  *
  * @ContentEntityType(
- *   id = "soccerbet_tipper_group",
- *   label = @Translation("Tipper Group Relation"),
+ *   id = "soccerbet_participant_group_relation",
+ *   label = @Translation("Participant Group Relation"),
  *   handlers = {
  *     "storage_schema" = "Drupal\soccerbet\TournamentTeamRelationStorageSchema",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\soccerbet\Entity\Controller\TipperGroupRelationListBuilder",
- *     "access" = "Drupal\soccerbet\TipperGroupRelationAccessControlHandler",
+ *     "list_builder" = "Drupal\soccerbet\Entity\Controller\ParticipantGroupRelationListBuilder",
+ *     "access" = "Drupal\soccerbet\ParticipantGroupRelationAccessControlHandler",
  *     "form" = {
- *       "add" = "Drupal\soccerbet\Form\TipperGroupRelationForm",
- *       "edit" = "Drupal\soccerbet\Form\TipperGroupRelationForm",
- *       "delete" = "Drupal\soccerbet\Form\TipperGroupRelationDeleteForm",
+ *       "add" = "Drupal\soccerbet\Form\ParticipantGroupRelationForm",
+ *       "edit" = "Drupal\soccerbet\Form\ParticipantGroupRelationForm",
+ *       "delete" = "Drupal\soccerbet\Form\ParticipantGroupRelationDeleteForm",
  *     },
  *   },
- *   base_table = "soccerbet_tipper_group",
+ *   base_table = "soccerbet_participant_group_relation",
  *   admin_permission = "administer soccerbet",
  *   translatable = FALSE,
  *   entity_keys = {
@@ -49,15 +49,15 @@ use Drupal\user\UserInterface;
  *     "label" = "description"
  *   },
  *   links = {
- *     "canonical" = "/soccerbet/tipper/group/{soccerbet_tipper_group}",
- *     "edit-form" = "/soccerbet/tipper/{soccerbet_tipper}/group/{soccerbet_tipper_group}/edit",
- *     "delete-form" = "/soccerbet/tipper/{soccerbet_tipper}/group/{soccerbet_tipper_group}delete",
- *     "collection" = "/soccerbet/tipper/group/list"
+ *     "canonical" = "/soccerbet/participant/group/{soccerbet_participant_group_relation}",
+ *     "edit-form" = "/soccerbet/participant/{soccerbet_participant}/group/{soccerbet_participant_group_relation}/edit",
+ *     "delete-form" = "/soccerbet/participant/{soccerbet_participant}/group/{soccerbet_participant_group_relation}delete",
+ *     "collection" = "/soccerbet/participant/group/list"
  *   }
  * )
  */
 
-class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelationInterface {
+class ParticipantGroupRelation extends ContentEntityBase implements ParticipantGroupRelationInterface {
 
   /**
    * {@inheritdoc}
@@ -75,38 +75,39 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
   /**
    *{@inheritdoc}
    */
-  public function getTipperID() {
-    return $this->get('tipper_id')->target_id;
+  public function getParticipantID() {
+    return $this->get('participant_id')->participant_id;
   }
 
   /**
    *{@inheritdoc}
    */
-  public function getTipper() {
-    return $this->get('tipper_id')->entity;
-  }
-
-  /**
-   *{@inheritdoc}
-   */
-  public function setTipperID($tipper_id) {
-    $this->set('tipper_id', $tipper_id);
+  public function setParticipantID($participant_id) {
+    $this->set('participant_id', $participant_id);
     return $this;
   }
 
   /**
    *{@inheritdoc}
    */
-  public function setTipper(ParticipantInterface $participant) {
-    $this->set('tipper_id', $participant->id());
+  public function getParticipant() {
+    return $this->get('participant_id')->entity;
+  }
+
+
+  /**
+   *{@inheritdoc}
+   */
+  public function setParticipant(ParticipantInterface $participant) {
+    $this->set('participant_id', $participant->id());
     return $this;
   }
 
   /**
    *{@inheritdoc}
    */
-  public function getTippergroupID() {
-    return $this->get('tippergroup_id')->target_id;
+  public function getUserGroupID() {
+    return $this->get('usergroup_id')->target_id;
   }
 
   public function setChangedTime($timestamp)
@@ -122,23 +123,23 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
   /**
    *{@inheritdoc}
    */
-  public function getTippergroup() {
-    return $this->get('tippergroup_id')->entity;
+  public function getParticipantgroup() {
+    return $this->get('participantgroup_id')->entity;
   }
 
   /**
    *{@inheritdoc}
    */
-  public function setTippergroupID($tippergroup_id) {
-    $this->set('tippergroup_id', $tippergroup_id);
+  public function setParticipantgroupID($participantgroup_id) {
+    $this->set('participantgroup_id', $participantgroup_id);
     return $this;
   }
 
   /**
    *{@inheritdoc}
    */
-  public function setTippergroup(TippergroupInterface $tippergroup) {
-    $this->set('tippergroup_id', $tippergroup->id());
+  public function setParticipantgroup(ParticipantgroupInterface $participantgroup) {
+    $this->set('participantgroup_id', $participantgroup->id());
     return $this;
   }
 
@@ -189,7 +190,7 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
   /**
    *{@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public function setOwner(ParticipantInterface $account) {
     $this->set('uid', $account->id());
     return $this;
   }
@@ -221,14 +222,14 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
    *{@inheritdoc}
    */
   public function isPaid() {
-    return (bool) $this->get('tipper_has_payed')->value;
+    return (bool) $this->get('participant_has_payed')->value;
   }
 
   /**
    *{@inheritdoc}
    */
   public function setPaid($paid) {
-    $this->set('tipper_has_payed', $paid ? TIPPER_HAS_PAID : TIPPER_HAS_NOT_PAID);
+    $this->set('participant_has_payed', $paid ? PARTICIPANT_HAS_PAID : PARTICIPANT_HAS_NOT_PAID);
     return $this;
   }
 
@@ -269,13 +270,13 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
     // Standard field, used as unique if primary index.
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
-      ->setDescription(t('The entity_id of the tipper group relation.'))
+      ->setDescription(t('The entity_id of the participant group relation.'))
       ->setReadOnly(TRUE)
       ->setSetting('unsigned', TRUE);
 
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('User ID'))
-      ->setDescription(t('The user ID of this tipper.'))
+      ->setDescription(t('The user ID of this participant.'))
       ->setSetting('target_type', 'soccerbet_participant')
       ->setDefaultValue(0)
       ->setDisplayOptions('view', array(
@@ -310,7 +311,7 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
 
     $fields['tournament_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Tournament ID'))
-      ->setDescription(t('The tournament this tipper and group belongs to'))
+      ->setDescription(t('The tournament this participant and group belongs to'))
       ->setSetting('target_type', 'soccerbet_tournament')
       ->setDefaultValue(0)
       ->setRequired(TRUE)
@@ -327,9 +328,9 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['end_result'] = BaseFieldDefinition::create('list_integer')
-      ->setLabel(t('End Result of the tipper'))
-      ->setDescription(t('The end result of this tipper in this tournament'))
-      ->setDefaultValueCallback('Drupal\soccerbet\TipperGroupRelation::getTipperCount')
+      ->setLabel(t('End Result of the participant'))
+      ->setDescription(t('The end result of this participant in this tournament'))
+      ->setDefaultValueCallback('Drupal\soccerbet\ParticipantGroupRelation::getParticipantCount')
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'hidden',
@@ -343,7 +344,7 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
 
     $fields['member_has_payed'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Member has payed'))
-      ->setDescription(t('A boolean indicating whether the tipper has payed his stakes.'))
+      ->setDescription(t('A boolean indicating whether the participant has payed his stakes.'))
       ->setDefaultValue(FALSE)
       ->setSettings(array(
         'on_label' => t('Paid'),
@@ -364,12 +365,12 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
-      ->setDescription(t('The time that the tipper was created.'))
+      ->setDescription(t('The time that the participant was created.'))
       ->setTranslatable(TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
-      ->setDescription(t('The time the tipper was last edited.'))
+      ->setDescription(t('The time the participant was last edited.'))
       ->setTranslatable(TRUE);
 
     return $fields;
@@ -381,10 +382,10 @@ class TipperGroupRelation extends ContentEntityBase implements TipperGroupRelati
    * @see ::baseFieldDefitions()
    *
    * @return integer
-   *   An integer of all tippers in a specific group of a tournament
+   *   An integer of all participants in a specific group of a tournament
    */
-  public static function getTipperCount() {
-    //return SqlContentEntityStorage->database->query('SELECT COUNT(*) FROM {soccerbet_tipper_group} WHERE tippergroup_id = :tippergroup_id AND tournament_id = :tournament_id', array(':tippergroup_id' => $this->getTippergroupID(), ':tournament_id' => $this->getTournamentID()));
+  public static function getParticipantCount() {
+    //return SqlContentEntityStorage->database->query('SELECT COUNT(*) FROM {soccerbet_participant_group} WHERE participantgroup_id = :participantgroup_id AND tournament_id = :tournament_id', array(':participantgroup_id' => $this->getParticipantgroupID(), ':tournament_id' => $this->getTournamentID()));
   }
 }
 ?>

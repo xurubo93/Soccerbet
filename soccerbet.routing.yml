@@ -450,3 +450,21 @@ entity.soccerbet_participant.delete_form:
     _title: 'Delete Participant'
   requirements:
     _entity_access: 'soccerbet_participant.delete'
+
+entity.soccerbet_participant_group_relation.edit_form:
+  path: '/soccerbet/participant_group_relation/{soccerbet_participant_group_relation}/edit'
+  defaults:
+    # Calls the form.edit controller, defined in the participant entity.
+    _entity_form: soccerbet_participant_group_relation.edit
+    _title: 'Edit participant group relation'
+  requirements:
+    _entity_access: 'soccerbet_participant_group_relation.edit'
+
+entity.soccerbet_participant_group_relation.delete_form:
+  path: '/soccerbet/participant/{soccerbet_participant_group_relation}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the participant entity.
+    _entity_form: soccerbet_participant_group_relation.delete
+    _title: 'Delete participant group relation'
+  requirements:
+    _entity_access: 'soccerbet_participant_group_relation.delete'

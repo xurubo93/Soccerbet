@@ -74,3 +74,4 @@ soccerbet_participant.participant_add:
   appears_on:
     - entity.soccerbet_participant.collection
     - entity.soccerbet_participant.canonical
+
