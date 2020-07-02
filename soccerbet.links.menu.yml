@@ -77,9 +77,9 @@ entity.soccerbet_participant.collection:
   menu_name: soccerbet
 
 #Soccerbet ParticipantGroupRelation Entity menu links
-entity.soccerbet_participant_group_relation.collection:
+entity.soccerbet_participant_group.collection:
   title: 'participant group relation'
-  route_name: entity.soccerbet_participant_group_relation.collection
+  route_name: entity.soccerbet_participant_group.collection
   description: participant group relation'
   parent: 'system.admin_soccerbet'
   weight: -20

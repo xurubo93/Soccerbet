@@ -156,21 +156,21 @@ participant.delete_confirm:
   title: Delete
   weight: 10
 
-#The Soccerbet Participant_Group_Relation Entity local links
-Participant_Group_Relation.view:
+#The Soccerbet Participant_Group Entity local links
+Participant_Group.view:
   #class: Drupal\Core\Menu\LocalTaskDefault
   #deriver: \Drupal\soccerbet\Plugin\Derivative\SoccerbetLocalTasks
-  route_name: entity.soccerbet_Participant_Group_Relation.canonical
-  base_route: entity.soccerbet_Participant_Group_Relation.canonical
+  route_name: entity.soccerbet_Participant_Group.canonical
+  base_route: entity.soccerbet_Participant_Group.canonical
   title: View
 
-Participant_Group_Relation.page_edit:
-  route_name: entity.soccerbet_Participant_Group_Relation.edit_form
-  base_route: entity.soccerbet_Participant_Group_Relation.canonical
+Participant_Group.page_edit:
+  route_name: entity.soccerbet_Participant_Group.edit_form
+  base_route: entity.soccerbet_Participant_Group.canonical
   title: Edit
 
-Participant_Group_Relation.delete_confirm:
-  route_name:  entity.soccerbet_Participant_Group_Relation.delete_form
-  base_route:  entity.soccerbet_Participant_Group_Relation.canonical
+Participant_Group.delete_confirm:
+  route_name:  entity.soccerbet_Participant_Group.delete_form
+  base_route:  entity.soccerbet_Participant_Group.canonical
   title: Delete
   weight: 10

@@ -43,7 +43,7 @@ soccerbet_tournament.tournament_add:
   requirements:
     _entity_create_access: 'soccerbet_tournament'
 
-#soccerbet_tournament.tournament_team_relation_add:
+#soccerbet_tournament.tournament_team_add:
 #  path: '/soccerbet/tournament/{soccerbet_tournament}/team/add'
 #  defaults:
 #    # Calls the form.add controller, defined in the soccerbet_tournament_team relation entity.
@@ -156,7 +156,7 @@ soccerbet_game.game_add:
   requirements:
     _entity_create_access: 'soccerbet_game'
 
-#soccerbet_game.game_team_relation_add:
+#soccerbet_game.game_team_add:
 #  path: '/soccerbet/game/{soccerbet_game}/team/add'
 #  defaults:
 #    # Calls the form.add controller, defined in the soccerbet_game_team relation entity.
@@ -221,7 +221,7 @@ soccerbet_usergroup.usergroup_add:
   requirements:
     _entity_create_access: 'soccerbet_usergroup'
 
-#soccerbet_usergroup.usergroup_team_relation_add:
+#soccerbet_usergroup.usergroup_team_add:
 #  path: '/soccerbet/usergroup/{soccerbet_usergroup}/team/add'
 #  defaults:
 #    # Calls the form.add controller, defined in the soccerbet_usergroup_team relation entity.
@@ -286,7 +286,7 @@ soccerbet_team.team_add:
   requirements:
     _entity_create_access: 'soccerbet_team'
 
-#soccerbet_team.team_team_relation_add:
+#soccerbet_team.team_team_add:
 #  path: '/soccerbet/team/{soccerbet_team}/team/add'
 #  defaults:
 #    # Calls the form.add controller, defined in the soccerbet_team_team relation entity.
@@ -351,7 +351,7 @@ soccerbet_tip.tip_add:
   requirements:
     _entity_create_access: 'soccerbet_tip'
 
-#soccerbet_tip.tip_team_relation_add:
+#soccerbet_tip.tip_team_add:
 #  path: '/soccerbet/tip/{soccerbet_tip}/team/add'
 #  defaults:
 #    # Calls the form.add controller, defined in the soccerbet_tip_team relation entity.
@@ -416,7 +416,7 @@ soccerbet_participant.participant_add:
   requirements:
     _entity_create_access: 'soccerbet_participant'
 
-#soccerbet_participant.participant_team_relation_add:
+#soccerbet_participant.participant_team_add:
 #  path: '/soccerbet/participant/{soccerbet_participant}/team/add'
 #  defaults:
 #    # Calls the form.add controller, defined in the soccerbet_participant_team relation entity.
@@ -451,20 +451,20 @@ entity.soccerbet_participant.delete_form:
   requirements:
     _entity_access: 'soccerbet_participant.delete'
 
-entity.soccerbet_participant_group_relation.edit_form:
-  path: '/soccerbet/participant_group_relation/{soccerbet_participant_group_relation}/edit'
+entity.soccerbet_participant_group.edit_form:
+  path: '/soccerbet/participant_group/{soccerbet_participant_group}/edit'
   defaults:
     # Calls the form.edit controller, defined in the participant entity.
-    _entity_form: soccerbet_participant_group_relation.edit
+    _entity_form: soccerbet_participant_group.edit
     _title: 'Edit participant group relation'
   requirements:
-    _entity_access: 'soccerbet_participant_group_relation.edit'
+    _entity_access: 'soccerbet_participant_group.edit'
 
-entity.soccerbet_participant_group_relation.delete_form:
-  path: '/soccerbet/participant/{soccerbet_participant_group_relation}/delete'
+entity.soccerbet_participant_group.delete_form:
+  path: '/soccerbet/participant/{soccerbet_participant_group}/delete'
   defaults:
     # Calls the form.delete controller, defined in the participant entity.
-    _entity_form: soccerbet_participant_group_relation.delete
+    _entity_form: soccerbet_participant_group.delete
     _title: 'Delete participant group relation'
   requirements:
-    _entity_access: 'soccerbet_participant_group_relation.delete'
+    _entity_access: 'soccerbet_participant_group.delete'

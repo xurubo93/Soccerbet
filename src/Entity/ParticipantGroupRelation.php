@@ -28,7 +28,7 @@ use Drupal\user\UserInterface;
  * and a group
  *
  * @ContentEntityType(
- *   id = "soccerbet_participant_group_relation",
+ *   id = "soccerbet_participant_group",
  *   label = @Translation("Participant Group Relation"),
  *   handlers = {
  *     "storage_schema" = "Drupal\soccerbet\TournamentTeamRelationStorageSchema",
@@ -41,7 +41,7 @@ use Drupal\user\UserInterface;
  *       "delete" = "Drupal\soccerbet\Form\ParticipantGroupRelationDeleteForm",
  *     },
  *   },
- *   base_table = "soccerbet_participant_group_relation",
+ *   base_table = "soccerbet_participant_group",
  *   admin_permission = "administer soccerbet",
  *   translatable = FALSE,
  *   entity_keys = {
@@ -49,9 +49,9 @@ use Drupal\user\UserInterface;
  *     "label" = "description"
  *   },
  *   links = {
- *     "canonical" = "/soccerbet/participant/group/{soccerbet_participant_group_relation}",
- *     "edit-form" = "/soccerbet/participant/{soccerbet_participant}/group/{soccerbet_participant_group_relation}/edit",
- *     "delete-form" = "/soccerbet/participant/{soccerbet_participant}/group/{soccerbet_participant_group_relation}delete",
+ *     "canonical" = "/soccerbet/participant/group/{soccerbet_participant_group}",
+ *     "edit-form" = "/soccerbet/participant/{soccerbet_participant}/group/{soccerbet_participant_group}/edit",
+ *     "delete-form" = "/soccerbet/participant/{soccerbet_participant}/group/{soccerbet_participant_group}delete",
  *     "collection" = "/soccerbet/participant/group/list"
  *   }
  * )
