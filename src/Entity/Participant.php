@@ -11,6 +11,8 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
 use Drupal\soccerbet\ParticipantInterface;
+use Drupal\soccerbet\TeamInterface;
+use Drupal\soccerbet\TipInterface;
 
 /**
  * Defines the Participant entity.
@@ -56,6 +58,37 @@ use Drupal\soccerbet\ParticipantInterface;
  */
 class Participant extends ContentEntityBase implements ParticipantInterface {
 
+  /**
+   *{@inheritdoc}
+   */
+  public function getTipA() {
+    return $this->get('tipA')->entity;
+  }
+
+  /**
+   * @param TipInterface $tipA
+   * @return $this|Participant
+   */
+  public function setTipA(TipInterface $tipA) {
+    $this->set('tipA', $tipA);
+    return $this;
+  }
+
+  /**
+   * @return Tip
+   */
+  public function getTipB() {
+    return $this->get('tipB')->entity;
+  }
+
+  /**
+   * @param TipInterface $tipB
+   * @return $this|mixed
+   */
+  public function setTipB(TipInterface $tipB) {
+    $this->set('game_second_team', $tipB);
+    return $this;
+  }
 
   /**
    *{@inheritdoc}

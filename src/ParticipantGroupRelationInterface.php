@@ -18,14 +18,14 @@ use Drupal\soccerbet\Entity\Team;
 interface ParticipantGroupRelationInterface extends ContentEntityInterface, EntityChangedInterface {
 
    /**
-   * Returns the game's start time.
+   * Returns the Participant ID
    *
    * @return integer
    */
   public function getParticipantID();
 
   /**
-   * Sets the StartTime of game.
+   * Sets the Participant ID
    *
    * @param int $participant_id
    *
@@ -34,7 +34,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function setParticipantID($participant_id);
 
   /**
-   * Returns the first team of the game
+   * Returns the Participant
    *
    * @return $this
    */
@@ -42,7 +42,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function getParticipant();
 
   /**
-   * Sets the first team of this game
+   * Sets the Participant
    *
    * @param $participant
    * @return $this
@@ -51,7 +51,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
 
 
   /**
-   * Returns the first team of the game
+   * Returns the user group ID
    *
    * @return $this
    */
@@ -72,7 +72,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
 
 
   /**
-   * Returns the first team of the game
+   * Returns the changed time across translations
    *
    * @return $this
    */
@@ -81,7 +81,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
 
 
   /**
-   * Returns the first team of the game
+   * Returns the group of the participant
    *
    * @return $this
    */
@@ -91,10 +91,9 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
 
 
   /**
-   * Sets the creation date of the game.
+   * Sets the participant ID
    *
    * @param int $participantgroup_id
-   *   The timestamp of when the game was created.
    *
    * @return $this
    *   The class instance that this method is called on.
@@ -102,7 +101,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function setParticipantgroupID($participantgroup_id);
 
   /**
-   * Sets the first team of this game
+   * Sets the participant group
    *
    * @param $participantgroup
    * @return $this
@@ -110,10 +109,9 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function setParticipantgroup(ParticipantgroupInterface $participantgroup);
 
   /**
-   * Returns the time that the game was created.
+   * Returns the Tournament ID
    *
    * @return int
-   *   The timestamp of when the game was created.
    */
   public function getTournamentID();
 
@@ -121,15 +119,13 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
    * Returns the time that the game was created.
    *
    * @return string
-   *   The timestamp of when the game was created.
    */
   public function getTournament();
 
   /**
-   * Sets the creation date of the game.
+   * Sets the Tournament ID
    *
    * @param int $tournament_id
-   *   The timestamp of when the game was created.
    *
    * @return $this
    *   The class instance that this method is called on.
@@ -137,7 +133,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function setTournamentID($tournament_id);
 
   /**
-   * Sets the first team of this game
+   * Sets the tournament
    *
    * @param $tournament
    * @return $this
@@ -145,15 +141,14 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function setTournament(TournamentInterface $tournament);
 
   /**
-   * Returns the time that the game was created.
+   * Returns the owner
    *
    * @return int
-   *   The timestamp of when the game was created.
    */
   public function getOwner();
 
   /**
-   * Sets the first team of this game
+   * Sets the owner
    *
    * @param $account
    * @return $this
@@ -161,15 +156,14 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function setOwner(ParticipantInterface $account);
 
   /**
-   * Returns the time that the game was created.
+   * Returns the ownder ID
    *
    * @return int
-   *   The timestamp of when the game was created.
    */
   public function getOwnerID();
 
   /**
-   * Sets the first team of this game
+   * Sets the owner ID
    *
    * @param $user_id
    * @return $this
@@ -177,7 +171,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function setOwnerID($user_id);
 
   /**
-   * Returns the time that the game was created.
+   * Returns the End result of the game
    *
    * @return int
    *   The timestamp of when the game was created.
@@ -185,7 +179,7 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function getEndResult();
 
   /**
-   * Sets the first team of this game
+   * Sets the end result of the game
    *
    * @param $result
    * @return $this
@@ -193,18 +187,17 @@ interface ParticipantGroupRelationInterface extends ContentEntityInterface, Enti
   public function setEndResult($result);
 
   /**
-   * Checks if the tournament is active.
+   * Checks if the tip has been paid
    *
    * @return bool
-   *   TRUE if the tournament is active.
+   *   TRUE if the tip was paid
    */
   public function isPaid();
 
   /**
-   * Sets the status of the tournament entity.
+   * Sets the status of the payment
    *
    * @param bool $paid
-   *   Set to TRUE to activate the tournament, FALSE to deactivate.
    *
    * @return $this
    *   The class instance that this method is called on.

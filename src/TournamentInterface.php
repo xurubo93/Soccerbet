@@ -9,6 +9,7 @@ namespace Drupal\soccerbet;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
+use Drupal\soccerbet\Entity\Tip;
 
 /**
  * Provides an interface defining a Tournament entity.
@@ -194,6 +195,39 @@ interface TournamentInterface extends ContentEntityInterface, EntityChangedInter
    *   The class instance that this method is called on.
    */
   public function setTipperInThirdPlace($tipper_id);
+
+
+  /**
+   * Returns the tournament group of this tournament
+   *
+   * @return Tip
+   */
+  public function getTournamentGroup();
+
+  /**
+   * Sets the tournament group of this tournament
+   *
+   * @param $tournamentgroup
+   * @return $this
+   */
+  public function setTournamentGroup(TournamentGroupInterface $tournamentgroup);
+
+  /**
+   * Returns the tournament group of this tournament
+   *
+   * @return Tip
+   */
+  public function getUserGroup();
+
+  /**
+   * Sets the tournament group of this tournament
+   *
+   * @param $usergroup
+   * @return $this
+   */
+  public function setUserGroup(UserGroupInterface $usergroup);
+
+
 
   /**
    * Returns the time that the tournament was created.

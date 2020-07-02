@@ -10,7 +10,10 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
+use Drupal\soccerbet\TipInterface;
+use Drupal\soccerbet\TournamentgroupInterface;
 use Drupal\soccerbet\TournamentInterface;
+use Drupal\soccerbet\UsergroupInterface;
 
 /**
  * Defines the Tournament entity.
@@ -267,6 +270,47 @@ class Tournament extends ContentEntityBase implements TournamentInterface {
   public function getChangedTimeAcrossTranslations() {
     return $this->getChangedTime();
   }
+
+  /**
+   *
+   * build the connectio between the entities
+   *
+   */
+
+
+  /**
+   *{@inheritdoc}
+   */
+  public function getTournamentGroup() {
+    return $this->get('tournamentgroup')->entity;
+  }
+
+  /**
+   * @param TournamentgroupInterface $tournamentgroup
+   * @return $this|Tournament
+   */
+  public function setTournamentGroup(TournamentgroupInterface $tournamentgroup) {
+    $this->set('tournamentgroup', $tournamentgroup);
+    return $this;
+  }
+
+  /**
+   *{@inheritdoc}
+   */
+  public function getUserGroup() {
+    return $this->get('usergroup')->entity;
+  }
+
+  /**
+   * @param UsergroupInterface $usergroup
+   * @return $this|Tournament
+   */
+  public function setUserGroup(UsergroupInterface $usergroup) {
+    $this->set('usergroup', $usergroup);
+    return $this;
+  }
+
+
 
   /**
    * {@inheritdoc}

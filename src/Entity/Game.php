@@ -11,6 +11,7 @@ use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\soccerbet\GameInterface;
 use Drupal\soccerbet\TeamInterface;
+use Drupal\soccerbet\TipInterface;
 
 /**
  * Defines the Game entity.
@@ -103,37 +104,6 @@ class Game extends ContentEntityBase implements GameInterface {
     return $this;
   }
 
-  /**
-   *{@inheritdoc}
-   */
-  public function getFirstTeam() {
-    return $this->get('game_first_team')->entity;
-  }
-
-  /**
-   * @param TeamInterface $game_first_team
-   * @return $this|Game
-   */
-  public function setFirstTeam(TeamInterface $game_first_team) {
-    $this->set('game_first_team', $game_first_team);
-    return $this;
-  }
-
-  /**
-   * @return Team
-   */
-  public function getSecondTeam() {
-    return $this->get('game_second_team')->entity;
-  }
-
-  /**
-   * @param TeamInterface $game_second_team
-   * @return $this|mixed
-   */
-  public function setSecondTeam(TeamInterface $game_second_team) {
-    $this->set('game_second_team', $game_second_team);
-    return $this;
-  }
 
   /**
    *{@inheritdoc}
@@ -213,6 +183,76 @@ class Game extends ContentEntityBase implements GameInterface {
    */
   public function getChangedTimeAcrossTranslations() {
     return $this->getChangedTime();
+  }
+
+  /**
+   *
+   * build the connection between the entities
+   *
+   */
+
+  /**
+   *{@inheritdoc}
+   */
+  public function getFirstTeam() {
+    return $this->get('game_first_team')->entity;
+  }
+
+  /**
+   * @param TeamInterface $game_first_team
+   * @return $this|Game
+   */
+  public function setFirstTeam(TeamInterface $game_first_team) {
+    $this->set('game_first_team', $game_first_team);
+    return $this;
+  }
+
+  /**
+   * @return Team
+   */
+  public function getSecondTeam() {
+    return $this->get('game_second_team')->entity;
+  }
+
+  /**
+   * @param TeamInterface $game_second_team
+   * @return $this|mixed
+   */
+  public function setSecondTeam(TeamInterface $game_second_team) {
+    $this->set('game_second_team', $game_second_team);
+    return $this;
+  }
+
+
+  /**
+   *{@inheritdoc}
+   */
+  public function getTipA() {
+    return $this->get('tipA')->entity;
+  }
+
+  /**
+   * @param TipInterface $tipA
+   * @return $this|Participant
+   */
+  public function setTipA(TipInterface $tipA) {
+    $this->set('tipA', $tipA);
+    return $this;
+  }
+
+  /**
+   * @return Tip
+   */
+  public function getTipB() {
+    return $this->get('tipB')->entity;
+  }
+  /**
+   * @param TipInterface $tipB
+   * @return $this|mixed
+   */
+  public function setTipB(TipInterface $tipB) {
+    $this->set('game_second_team', $tipB);
+    return $this;
   }
 
   /**

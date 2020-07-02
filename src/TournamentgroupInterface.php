@@ -9,6 +9,8 @@ namespace Drupal\soccerbet;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
+use Drupal\soccerbet\Entity\Team;
+use Drupal\soccerbet\Entity\Tip;
 
 /**
  * Provides an interface defining a Tournamentgroup entity.
@@ -34,6 +36,23 @@ interface TournamentgroupInterface extends ContentEntityInterface, EntityChanged
    *   The class instance that this method is called on.
    */
   public function setName($tournamentgroupname);
+
+
+
+  /**
+   * Returns the team of this tournament group
+   *
+   * @return Team
+   */
+  public function getTeam();
+
+  /**
+   * Sets the team of the this tournament group
+   *
+   * @param $team
+   * @return $this
+   */
+  public function setTeam(TeamInterface $team);
 
 
   /**

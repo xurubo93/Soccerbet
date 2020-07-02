@@ -9,12 +9,44 @@ namespace Drupal\soccerbet;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
+use Drupal\soccerbet\Entity\Team;
+use Drupal\soccerbet\Entity\Tip;
 
 /**
  * Provides an interface defining a Participant entity.
  * @ingroup content_entity_example
  */
 interface ParticipantInterface extends ContentEntityInterface, EntityChangedInterface {
+
+  /**
+   * Returns the tip of the Participant
+   *
+   * @return Tip
+   */
+  public function getTipA();
+
+  /**
+   * Sets the first tip of the Participant
+   *
+   * @param $tipA
+   * @return $this
+   */
+  public function setTipA(TipInterface $tipA);
+
+  /**
+   * Returns the first tip of the Participant
+   *
+   * @return Tip
+   */
+  public function getTipB();
+
+  /**
+   * Sets the tip of the Participant
+   *
+   * @param $tipB
+   * @return mixed
+   */
+  public function setTipB(TipInterface $tipB);
 
 
   /**
