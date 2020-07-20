@@ -75,3 +75,25 @@ soccerbet_participant.participant_add:
     - entity.soccerbet_participant.collection
     - entity.soccerbet_participant.canonical
 
+#Soccerbet Participant_group Entity action links
+soccerbet_participant_group.participant_group_add:
+  # Which route will be called by the link
+  route_name: soccerbet_participant_group.participant_group_add
+  title: 'Add Participant_group'
+
+  # Where will the link appear, defined by route name.
+  appears_on:
+    - entity.soccerbet_participant_group.collection
+    - entity.soccerbet_participant_group.canonical
+
+#Soccerbet Tournament_Group_Team Entity action links
+soccerbet_tournament_group_team.tournament_group_team_add:
+  # Which route will be called by the link
+  route_name: soccerbet_tournament_group_team.tournament_group_team_add
+  title: 'Add tournament_group_team'
+
+  # Where will the link appear, defined by route name.
+  appears_on:
+    - entity.soccerbet_tournament_group_team.collection
+    - entity.soccerbet_tournament_group_team.canonical
+

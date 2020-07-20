@@ -49,6 +49,7 @@ class GameListBuilder extends EntityListBuilder {
     $header['game_location'] = $this->t('Game location');
     $header['game_first_team'] = $this->t('First Team');
     $header['game_second_team'] = $this->t('Second Team');
+    $header['tournament'] = $this->t('Tournament');
     $header['score_first_team'] = $this->t('Score first team');
     $header['score_second_team'] = $this->t('Score second team');
     $header['game_type'] = $this->t('Game Type');
@@ -65,6 +66,7 @@ class GameListBuilder extends EntityListBuilder {
     $row['game_location'] = $entity->game_location->value;
     $row['game_first_team'] = $entity->getFirstTeam()->getTeamName();
     $row['game_second_team'] = $entity->getSecondTeam()->getTeamName();
+    $row['tournament'] = $entity->getTournament()->getName();
     $row['score_first_team'] = $entity->score_first_team->value;
     $row['score_second_team'] = $entity->score_second_team->value;
     $row['game_type'] = $entity->getGameType();

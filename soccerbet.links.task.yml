@@ -174,3 +174,22 @@ Participant_Group.delete_confirm:
   base_route:  entity.soccerbet_Participant_Group.canonical
   title: Delete
   weight: 10
+
+#The Soccerbet Tournament_Group_Team Entity local links
+tournament_group_team.view:
+  #class: Drupal\Core\Menu\LocalTaskDefault
+  #deriver: \Drupal\soccerbet\Plugin\Derivative\SoccerbetLocalTasks
+  route_name: entity.soccerbet_tournament_group_team.canonical
+  base_route: entity.soccerbet_tournament_group_team.canonical
+  title: View
+
+tournament_group_team.page_edit:
+  route_name: entity.soccerbet_tournament_group_team.edit_form
+  base_route: entity.soccerbet_tournament_group_team.canonical
+  title: Edit
+
+tournament_group_team.delete_confirm:
+  route_name:  entity.soccerbet_tournament_group_team.delete_form
+  base_route:  entity.soccerbet_tournament_group_team.canonical
+  title: Delete
+  weight: 10

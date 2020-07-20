@@ -84,3 +84,12 @@ entity.soccerbet_participant_group.collection:
   parent: 'system.admin_soccerbet'
   weight: -20
   menu_name: soccerbet
+
+#Soccerbet TournamentTournamentgroupTeam Entity menu links
+entity.soccerbet_tournament_group_team.collection:
+  title: 'tournament tournamentgroup team'
+  route_name: entity.soccerbet_tournament_group_team.collection
+  description: tournament tournamentgroup team relation'
+  parent: 'system.admin_soccerbet'
+  weight: -20
+  menu_name: soccerbet

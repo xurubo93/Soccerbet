@@ -12,11 +12,11 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
 /**
- * Provides a form for deleting a participant entity.
+ * Provides a form for deleting a soccerbet_tournament_group_team entity.
  *
  * @ingroup soccerbet
  */
-class ParticipantGroupRelationDeleteForm extends ContentEntityConfirmFormBase {
+class TournamentTournamentgroupTeamDeleteForm extends ContentEntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
@@ -31,7 +31,7 @@ class ParticipantGroupRelationDeleteForm extends ContentEntityConfirmFormBase {
    * If the delete command is canceled, return to the contact list.
    */
   public function getCancelURL() {
-    return new Url('entity.soccerbet_participant_group.collection');
+    return new Url('entity.soccerbet_tournament_group_team.collection');
   }
 
   /**
@@ -50,12 +50,12 @@ class ParticipantGroupRelationDeleteForm extends ContentEntityConfirmFormBase {
     $entity = $this->getEntity();
     $entity->delete();
 
-    \Drupal::logger('soccerbet_participant_group')->notice('@type: deleted %title.',
+    \Drupal::logger('soccerbet_tournament_group_team')->notice('@type: deleted %title.',
       array(
         '@type' => $this->entity->bundle(),
         '%title' => $this->entity->label(),
       ));
-    $form_state->setRedirect('entity.soccerbet_participant_group.collection');
+    $form_state->setRedirect('entity.soccerbet_tournament_group_team.collection');
   }
 
 }

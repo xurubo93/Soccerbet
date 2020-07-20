@@ -224,34 +224,21 @@ class Game extends ContentEntityBase implements GameInterface {
   }
 
 
+
+
   /**
    *{@inheritdoc}
    */
-  public function getTipA() {
-    return $this->get('tipA')->entity;
+  public function getTournament() {
+    return $this->get('tournament')->entity;
   }
 
   /**
-   * @param TipInterface $tipA
-   * @return $this|Participant
+   * @param TournamentInterface $tournament
+   * @return $this|Tournament
    */
-  public function setTipA(TipInterface $tipA) {
-    $this->set('tipA', $tipA);
-    return $this;
-  }
-
-  /**
-   * @return Tip
-   */
-  public function getTipB() {
-    return $this->get('tipB')->entity;
-  }
-  /**
-   * @param TipInterface $tipB
-   * @return $this|mixed
-   */
-  public function setTipB(TipInterface $tipB) {
-    $this->set('game_second_team', $tipB);
+  public function setTournament(TournamentInterface $tournament) {
+    $this->set('tournament', $tournament);
     return $this;
   }
 
@@ -454,6 +441,29 @@ class Game extends ContentEntityBase implements GameInterface {
           'placeholder' => '',
         ),
         'weight' => 11,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+
+    $fields['tournament'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('tournament'))
+      ->setDescription(t('The tournament of this game'))
+      ->setSetting('target_type', 'soccerbet_tournament')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'entity_reference',
+        'weight' => 10,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => 60,
+          'placeholder' => '',
+        ),
+        'weight' => 10,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);

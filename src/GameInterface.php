@@ -64,37 +64,6 @@ interface GameInterface extends ContentEntityInterface, EntityChangedInterface {
    */
   public function setSecondTeam(TeamInterface $game_second_team);
 
-  /**
-   * Returns the tip of the Participant
-   *
-   * @return Tip
-   */
-  public function getTipA();
-
-  /**
-   * Sets the first tip of the Participant
-   *
-   * @param $tipA
-   * @return $this
-   */
-  public function setTipA(TipInterface $tipA);
-
-  /**
-   * Returns the first tip of the Participant
-   *
-   * @return Tip
-   */
-  public function getTipB();
-
-  /**
-   * Sets the tip of the Participant
-   *
-   * @param $tipB
-   * @return mixed
-   */
-  public function setTipB(TipInterface $tipB);
-
-
 
   /**
    * Returns the score of the first team.

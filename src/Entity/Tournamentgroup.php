@@ -132,21 +132,16 @@ class Tournamentgroup extends ContentEntityBase implements TournamentgroupInterf
    *
    */
 
-  /**
-   *{@inheritdoc}
-   */
-  public function getTeam() {
-    return $this->get('team')->entity;
-  }
 
   /**
-   * @param TeamInterface $team
-   * @return $this|Tournamentgroup
+   * @param TournamentInterface $tournament
+   * @return $this|Tournament
    */
-  public function setTeam(TeamInterface $team) {
-    $this->set('team', $team);
+  public function setTournament(TournamentInterface $tournament) {
+    $this->set('tournament', $tournament);
     return $this;
   }
+
 
   /**
    * {@inheritdoc}
@@ -190,6 +185,28 @@ class Tournamentgroup extends ContentEntityBase implements TournamentgroupInterf
         'label' => 'hidden',
         'type' => 'string_textfield',
         'weight' => -6,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+    $fields['tournament'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('tournament'))
+      ->setDescription(t('The tournament of this tournamentgroup'))
+      ->setSetting('target_type', 'soccerbet_tournament')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'entity_reference',
+        'weight' => 10,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => 60,
+          'placeholder' => '',
+        ),
+        'weight' => 10,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);

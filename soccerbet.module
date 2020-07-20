@@ -213,6 +213,32 @@ function soccerbet_theme($existing, $type, $theme, $path) {
       'variables' => array(
         'table' => NULL,
       )
+    ),
+    'soccerbet_tournament_group_team' => array(
+      'template' => 'soccerbet_tournament_group_team',
+      'variables' => array(
+        'soccerbet_tournament_group_team_tables' => NULL,
+      )
+    ),
+    'soccerbet_tournament_group_team_tables' => array(
+      'template' => 'soccerbet_tournament_group_team_tables',
+      'variables' => array(
+        'title' => NULL,
+        'tables' => NULL,
+      ),
+    ),
+    'soccerbet_tournament_group_team_table' => array(
+      'template' => 'soccerbet_tournament_group_team_table',
+      'variables' => array(
+        'group_name' => NULL,
+        'table' => NULL,
+      ),
+    ),
+    'soccerbet_tournament_group_team_games' => array(
+      'template' => 'soccerbet_tournament_group_team_games',
+      'variables' => array(
+        'table' => NULL,
+      )
     )
   );
 }

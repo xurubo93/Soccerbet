@@ -126,6 +126,24 @@ class Tip extends ContentEntityBase implements TipInterface {
     return $this->getChangedTime();
   }
 
+
+  /**
+   *{@inheritdoc}
+   */
+  public function getGame() {
+    return $this->get('game')->entity;
+  }
+
+  /**
+   * @param GameInterface $game
+   * @return $this|Game
+   */
+  public function setGame(GameInterface $game) {
+    $this->set('game', $game);
+    return $this;
+  }
+
+
   /**
    * {@inheritdoc}
    *
@@ -186,6 +204,32 @@ class Tip extends ContentEntityBase implements TipInterface {
       ))
       ->setDisplayConfigurable('view', TRUE)
       ->setDisplayConfigurable('form', TRUE);
+
+
+
+    $fields['game'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('game'))
+      ->setDescription(t('The game of this tip'))
+      ->setSetting('target_type', 'soccerbet_game')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'entity_reference',
+        'weight' => 10,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => 60,
+          'placeholder' => '',
+        ),
+        'weight' => 10,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+
+
     // Name field for the tip.
     // We set display options for the view as well as the form.
     // Users with correct privileges can change the view and edit configuration.

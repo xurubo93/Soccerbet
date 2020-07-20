@@ -34,7 +34,7 @@ use Drupal\user\UserInterface;
  *     "storage_schema" = "Drupal\soccerbet\TournamentTeamRelationStorageSchema",
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\soccerbet\Entity\Controller\ParticipantGroupRelationListBuilder",
- *     "access" = "Drupal\soccerbet\ParticipantGroupRelationAccessControlHandler",
+ *     "access" = "Drupal\soccerbet\Entity\Access\ParticipantGroupRelationAccessControlHandler",
  *     "form" = {
  *       "add" = "Drupal\soccerbet\Form\ParticipantGroupRelationForm",
  *       "edit" = "Drupal\soccerbet\Form\ParticipantGroupRelationForm",

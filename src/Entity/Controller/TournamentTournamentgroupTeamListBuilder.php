@@ -12,11 +12,11 @@ use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Url;
 
 /**
- * Provides a list controller for Tournamentgroup entity.
+ * Provides a list controller for TournamentTournamentgroupTeam entity.
  *
  * @ingroup soccerbet
  */
-class TournamentgroupListBuilder extends EntityListBuilder {
+class TournamentTournamentgroupTeamListBuilder extends EntityListBuilder {
 
   /**
    * {@inheritdoc}
@@ -27,7 +27,7 @@ class TournamentgroupListBuilder extends EntityListBuilder {
    */
   public function render() {
     $build['description'] = array(
-      '#markup' => $this->t('Soccerbet tournamentgroup implements a Tournamentgroup model. You can manage the fields on the <a href="@adminlink">Soccerbet admin page</a>.', array(
+      '#markup' => $this->t('Soccerbet TournamentTournamentgroupTeam implements a TournamentTournamentgroupTeam relation model. You can manage the fields on the <a href="@adminlink">Soccerbet admin page</a>.', array(
         '@adminlink' => \Drupal::urlGenerator()->generateFromRoute('soccerbet.soccerbet_settings'),
       )),
     );
@@ -44,9 +44,9 @@ class TournamentgroupListBuilder extends EntityListBuilder {
    * and inserts the 'edit' and 'delete' links as defined for the entity type.
    */
   public function buildHeader() {
-    $header['tournamentgroup_id'] = $this->t('Tournamentgroup ID');
-    $header['name'] = $this->t('Name');
-    $header['tournament'] = $this->t('Tournament');
+    $header['team_id'] = $this->t('Team id');
+    $header['tournament_id'] = $this->t('Tournament id');
+    $header['tournamentgroup_id'] = $this->t('Tournamentgroup id');
     return $header + parent::buildHeader();
   }
 
@@ -54,10 +54,11 @@ class TournamentgroupListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\soccerbet\Entity\Tournamentgroup */
+    /* @var $entity \Drupal\soccerbet\Entity\Participant */
+    $row['team_id'] = $entity->id();
+    $row['tournament_id'] = $entity->id();
     $row['tournamentgroup_id'] = $entity->id();
-    $row['name'] = $entity->link();
-    $row['tournament'] = $entity->getName();
+    //kint($entity->getParticipantType());
     return $row + parent::buildRow($entity);
   }
 }

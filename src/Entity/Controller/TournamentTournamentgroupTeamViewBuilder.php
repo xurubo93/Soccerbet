@@ -15,12 +15,12 @@ use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 
 
-class GameViewBuilder extends EntityViewBuilder {
+class TournamentTournamentgroupTeamViewBuilder extends EntityViewBuilder {
 
   /**
-   * This hook is used to display the TournamentTeamRelations and the game beneath the tournament.
+   * This hook is used to display the TournamentTeamRelations and the participant beneath the tournament.
    * jQuery Accordion is used for the groups.
-   * jQuery Tabs is used for separating the standings from the game.
+   * jQuery Tabs is used for separating the standings from the participant.
    *
    */
   protected function alterBuild(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
@@ -39,12 +39,12 @@ class GameViewBuilder extends EntityViewBuilder {
       )
     );*/
 
-    /*$game = entity_load_multiple_by_properties('soccerbet_game', array('tournament_id' => $entity->id()));
-    $games_build = \Drupal::entityManager()->getViewBuilder('soccerbet_game')->viewMultiple($games);
+    /*$participant = entity_load_multiple_by_properties('soccerbet_participant', array('tournament_id' => $entity->id()));
+    $participants_build = \Drupal::entityManager()->getViewBuilder('soccerbet_participant')->viewMultiple($participants);
 
-    $build['#soccerbet_tournament_games'] = array(
-      '#theme' => 'soccerbet_tournament_games',
-      '#table' => $game_build,
+    $build['#soccerbet_tournament_participants'] = array(
+      '#theme' => 'soccerbet_tournament_participants',
+      '#table' => $participant_build,
       '#attached' => array(
         'library' => array(
           'soccerbet/soccerbet.tournament_tabs',
@@ -52,17 +52,7 @@ class GameViewBuilder extends EntityViewBuilder {
       )
     );*/
 
-    $build['#location'] = $build['location'];
-    $build['#start_time'] = Drupal::service('date.formatter')->format(strtotime($entity->start_time->value), 'custom', 'D, j. M Y', 0) ;
-    $build['#first_team'] = $build['first_team'];
-    $build['#score_first_team'] = $build['score_first_team'];
-    $build['#second_team'] = $build['second_team'];
-    $build['#score_second_team'] = $build['score_second_team'];
-    $build['#tournament'] = $build['tournament'];
-    $build['#game_location'] = $build['game_location'];
-    $build['#KO_game'] = $build['KO_game'];
-    $build['#group_game'] = $build['group_game'];
-    $build['#attached']['library'][] = 'soccerbet/soccerbet.game';
+    $build['#attached']['library'][] = 'soccerbet/soccerbet.participant';
 
     //kint($build);
   }

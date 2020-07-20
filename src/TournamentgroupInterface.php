@@ -40,22 +40,6 @@ interface TournamentgroupInterface extends ContentEntityInterface, EntityChanged
 
 
   /**
-   * Returns the team of this tournament group
-   *
-   * @return Team
-   */
-  public function getTeam();
-
-  /**
-   * Sets the team of the this tournament group
-   *
-   * @param $team
-   * @return $this
-   */
-  public function setTeam(TeamInterface $team);
-
-
-  /**
    * Returns the time that the tournamentgroup was created.
    *
    * @return int

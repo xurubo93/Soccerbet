@@ -451,6 +451,36 @@ entity.soccerbet_participant.delete_form:
   requirements:
     _entity_access: 'soccerbet_participant.delete'
 
+
+entity.soccerbet_participant_group.canonical:
+  path: '/soccerbet/participant_group/{soccerbet_participant_group}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the participant entity
+    _entity_view: 'soccerbet_participant_group'
+    _title: 'Participant group Content'
+  requirements:
+    # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'soccerbet_participant_group.view'
+
+entity.soccerbet_participant_group.collection:
+  path: '/soccerbet/participant_group/list'
+  defaults:
+    # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'soccerbet_participant_group'
+    _title: 'Participant group List'
+  requirements:
+    # Checks for permission directly.
+    _permission: 'view participant group entity'
+
+soccerbet_participant_group.participant_group_add:
+  path: '/soccerbet/participant_group/add'
+  defaults:
+    # Calls the form.add controller, defined in the participant entity.
+    _entity_form: soccerbet_participant_group.add
+    _title: 'Add Participant group'
+  requirements:
+    _entity_create_access: 'soccerbet_participant_group'
+
 entity.soccerbet_participant_group.edit_form:
   path: '/soccerbet/participant_group/{soccerbet_participant_group}/edit'
   defaults:
@@ -468,3 +498,50 @@ entity.soccerbet_participant_group.delete_form:
     _title: 'Delete participant group relation'
   requirements:
     _entity_access: 'soccerbet_participant_group.delete'
+
+entity.soccerbet_tournament_group_team.canonical:
+  path: '/soccerbet/tournament_group_team/{soccerbet_tournament_group_team}'
+  defaults:
+    # Calls the view controller, defined in the annotation of the tournament_group_team entity
+    _entity_view: 'soccerbet_tournament_group_team'
+    _title: 'tournament group team Content'
+  requirements:
+    # Calls the access controller of the entity, $operation 'view'
+    _entity_access: 'soccerbet_tournament_group_team.view'
+
+entity.soccerbet_tournament_group_team.collection:
+  path: '/soccerbet/tournament_group_team/list'
+  defaults:
+    # Calls the list controller, defined in the annotation of the contact entity.
+    _entity_list: 'soccerbet_tournament_group_team'
+    _title: 'tournament group team List'
+  requirements:
+    # Checks for permission directly.
+    _permission: 'view tournament group team entity'
+
+soccerbet_tournament_group_team.tournament_group_team_add:
+  path: '/soccerbet/tournament_group_team/add'
+  defaults:
+    # Calls the form.add controller, defined in the tournament_group_team entity.
+    _entity_form: soccerbet_tournament_group_team.add
+    _title: 'Add tournament group team'
+  requirements:
+    _entity_create_access: 'soccerbet_tournament_group_team'
+
+entity.soccerbet_tournament_group_team.edit_form:
+  path: '/soccerbet/tournament_group_team/{soccerbet_tournament_group_team}/edit'
+  defaults:
+    # Calls the form.edit controller, defined in the tournament_group_team entity.
+    _entity_form: soccerbet_tournament_group_team.edit
+    _title: 'Edit tournament group team'
+  requirements:
+    _entity_access: 'soccerbet_tournament_group_team.edit'
+
+entity.soccerbet_tournament_group_team.delete_form:
+  path: '/soccerbet/tournament_group_team/{soccerbet_tournament_group_team}/delete'
+  defaults:
+    # Calls the form.delete controller, defined in the tournament_group_team entity.
+    _entity_form: soccerbet_tournament_group_team.delete
+    _title: 'Delete tournament group team relation'
+  requirements:
+    _entity_access: 'soccerbet_tournament_group_team.delete'
