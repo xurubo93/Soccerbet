@@ -4,6 +4,7 @@ system.admin_soccerbet:
   parent: 'system.admin'
   description: 'Administer and configure your soccerbet system.'
   weight: -9
+  menu_name: 'soccerbet'
 
 soccerbet.soccerbet_settings:
   title: 'Configuration'
@@ -11,85 +12,4 @@ soccerbet.soccerbet_settings:
   parent: 'system.admin_soccerbet'
   description: 'Configure your Soccerbet settings and structure.'
   weight: 10
-
-#Soccerbet Tournament Entity menu links
-entity.soccerbet_tournament.collection:
-  title: 'Tournaments'
-  route_name: entity.soccerbet_tournament.collection
-  description: Tournaments'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
-
-#Soccerbet Tournamentgroup Entity menu links
-entity.soccerbet_tournamentgroup.collection:
-  title: 'Tournamentgroups'
-  route_name: entity.soccerbet_tournamentgroup.collection
-  description: Tournamentgroups'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
-
-
-#Soccerbet game Entity menu links
-entity.soccerbet_game.collection:
-  title: 'Game'
-  route_name: entity.soccerbet_game.collection
-  description: Games'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
-
-#Soccerbet Usergroup Entity menu links
-entity.soccerbet_usergroup.collection:
-  title: 'Usergroups'
-  route_name: entity.soccerbet_usergroup.collection
-  description: Usergroups'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
-
-#Soccerbet Team Entity menu links
-entity.soccerbet_team.collection:
-  title: 'Teams'
-  route_name: entity.soccerbet_team.collection
-  description: Teams'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
-
-#Soccerbet Tip Entity menu links
-entity.soccerbet_tip.collection:
-  title: 'Tips'
-  route_name: entity.soccerbet_tip.collection
-  description: Tips'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
-
-#Soccerbet Participant Entity menu links
-entity.soccerbet_participant.collection:
-  title: 'participants'
-  route_name: entity.soccerbet_participant.collection
-  description: participants'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
-
-#Soccerbet ParticipantGroupRelation Entity menu links
-entity.soccerbet_participant_group.collection:
-  title: 'participant group relation'
-  route_name: entity.soccerbet_participant_group.collection
-  description: participant group relation'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
-
-#Soccerbet TournamentTournamentgroupTeam Entity menu links
-entity.soccerbet_tournament_group_team.collection:
-  title: 'tournament tournamentgroup team'
-  route_name: entity.soccerbet_tournament_group_team.collection
-  description: tournament tournamentgroup team relation'
-  parent: 'system.admin_soccerbet'
-  weight: -20
-  menu_name: soccerbet
+  menu_name: 'soccerbet'

@@ -1,0 +1,21 @@
+{#
+/**
+ * @file
+ * Default theme implementation to present a soccerbet team entity.
+ *
+ * This template is used when viewing a registered soccerbet team's page,
+ * e.g., /admin/content/soccerbet-team)/123. 123 being the soccerbet team's ID.
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ *   print a subset such as 'content.title'.
+ * - attributes: HTML attributes for the container element.
+ *
+ * @see template_preprocess_soccerbet_team()
+ */
+#}
+<article{{ attributes }}>
+  {% if content %}
+    {{- content -}}
+  {% endif %}
+</article>

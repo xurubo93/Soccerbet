@@ -1,0 +1,66 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Soccerbet module.
+ */
+
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\soccerbet_tournament\Entity\SoccerbetTournament;
+
+/**
+ * Implements hook_install().
+ */
+function soccerbet_tournament_install(): void {
+  $module_path = Drupal::service('extension.list.module')->getPath('soccerbet_tournament');
+  $soccerbet_tournament_data = include $module_path .'/includes/data_for_install.php';
+
+  foreach ($soccerbet_tournament_data as $entity) {
+    $tournament = SoccerbetTournament::create(
+      [
+        'name' => $entity['en']['name'],
+        'langcode' => $entity['en']['langcode'],
+        'start_and_end_date' => $entity['en']['start_and_end_date'],
+        'group_count' => $entity['en']['group_count'],
+        'status' => $entity['en']['status'],
+        'id' => $entity['en']['id'],
+        'uuid' => Drupal::service('uuid')->generate(),
+        'created' => $entity['en']['created'],
+      ]
+    );
+    if (!empty($tournament)) {
+      try {
+        $tournament->save();
+      } catch (EntityStorageException $e) {
+        Drupal::logger('soccerbet_tournament')->error($e->getMessage());
+      }
+    }
+
+    //TODO check if translation is enabled and allowed for this content type
+    /*$tournament->addTranslation('de', array(
+      'name' => $entity['de']['name'],
+      'langcode' => $entity['de']['langcode'],
+      'start_and_end_date' => $entity['de']['start_and_end_date'],
+      'group_count' => $entity['de']['group_count'],
+      'status' => $entity['de']['status'],
+      'id' => $entity['de']['id'],
+      'uuid' => \Drupal::service('uuid')->generate(),
+      'created' => $entity['de']['created'],
+    ));*/
+  }
+
+/*  $module_path = \Drupal::service('extension.list.module')->getPath('soccerbet');
+  $install_vars = include $module_path .'/includes/data_for_install.php';
+
+  $connection = \Drupal::database();
+
+  foreach ($install_vars as $entity) {
+    $query = $connection->insert($entity['table'])
+      ->fields($entity['fields']);
+
+    foreach ($entity['values'] as $record) {
+      $query->values($record);
+    }
+    $query->execute();
+  }*/
+}

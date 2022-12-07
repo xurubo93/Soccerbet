@@ -4,13 +4,108 @@
 * A description of what your module does.
 */
 
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_toolbar().
+ */
+function soccerbet_toolbar() {
+  // First, build an array of all example modules and their routes.
+  // We resort to this hard-coded way so as not to muck up each example.
+  $soccerbet_modules = _soccerbet_toolbar_routes();
+
+  // Build a list of links for the menu.
+  $links = [];
+  foreach ($soccerbet_modules as $module => $route) {
+
+    // Check if module is installed or not.
+    if (\Drupal::moduleHandler()->moduleExists($module)) {
+
+      // Get the module info (title, description) from Drupal.
+      $info = \Drupal::service('extension.list.module')->getExtensionInfo($module);
+
+      // If there's no info, the example isn't enabled, so don't display it.
+      if (!empty($info)) {
+        $links[$module] = [
+          'title' => Html::escape($info['name']),
+          'url' => Url::fromRoute($route),
+          'attributes' => [
+            'class' => [Html::getClass($module)],
+            'title' => Html::escape($info['description']),
+          ],
+        ];
+      }
+    }
+  }
+
+  // Create the examples toolbar render array.
+  $items['soccerbet'] = [
+    '#type' => 'toolbar_item',
+    'tab' => [
+      '#type' => 'link',
+      '#title' => t('Soccerbet'),
+      '#url' => Url::fromRoute('<front>'),
+      '#attributes' => [
+        'title' => t('Soccerbet'),
+        'class' => ['toolbar-icon', 'toolbar-icon-soccerbet'],
+      ],
+    ],
+    'tray' => [
+      '#heading' => t('Soccerbet'),
+      'shortcuts' => [
+        '#theme' => 'links__toolbar_soccerbet',
+        '#links' => $links,
+        '#attributes' => [
+          'class' => ['toolbar-menu'],
+        ],
+      ],
+    ],
+    '#weight' => 99,
+    '#attached' => [
+      'library' => [
+        'soccerbet/soccerbet-icons',
+      ],
+    ],
+  ];
+
+  return $items;
+}
+
+/**
+ * Get a list of toolbar links to provide.
+ *
+ * We've factored this list into a function so that we can use it to test
+ * toolbar routes.
+ *
+ * This function is for internal use.
+ *
+ * @return string[]
+ *   Keyed array of toolbar routes. Keys are the module name which supplies the
+ *   route.
+ */
+function _soccerbet_toolbar_routes() {
+  return [
+    'soccerbet_tournament' => 'entity.soccerbet_tournament.collection',
+    'soccerbet_team' => 'entity.soccerbet_team.collection',
+  ];
+}
+
 /**
  * Implements hook_theme().
  */
 function soccerbet_theme($existing, $type, $theme, $path) {
-  return array(
-    'soccerbet_tournament' => array(
-      'template' => 'soccerbet_tournament',
+  return [
+    'tournament' => [
+      'path' => $path . '/templates',
+      'template' => 'tournament',
+      'render element' => 'elements',
+    ],
+  ];
+
+  /*return array(
+    'tournament' => array(
+      'template' => 'tournament',
       'variables' => array(
         'name' => NULL,
         'start_date' => NULL,
@@ -240,5 +335,19 @@ function soccerbet_theme($existing, $type, $theme, $path) {
         'table' => NULL,
       )
     )
-  );
+  );*/
+}
+
+/**
+ * Prepares variables for the tournament template.
+ *
+ * Default template: tournament.html.twig
+ *
+ * @param array $variables
+ *   - elements: An array of elements to display in view mode.
+ *   - tournament: The group object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function template_preprocess_tournament(&$variables) {
+  kint($variables['elements']['#tournament']);
 }

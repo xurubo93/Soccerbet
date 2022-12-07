@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the soccerbet team module.
+ */
+
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\soccerbet_team\Entity\SoccerbetTeam;
+
+/**
+ * Implements hook_install().
+ */
+function soccerbet_team_install(): void {
+  $module_path = Drupal::service('extension.list.module')->getPath('soccerbet_team');
+  $soccerbet_team_data = include $module_path .'/includes/data_for_install.php';
+
+  foreach ($soccerbet_team_data as $entity) {
+    $team = SoccerbetTeam::create(
+      [
+        'title' => $entity['title'],
+        'langcode' => $entity['langcode'],
+        'status' => 1,
+        'team_name_code' => $entity['team_name_code'],
+        'uuid' => Drupal::service('uuid')->generate(),
+        'created' => $entity['created'],
+      ]
+    );
+    if (!empty($team)) {
+      try {
+        $team->save();
+      } catch (EntityStorageException $e) {
+        Drupal::logger('soccerbet_team')->error($e->getMessage());
+      }
+    }
+
+    //TODO check if translation is enabled and allowed for this content type
+
+  }
+
+/*  $module_path = \Drupal::service('extension.list.module')->getPath('soccerbet');
+  $install_vars = include $module_path .'/includes/data_for_install.php';
+
+  $connection = \Drupal::database();
+
+  foreach ($install_vars as $entity) {
+    $query = $connection->insert($entity['table'])
+      ->fields($entity['fields']);
+
+    foreach ($entity['values'] as $record) {
+      $query->values($record);
+    }
+    $query->execute();
+  }*/
+}

@@ -1,0 +1,13 @@
+/**
+ * @file
+ * Styling for soccerbet toolbar module.
+ */
+
+/**
+ * Toolbar tab icon.
+ */
+.toolbar-bar .toolbar-icon-soccerbet:before,
+.toolbar-bar .toolbar-icon-soccerbet:active:before,
+.toolbar-bar .toolbar-icon-soccerbet.active:before {
+  background-image: url(../icons/ffffff/football.svg);
+}

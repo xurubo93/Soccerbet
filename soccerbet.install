@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the soccerbet module.
+ */
+
+use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+
+/**
+ * Implements hook_install().
+ */
+function soccerbet_install() {
+/*  $module_path = \Drupal::service('extension.list.module')->getPath('soccerbet');
+  $install_vars = include $module_path .'/includes/data_for_install.php';
+
+  $connection = \Drupal::database();
+
+  foreach ($install_vars as $entity) {
+    $query = $connection->insert($entity['table'])
+      ->fields($entity['fields']);
+
+    foreach ($entity['values'] as $record) {
+      $query->values($record);
+    }
+    $query->execute();
+  }*/
+}
