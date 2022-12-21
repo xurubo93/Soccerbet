@@ -8,7 +8,7 @@ dependencies:
   - datetime
   - options
   - image
+  - drupal:datetime_range
   - drupal:toolbar
-  - soccerbet_tournament
 configure: soccerbet.admin_index
 project: 'soccerbet'

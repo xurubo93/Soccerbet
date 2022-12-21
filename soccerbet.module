@@ -5,39 +5,65 @@
 */
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Url;
 
 /**
  * Implements hook_toolbar().
  */
-function soccerbet_toolbar() {
+function soccerbet_toolbar(): array {
   // First, build an array of all example modules and their routes.
   // We resort to this hard-coded way so as not to muck up each example.
-  $soccerbet_modules = _soccerbet_toolbar_routes();
+  $soccerbet_entities = _soccerbet_toolbar_routes();
 
   // Build a list of links for the menu.
   $links = [];
-  foreach ($soccerbet_modules as $module => $route) {
+  foreach ($soccerbet_entities as $entity => $route) {
 
-    // Check if module is installed or not.
-    if (\Drupal::moduleHandler()->moduleExists($module)) {
+    // Check if entity is installed or not.
 
-      // Get the module info (title, description) from Drupal.
-      $info = \Drupal::service('extension.list.module')->getExtensionInfo($module);
+    $entity_type_definitions = Drupal::entityTypeManager()->getDefinitions();
+
+    /* @var $definition EntityTypeInterface */
+    $definition = $entity_type_definitions[$entity];
+    if ($definition instanceof ContentEntityType) {
+    //if (\Drupal::moduleHandler()->moduleExists($entity)) {
+
+      // Get the Entity info (title, description) from Drupal.
+      //$info = \Drupal::service('extension.list.module')->getExtensionInfo($entity);
 
       // If there's no info, the example isn't enabled, so don't display it.
-      if (!empty($info)) {
-        $links[$module] = [
+      /*if (!empty($info)) {
+        $links[$entity] = [
           'title' => Html::escape($info['name']),
           'url' => Url::fromRoute($route),
           'attributes' => [
-            'class' => [Html::getClass($module)],
+            'class' => [Html::getClass($entity)],
             'title' => Html::escape($info['description']),
           ],
         ];
-      }
+      }*/
+      $links[$entity] = [
+        'title' => Html::escape($definition->getLabel()),
+        'url' => Url::fromRoute($route),
+        'attributes' => [
+          'class' => [Html::getClass($entity)],
+          'title' => Html::escape('description'),
+        ],
+
+      ];
     }
   }
+  //Create the link for the Soccerbet settings form
+  array_unshift($links, [
+    'title' => Html::escape('Soccerbet settings'),
+    'url' => Url::fromRoute('soccerbet.soccerbet_settings'),
+    'attributes' => [
+      'class' => ['soccerbet'],
+      'title' => t('Soccerbet Settings'),
+    ],
+  ]);
 
   // Create the examples toolbar render array.
   $items['soccerbet'] = [
@@ -84,7 +110,7 @@ function soccerbet_toolbar() {
  *   Keyed array of toolbar routes. Keys are the module name which supplies the
  *   route.
  */
-function _soccerbet_toolbar_routes() {
+function _soccerbet_toolbar_routes(): array {
   return [
     'soccerbet_tournament' => 'entity.soccerbet_tournament.collection',
     'soccerbet_team' => 'entity.soccerbet_team.collection',
@@ -94,248 +120,50 @@ function _soccerbet_toolbar_routes() {
 /**
  * Implements hook_theme().
  */
-function soccerbet_theme($existing, $type, $theme, $path) {
+function soccerbet_theme($existing, $type, $theme, $path): array {
   return [
-    'tournament' => [
+    'soccerbet_tournament' => [
       'path' => $path . '/templates',
-      'template' => 'tournament',
+      'template' => 'soccerbet-tournament',
       'render element' => 'elements',
     ],
+    'soccerbet_team' => [
+      'render element' => 'elements',
+    ],
+    'soccerbet_team_title' => [
+      'variables' => [
+        'entity' => NULL,
+        'flag' => NULL,
+        'attributes' => [],
+        'link_options' => [],
+      ]
+    ]
   ];
+}
 
-  /*return array(
-    'tournament' => array(
-      'template' => 'tournament',
-      'variables' => array(
-        'name' => NULL,
-        'start_date' => NULL,
-        'end_date' => NULL,
-        'soccerbet_tournament_tables' => NULL,
-      )
-    ),
-    'soccerbet_tournament_tables' => array(
-      'template' => 'tournament_tables',
-      'variables' => array(
-        'title' => NULL,
-        'tables' => NULL,
-      ),
-    ),
-    'soccerbet_tournament_table' => array(
-      'template' => 'tournament_table',
-      'variables' => array(
-        'group_name' => NULL,
-        'table' => NULL,
-      ),
-    ),
-
-        'soccerbet_tournamentgroup' => array(
-    'template' => 'soccerbet_tournamentgroup',
-    'variables' => array(
-      'name' => NULL,
-      'soccerbet_tournamentgroup_tables' => NULL,
-    ),
-  ),
-    'soccerbet_tournamentgroup_tables' => array(
-    'template' => 'tournamentgroup_tables',
-    'variables' => array(
-      'title' => NULL,
-      'tables' => NULL,
-    ),
-  ),
-    'soccerbet_tournamentgroup_table' => array(
-    'template' => 'tournamentgroup_table',
-    'variables' => array(
-      'group_name' => NULL,
-      'table' => NULL,
-    ),
-  ),
-
-    'soccerbet_game' => array(
-      'template' => 'soccerbet_game',
-      'variables' => array(
-        'game_location' => NULL,
-        'start_time' => NULL,
-        'score_first_team' => NULL,
-        'score_second_team' => NULL,
-        'KO_game' => NULL,
-        'group_game' => NULL,
-        'soccerbet_game_tables' => NULL,
-      ),
-    ),
-    'soccerbet_game_tables' => array(
-      'template' => 'game_tables',
-      'variables' => array(
-        'title' => NULL,
-        'tables' => NULL,
-      ),
-    ),
-    'soccerbet_game_table' => array(
-      'template' => 'game_table',
-      'variables' => array(
-        'group_name' => NULL,
-        'table' => NULL,
-      ),
-    ),
-    'soccerbet_usergroup' => array(
-      'template' => 'soccerbet_usergroup',
-      'variables' => array(
-        'soccerbet_usergroup_tables' => NULL,
-      )
-    ),
-    'soccerbet_usergroup_tables' => array(
-      'template' => 'usergroup_tables',
-      'variables' => array(
-        'title' => NULL,
-        'tables' => NULL,
-      ),
-    ),
-    'soccerbet_usergroup_table' => array(
-      'template' => 'usergroup_table',
-      'variables' => array(
-        'group_name' => NULL,
-        'table' => NULL,
-      ),
-    ),
-    'soccerbet_usergroup_games' => array(
-      'template' => 'usergroup_games',
-      'variables' => array(
-        'table' => NULL,
-      ),
-    ),
-    'soccerbet_team' => array(
-      'template' => 'soccerbet_team',
-      'variables' => array(
-        'team_name' => NULL,
-        'soccerbet_team_tables' => NULL,
-      )
-    ),
-    'soccerbet_team_tables' => array(
-      'template' => 'team_tables',
-      'variables' => array(
-        'title' => NULL,
-        'tables' => NULL,
-      ),
-    ),
-    'soccerbet_team_table' => array(
-      'template' => 'team_table',
-      'variables' => array(
-        'group_name' => NULL,
-        'table' => NULL,
-      ),
-    ),
-    'soccerbet_team_games' => array(
-      'template' => 'team_games',
-      'variables' => array(
-        'table' => NULL,
-      ),
-    ),
-    'soccerbet_tip' => array(
-      'template' => 'soccerbet_tip',
-      'variables' => array(
-        'tip_team_A' => NULL,
-        'tip_team_B' => NULL,
-        'soccerbet_tip_tables' => NULL,
-      )
-    ),
-    'soccerbet_tip_tables' => array(
-      'template' => 'tip_tables',
-      'variables' => array(
-        'title' => NULL,
-        'tables' => NULL,
-      ),
-    ),
-    'soccerbet_tip_table' => array(
-      'template' => 'tip_table',
-      'variables' => array(
-        'group_name' => NULL,
-        'table' => NULL,
-      ),
-    ),
-    'soccerbet_tip_games' => array(
-      'template' => 'tip_games',
-      'variables' => array(
-        'table' => NULL,
-      )
-    ),
-        'soccerbet_participant' => array(
-    'template' => 'soccerbet_participant',
-    'variables' => array(
-      'soccerbet_participant_tables' => NULL,
-    )
-  ),
-    'soccerbet_participant_tables' => array(
-    'template' => 'participant_tables',
-    'variables' => array(
-      'title' => NULL,
-      'tables' => NULL,
-    ),
-  ),
-    'soccerbet_participant_table' => array(
-    'template' => 'participant_table',
-    'variables' => array(
-      'group_name' => NULL,
-      'table' => NULL,
-    ),
-  ),
-    'soccerbet_participant_games' => array(
-    'template' => 'participant_games',
-    'variables' => array(
-      'table' => NULL,
-    )
-  ),
-    'soccerbet_participant_group' => array(
-      'template' => 'soccerbet_participant_group',
-      'variables' => array(
-        'soccerbet_participant_group_tables' => NULL,
-      )
-    ),
-    'soccerbet_participant_group_tables' => array(
-      'template' => 'soccerbet_participant_group_tables',
-      'variables' => array(
-        'title' => NULL,
-        'tables' => NULL,
-      ),
-    ),
-    'soccerbet_participant_group_table' => array(
-      'template' => 'soccerbet_participant_group_table',
-      'variables' => array(
-        'group_name' => NULL,
-        'table' => NULL,
-      ),
-    ),
-    'soccerbet_participant_group_games' => array(
-      'template' => 'soccerbet_participant_group_games',
-      'variables' => array(
-        'table' => NULL,
-      )
-    ),
-    'soccerbet_tournament_group_team' => array(
-      'template' => 'soccerbet_tournament_group_team',
-      'variables' => array(
-        'soccerbet_tournament_group_team_tables' => NULL,
-      )
-    ),
-    'soccerbet_tournament_group_team_tables' => array(
-      'template' => 'soccerbet_tournament_group_team_tables',
-      'variables' => array(
-        'title' => NULL,
-        'tables' => NULL,
-      ),
-    ),
-    'soccerbet_tournament_group_team_table' => array(
-      'template' => 'soccerbet_tournament_group_team_table',
-      'variables' => array(
-        'group_name' => NULL,
-        'table' => NULL,
-      ),
-    ),
-    'soccerbet_tournament_group_team_games' => array(
-      'template' => 'soccerbet_tournament_group_team_games',
-      'variables' => array(
-        'table' => NULL,
-      )
-    )
-  );*/
+/**
+ * Prepares variables for the soccerbet-team title
+ *
+ * @param array $variables
+ *
+ * @return void
+ * @throws \Drupal\Core\Entity\EntityMalformedException
+ */
+function template_preprocess_soccerbet_team_title(array &$variables): void {
+  /* @var $entity \Drupal\soccerbet\Entity\SoccerbetTeamInterface */
+  $entity = $variables['entity'];
+  $module_path = Drupal::service('extension.list.module')->getPath('soccerbet');
+  $variables['link_path'] = $entity->toUrl();
+  //$url = Url::fromUri($entity->toUrl());
+  $variables['title'] = $entity->getTitle();
+  //$variables['flag'] = file_get_contents($module_path . '/flags/svg/' . strtolower($entity->getTeamNameCode()) . '.svg');
+  $variables['attributes']['class'][] = 'soccerbet-team-title';
+  $variables['flagclass'] = 'bg-' . $entity->getTeamNameCode();
+  if (isset($variables['link_path'])) {
+    $variables['attributes']['href'] =  Url::fromRoute('entity.soccerbet_team.canonical' , ['soccerbet_team' => $entity->id()])->toString();
+    //$variables['attributes']['class'][] = 'soccerbet-team-title';//
+    //$variables['attributes']['class'][] = strtolower($entity->getTeamNameCode());//
+  }
 }
 
 /**

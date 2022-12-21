@@ -5,24 +5,116 @@
  * Install, update and uninstall functions for the soccerbet module.
  */
 
+use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
+use Drupal\Core\File\Event\FileUploadSanitizeNameEvent;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\soccerbet\Entity\SoccerbetTournament;
 
 /**
  * Implements hook_install().
  */
-function soccerbet_install() {
-/*  $module_path = \Drupal::service('extension.list.module')->getPath('soccerbet');
-  $install_vars = include $module_path .'/includes/data_for_install.php';
-
-  $connection = \Drupal::database();
-
-  foreach ($install_vars as $entity) {
-    $query = $connection->insert($entity['table'])
-      ->fields($entity['fields']);
-
-    foreach ($entity['values'] as $record) {
-      $query->values($record);
-    }
-    $query->execute();
-  }*/
+function soccerbet_install(): void {
 }
+
+/*function soccerbet_import_entity_data(&$context, array $import_entities) {
+
+  foreach ($import_entities as $entity_name => $data) {
+    $context['sandbox']['progress']++;
+    $context['results']++;
+    $context['sandbox']['current_id'] = $entity_name;
+
+    switch ($entity_name) {
+      case 'soccerbet_tournament':
+        foreach ($data['data'] as $entity) {
+          $tournament = SoccerbetTournament::create(
+            [
+              'name' => $entity['en']['name'],
+              'langcode' => $entity['en']['langcode'],
+              'start_and_end_date' => $entity['en']['start_and_end_date'],
+              'group_count' => $entity['en']['group_count'],
+              'status' => $entity['en']['status'],
+              'id' => $entity['en']['id'],
+              'uuid' => Drupal::service('uuid')->generate(),
+              'created' => $entity['en']['created'],
+            ]
+          );
+          if (!empty($tournament)) {
+            try {
+              $tournament->save();
+            } catch (EntityStorageException $e) {
+              Drupal::logger('soccerbet')->error($e->getMessage());
+            }
+          }
+        }
+        break;
+      case 'soccerbet_team':
+        //Set the path for the files
+        $image_target_path = 'public://soccerbetflags';
+        $file_system = Drupal::service('file_system');
+        $file_system->prepareDirectory($image_target_path, FileSystemInterface::CREATE_DIRECTORY | FileSystemInterface::MODIFY_PERMISSIONS);
+
+        //Iterate through the array
+        foreach ($data['data'] as $entity) {
+          $team = \Drupal\soccerbet\Entity\SoccerbetTeam::create(
+            [
+              'title' => $entity['title'],
+              'langcode' => $entity['langcode'],
+              'status' => 1,
+              'team_name_code' => $entity['team_name_code'],
+              'uuid' => Drupal::service('uuid')->generate(),
+              'created' => $entity['created'],
+            ]
+          );
+          //In case we are using the FlagKit, we have to use this naming convention
+          $image_file_name = $team->getTeamNameCode() . '@3x.png';
+          //Building the image object for the Flag based on the shortcode which is stored in the SoccerbetTeam /flags directory
+          $image_source_path = $data['module_path'] . '/flags/PNG/3x/' . $image_file_name;
+          //Reading the Image file contents
+          $image_data = file_get_contents($image_source_path);
+          $image_alt = 'Flag of ' . $team->getTitle();
+          $image_title = 'Flag of ' . $team->getTitle();
+
+          //Sanitize the filename before we use it
+          $image_copy_event = new FileUploadSanitizeNameEvent($image_file_name, '');
+          $image_sanitized_filename = $image_copy_event->getFilename();
+
+          //Writing the file into the target folder
+          $image_object = Drupal::service('file.repository')
+            ->writeData($image_data, $image_target_path . '/' . $image_sanitized_filename, FileSystemInterface::EXISTS_REPLACE);
+
+          //Store the File Entity to the Soccerbet Team Entity
+          $team->set('flag', [
+            'target_id' => $image_object->id(),
+            'alt' => $image_alt,
+            'title' => $image_title,
+          ]);
+
+          //Save it to the database
+          if (!empty($team)) {
+            try {
+              $team->save();
+            } catch (EntityStorageException $e) {
+              Drupal::logger('soccerbet_team')->error($e->getMessage());
+            }
+          }
+        }
+        break;
+      default:
+        throw new \Exception('Unexpected value');
+    }
+    if ($context['sandbox']['progress'] != $context['sandbox']['max']) {
+      $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    }
+  }
+}*/
+
+/*function soccerbet_finished_batch_callback($success, $results, $operations, $elapsed) {
+  if ($success) {
+    $message = \Drupal::translation()->formatPlural($results, '@count Entity imported.', '@count entities imported.');
+  }
+  else {
+    $message = t('Finished with an error.');
+  }
+  \Drupal::messenger()->addMessage($message);
+}*/

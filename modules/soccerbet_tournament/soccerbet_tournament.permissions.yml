@@ -1,5 +1,0 @@
-administer soccerbet tournament:
-  title: 'Administer soccerbet tournament settings'
-  restrict access: true
-access soccerbet tournament overview:
-  title: 'Access soccerbet tournament overview page'

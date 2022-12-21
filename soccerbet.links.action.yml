@@ -1,0 +1,23 @@
+soccerbet_tournament.add_form:
+  route_name: entity.soccerbet_tournament.add_form
+  title: 'Add a tournament'
+  appears_on:
+    - entity.soccerbet_tournament.collection
+
+soccerbet_tournament.settings:
+  route_name: entity.soccerbet_tournament.settings
+  title: 'Configure Soccerbet Tournaments'
+  appears_on:
+    - entity.soccerbet_tournament.collection
+
+soccerbet_team.add_form:
+  route_name: entity.soccerbet_team.add_form
+  title: 'Add soccerbet team'
+  appears_on:
+    - entity.soccerbet_team.collection
+
+soccerbet_team.settings:
+  route_name: entity.soccerbet_team.settings
+  title: 'Configure Soccerbet Teams'
+  appears_on:
+    - entity.soccerbet_team.collection

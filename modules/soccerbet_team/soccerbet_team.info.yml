@@ -1,8 +1,0 @@
-name: Soccerbet Team
-type: module
-description: 'Provides a soccerbet team entity.'
-package: Soccerbet
-core: 8.x
-core_version_requirement: ^8 || ^9
-dependencies:
-  - drupal:text

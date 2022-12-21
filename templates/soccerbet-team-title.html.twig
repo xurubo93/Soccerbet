@@ -1,0 +1,28 @@
+{#
+/**
+ * @file
+ * Default theme implementation for displaying a Soccerbet Team Title .
+ *
+ * Available variables:
+ * - flag: The flag as SVG file.
+ * - title: The team's name, sanitized, and optionally truncated.
+ * - truncated: Whether the user's name was truncated.
+ * - extra: Additional text to append to the teams title, sanitized.
+ * - profile_access: Whether the current user has permission to access this
+     users profile page.
+ * - link_path: The path or URL of the teams entity page, home page,
+ * - link_options: Options to set on the \Drupal\Core\Url object
+ * - attributes: HTML attributes for the containing element.
+ *
+ * @see template_preprocess_soccerbet_team_title()
+ *
+ * @ingroup themeable
+ */
+#}
+{{ attach_library('soccerbet/flag') }}
+
+{% if link_path %}
+  <ul class="countryflag"><li class ="{{ flagclass }}"></li></ul><a{{ attributes }}>{{ title }}{{ extra }}</a>
+{%- else -%}
+  <span{{ attributes }}>{{ title }}{{ extra }}</span>
+{%- endif -%}
