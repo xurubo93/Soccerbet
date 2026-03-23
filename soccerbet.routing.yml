@@ -320,7 +320,6 @@ soccerbet.live.json:
   path: '/soccerbet/live/{tournament_id}/json'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\LiveController::liveJson'
-    tournament_id: 0
   requirements:
     _permission: 'access soccerbet content'
-    tournament_id: '\d*'
+    tournament_id: '\d+'
