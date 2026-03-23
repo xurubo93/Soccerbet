@@ -12,6 +12,12 @@
 #}
 <div class="soccerbet-tipper-detail">
 
+  <div class="soccerbet-tipper-detail__back">
+    <a href="{{ path('soccerbet.standings', {tournament_id: tournament.tournament_id}) }}">
+      ← {{ 'Zurück zur Rangliste'|t }}
+    </a>
+  </div>
+
   <h2 class="soccerbet-tipper-detail__name">
     {{ tipper.name }}
     {% if not tipper.tipper_has_paid %}
@@ -92,10 +98,5 @@
     </p>
   {% endif %}
 
-  <div class="soccerbet-tipper-detail__back">
-    <a href="{{ path('soccerbet.standings', {tournament_id: tournament.tournament_id}) }}">
-      ← {{ 'Zurück zur Rangliste'|t }}
-    </a>
-  </div>
 
 </div>

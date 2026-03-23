@@ -109,6 +109,41 @@
     },
   };
 
+  /**
+   * Ranglisten-Verlauf: AJAX-Navigation (kein Page-Reload, kein Scroll-Reset).
+   */
+  Drupal.behaviors.soccerbetStepsAjax = {
+    attach(context) {
+      once('soccerbet-steps-ajax', '.soccerbet-steps', context).forEach(function (nav) {
+        nav.addEventListener('click', function (e) {
+          const btn = e.target.closest('.soccerbet-steps__btn');
+          if (!btn) return;
+          e.preventDefault();
+
+          const url      = btn.href;
+          const standings = document.querySelector('.soccerbet-standings');
+          if (!standings) return;
+
+          nav.style.opacity       = '0.5';
+          nav.style.pointerEvents = 'none';
+
+          fetch(url)
+            .then(r => r.text())
+            .then(html => {
+              const doc = new DOMParser().parseFromString(html, 'text/html');
+              const fresh = doc.querySelector('.soccerbet-standings');
+              if (fresh) {
+                standings.replaceWith(fresh);
+                history.pushState(null, '', url);
+                Drupal.attachBehaviors(fresh, drupalSettings);
+              }
+            })
+            .catch(() => { window.location.href = url; });
+        });
+      });
+    },
+  };
+
   function setLiveMenuDot(isLive) {
     const menuLink = document.querySelector('a.menu-item--live');
     if (!menuLink) return;
