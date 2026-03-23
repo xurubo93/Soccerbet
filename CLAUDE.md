@@ -42,7 +42,7 @@ vendor/bin/drush migrate:import soccerbet_tipps
 vendor/bin/drush migrate:import soccerbet_tournament_tippers
 ```
 
-There are no automated tests in this module.
+There are no automated tests in this module currently.
 
 ## Architecture
 
