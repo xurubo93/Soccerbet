@@ -154,7 +154,7 @@ final class PlaceBetsForm extends FormBase {
         $kickoff  = $this->utcTimestamp($game->game_date);
         $deadline = $kickoff - ($lock_minutes * 60);
         $locked   = $is_admin ? FALSE : ($now >= $deadline);
-        $played   = ($game->team1_score !== NULL);
+        $played   = ($game->team1_score !== NULL) && ($now >= $kickoff);
         if ($played || $locked) {
           $played_games[] = $game;
         }
@@ -241,7 +241,7 @@ final class PlaceBetsForm extends FormBase {
     $kickoff  = $this->utcTimestamp($game->game_date);
     $deadline = $kickoff - ($lock_minutes * 60);
     $locked   = ($now >= $deadline);
-    $played   = ($game->team1_score !== NULL);
+    $played   = ($game->team1_score !== NULL) && ($now >= $kickoff);
     $saved    = $saved_tipps[$game_id] ?? NULL;
     $game_key = 'game_' . $game_id;
     $date_str = \Drupal::service('date.formatter')->format($kickoff, 'custom', 'd.m.Y H:i');
