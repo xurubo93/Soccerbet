@@ -1,0 +1,83 @@
+# Öffentliches Menü
+soccerbet.live:
+  title: 'Live'
+  route_name: soccerbet.live
+  menu_name: main
+  weight: 5
+  options:
+    attributes:
+      class: [menu-item--live]
+
+soccerbet.standings:
+  title: 'Rangliste'
+  route_name: soccerbet.standings
+  menu_name: main
+  weight: 10
+
+soccerbet.place_bets:
+  title: 'Tipps abgeben'
+  route_name: soccerbet.place_bets
+  menu_name: main
+  weight: 20
+
+soccerbet.tables:
+  title: 'Gruppentabellen'
+  route_name: soccerbet.tables
+  menu_name: main
+  weight: 30
+
+# Admin-Menü (unter /admin)
+soccerbet.admin:
+  title: 'Tippspiel'
+  route_name: soccerbet.admin
+  parent: system.admin
+  description: 'Turniere, Spiele, Teams und Teilnehmer verwalten.'
+  weight: 50
+
+soccerbet.admin.tournament.list:
+  title: 'Turniere'
+  route_name: soccerbet.admin.tournament.list
+  parent: soccerbet.admin
+  weight: 10
+
+soccerbet.admin.teams.list:
+  title: 'Teams'
+  route_name: soccerbet.admin.teams.list
+  parent: soccerbet.admin
+  weight: 20
+
+soccerbet.admin.games.list:
+  title: 'Spiele'
+  route_name: soccerbet.admin.games.list
+  parent: soccerbet.admin
+  weight: 30
+
+soccerbet.admin.tippergroups.list:
+  title: 'Tippergruppen'
+  route_name: soccerbet.admin.tippergroups.list
+  parent: soccerbet.admin
+  weight: 40
+
+soccerbet.admin.payments:
+  title: 'Zahlungen'
+  route_name: soccerbet.admin.payments
+  parent: soccerbet.admin
+  weight: 50
+
+soccerbet.admin.tipps.overview:
+  title: 'Tipps-Übersicht'
+  route_name: soccerbet.admin.tipps.overview
+  parent: soccerbet.admin
+  weight: 60
+
+soccerbet.settings:
+  title: 'Einstellungen'
+  route_name: soccerbet.settings
+  parent: soccerbet.admin
+  weight: 100
+
+soccerbet.admin.score_update:
+  title: 'Score-Update (OpenLigaDB)'
+  route_name: soccerbet.admin.score_update
+  parent: soccerbet.admin
+  weight: 55

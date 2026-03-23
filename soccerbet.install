@@ -1,0 +1,588 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Soccer Bet module.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Implements hook_schema().
+ */
+function soccerbet_schema(): array {
+  $schema = [];
+
+  // -----------------------------------------------------------------------
+  // Turniere
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_tournament'] = [
+    'description' => 'Speichert alle Fußball-Turniere.',
+    'fields' => [
+      'tournament_id' => [
+        'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE,
+        'description' => 'Primärschlüssel.',
+      ],
+      'tipper_grp_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+        'description' => 'Zugehörige Tippergruppe.',
+      ],
+      'tournament_desc' => [
+        'type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => '',
+        'description' => 'Name/Beschreibung des Turniers.',
+      ],
+      'start_date' => [
+        'type' => 'varchar', 'length' => 20, 'not null' => TRUE,
+        'description' => 'Startdatum (ISO 8601).',
+      ],
+      'end_date' => [
+        'type' => 'varchar', 'length' => 20, 'not null' => TRUE,
+        'description' => 'Enddatum (ISO 8601).',
+      ],
+      'group_count' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE,
+        'not null' => TRUE, 'default' => 0,
+        'description' => 'Anzahl Gruppen in der Vorrunde.',
+      ],
+      'is_active' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE,
+        'not null' => TRUE, 'default' => 0,
+        'description' => '1 = aktives Turnier.',
+      ],
+      'uid' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0,
+        'description' => 'Ersteller (Drupal User ID).',
+      ],
+      'created' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0,
+        'description' => 'Erstellungszeitpunkt (Unix timestamp).',
+      ],
+      'changed' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0,
+        'description' => 'Letztes Update (Unix timestamp).',
+      ],
+      'oldb_league' => [
+        'type'        => 'varchar',
+        'length'      => 32,
+        'not null'    => FALSE,
+        'description' => 'OpenLigaDB Liga-Kürzel (z.B. bl1, em2024).',
+      ],
+      'oldb_season' => [
+        'type'        => 'varchar',
+        'length'      => 8,
+        'not null'    => FALSE,
+        'description' => 'OpenLigaDB Saison (z.B. 2024).',
+      ],
+      'winner_tipper_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Tipper-ID des Turniersiegers (1. Platz).',
+      ],
+      'second_tipper_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Tipper-ID des 2. Platzes.',
+      ],
+      'third_tipper_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Tipper-ID des 3. Platzes.',
+      ],
+    ],
+    'primary key' => ['tournament_id'],
+    'indexes' => [
+      'is_active' => ['is_active'],
+    ],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Tournament ↔ TipperGroup N:M Relation
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_tournament_groups'] = [
+    'description' => 'N:M-Verknüpfung zwischen Turnieren und Tippergruppen.',
+    'fields' => [
+      'tournament_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'tipper_grp_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+    ],
+    'primary key' => ['tournament_id', 'tipper_grp_id'],
+    'indexes' => [
+      'tipper_grp' => ['tipper_grp_id'],
+    ],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Teams
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_teams'] = [
+    'description' => 'Teams eines Turniers mit Tabellenstand.',
+    'fields' => [
+      'team_id' => [
+        'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'tournament_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'team_name' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => TRUE,
+      ],
+      'team_flag' => [
+        'type' => 'varchar', 'length' => 255, 'not null' => FALSE,
+        'description' => 'Pfad zur Flaggen-Datei oder Managed File ID.',
+      ],
+      'team_group' => [
+        'type' => 'char', 'length' => 1, 'not null' => FALSE,
+        'description' => 'Gruppenkennung (A–Z).',
+      ],
+      'games_played' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'games_won'    => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'games_drawn'  => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'games_lost'   => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'goals_shot'   => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'goals_got'    => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'points'       => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'uid'     => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['team_id'],
+    'indexes' => [
+      'tournament_group' => ['tournament_id', 'team_group'],
+    ],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Spiele
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_games'] = [
+    'description' => 'Einzelspiele eines Turniers.',
+    'fields' => [
+      'game_id' => [
+        'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'tournament_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'team_id_1' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'team_id_2' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'game_date' => [
+        'type' => 'varchar', 'length' => 20, 'not null' => TRUE,
+        'description' => 'Anpfiff (ISO 8601 mit Zeitzone).',
+      ],
+      'game_location' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'default' => '',
+      ],
+      'game_stadium' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => FALSE, 'default' => '',
+      ],
+      'phase' => [
+        'type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => 'group',
+        'description' => 'group | round_of_16 | quarter | semi | final',
+      ],
+      'team1_score' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'NULL = noch nicht gespielt.',
+      ],
+      'team2_score' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => FALSE,
+      ],
+      'winner_team_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Sieger in KO-Spielen (kann Verlängerung/Elfmeter beinhalten).',
+      ],
+      'api_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Externe Spiel-ID der API (z.B. football-data.org match id).',
+      ],
+      'published' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE,
+        'not null' => TRUE, 'default' => 1,
+      ],
+      'uid'     => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['game_id'],
+    'indexes' => [
+      'tournament_date' => ['tournament_id', 'game_date'],
+      'published'       => ['published'],
+      'api_id'          => ['api_id'],
+    ],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Tipps
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_tipps'] = [
+    'description' => 'Tipps der Teilnehmer pro Spiel.',
+    'fields' => [
+      'tipp_id' => [
+        'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'tipper_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'game_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'team1_tipp' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => FALSE,
+      ],
+      'team2_tipp' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => FALSE,
+      ],
+      'winner_team_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Tipp auf Aufsteiger in KO-Runden.',
+      ],
+      'uid'     => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['tipp_id'],
+    'unique keys' => [
+      'tipper_game' => ['tipper_id', 'game_id'],
+    ],
+    'indexes' => [
+      'tipper_id' => ['tipper_id'],
+      'game_id'   => ['game_id'],
+    ],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Tippergruppen
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_tipper_groups'] = [
+    'description' => 'Wettgemeinschaften.',
+    'fields' => [
+      'tipper_grp_id' => [
+        'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'tipper_grp_name' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => TRUE,
+      ],
+      'tipper_admin_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+        'description' => 'Drupal UID des Gruppen-Admins.',
+      ],
+      'uid'     => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['tipper_grp_id'],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Tipper (Teilnehmer)
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_tippers'] = [
+    'description' => 'Verknüpfung von Drupal-Usern mit Tippergruppen.',
+    'fields' => [
+      'tipper_id' => [
+        'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'uid' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+        'description' => 'Drupal User ID.',
+      ],
+      'tipper_name' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => FALSE,
+        'description' => 'Anzeigename im Tippspiel (kann vom Usernamen abweichen).',
+      ],
+      'tipper_grp_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+      ],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['tipper_id'],
+    'unique keys' => [],
+    'indexes' => [
+      'uid_group'     => ['uid', 'tipper_grp_id'],
+      'uid'           => ['uid'],
+      'tipper_grp_id' => ['tipper_grp_id'],
+    ],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Turnier-Teilnehmer (Many-to-Many + Zahlungsstatus)
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_tournament_tippers'] = [
+    'description' => 'Verknüpft Tipper mit Turnieren und speichert den Zahlungsstatus.',
+    'fields' => [
+      'tournament_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'tipper_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'tipper_has_paid' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE,
+        'not null' => TRUE, 'default' => 0,
+        'description' => '1 = Einsatz bezahlt.',
+      ],
+      'payment_note' => [
+        'type' => 'varchar', 'length' => 255, 'not null' => FALSE,
+        'description' => 'Optionale Admin-Notiz zur Zahlung.',
+      ],
+      'confirmed_by_uid' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Admin-UID der die Zahlung bestätigt hat.',
+      ],
+      'confirmed_date' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Bestätigungszeitpunkt (Unix timestamp).',
+      ],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['tournament_id', 'tipper_id'],
+    'indexes' => [
+      'tipper_id'       => ['tipper_id'],
+      'tipper_has_paid' => ['tournament_id', 'tipper_has_paid'],
+    ],
+  ];
+
+  $schema['soccerbet_shoutbox'] = [
+    'description' => 'Shoutbox-Nachrichten der Tipper.',
+    'fields' => [
+      'shout_id' => [
+        'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'uid' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0,
+        'description' => 'Drupal User ID.',
+      ],
+      'tipper_name' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => '',
+        'description' => 'Anzeigename des Tippers.',
+      ],
+      'message' => [
+        'type' => 'varchar', 'length' => 500, 'not null' => TRUE, 'default' => '',
+        'description' => 'Nachricht (max. 500 Zeichen).',
+      ],
+      'tournament_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Zugehöriges Turnier (optional).',
+      ],
+      'created' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0,
+      ],
+    ],
+    'primary key' => ['shout_id'],
+    'indexes' => [
+      'tournament' => ['tournament_id'],
+      'created'    => ['created'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function soccerbet_install(): void {
+  // Standardkonfiguration setzen.
+  \Drupal::configFactory()
+    ->getEditable('soccerbet.settings')
+    ->set('default_tournament', 0)
+    ->set('points_exact', 3)
+    ->set('points_tendency', 1)
+    ->save();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function soccerbet_uninstall(): void {
+  \Drupal::configFactory()->getEditable('soccerbet.settings')->delete();
+}
+
+/**
+ * Update 8001: OpenLigaDB-Felder zur Tournament-Tabelle hinzufügen.
+ */
+function soccerbet_update_8001(): void {
+  $schema = \Drupal::database()->schema();
+
+  if (!$schema->fieldExists('soccerbet_tournament', 'oldb_league')) {
+    $schema->addField('soccerbet_tournament', 'oldb_league', [
+      'type'        => 'varchar',
+      'length'      => 32,
+      'not null'    => FALSE,
+      'description' => 'OpenLigaDB Liga-Kürzel (z.B. bl1, em2024).',
+    ]);
+  }
+
+  if (!$schema->fieldExists('soccerbet_tournament', 'oldb_season')) {
+    $schema->addField('soccerbet_tournament', 'oldb_season', [
+      'type'        => 'varchar',
+      'length'      => 8,
+      'not null'    => FALSE,
+      'description' => 'OpenLigaDB Saison (z.B. 2024).',
+    ]);
+  }
+}
+
+/**
+ * Update 8002: team_flag Spalte auf ISO-Code-Länge reduzieren.
+ */
+function soccerbet_update_8002(): void {
+  $schema = \Drupal::database()->schema();
+  $schema->changeField('soccerbet_teams', 'team_flag', 'team_flag', [
+    'type'        => 'varchar',
+    'length'      => 10,
+    'not null'    => FALSE,
+    'description' => 'ISO 3166-1 Alpha-2 Ländercode (z.B. AT, DE, GB-ENG).',
+  ]);
+}
+
+/**
+ * Update 8003: uid_group von UNIQUE auf normalen Index ändern.
+ *
+ * D6 hatte Tipper ohne Drupal-Account (uid=0), mehrere davon können in
+ * derselben Gruppe sein. Der Unique-Constraint wird daher entfernt.
+ */
+function soccerbet_update_8003(): void {
+  $db     = \Drupal::database();
+  $schema = $db->schema();
+
+  // Unique-Index entfernen falls vorhanden
+  try {
+    $db->query('ALTER TABLE {soccerbet_tippers} DROP INDEX uid_group');
+  }
+  catch (\Exception) {
+    // Index existiert nicht oder hat anderen Namen – ignorieren
+  }
+
+  // Normalen Index anlegen falls noch nicht vorhanden
+  if (!$schema->indexExists('soccerbet_tippers', 'uid_group')) {
+    $schema->addIndex('soccerbet_tippers', 'uid_group', ['uid', 'tipper_grp_id'], [
+      'fields' => [
+        'uid'           => ['type' => 'int', 'unsigned' => TRUE],
+        'tipper_grp_id' => ['type' => 'int', 'unsigned' => TRUE],
+      ],
+    ]);
+  }
+}
+
+/**
+ * Update 8004: Shoutbox-Tabelle anlegen.
+ */
+function soccerbet_update_8004(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('soccerbet_shoutbox')) {
+    $schema->createTable('soccerbet_shoutbox', [
+      'description' => 'Shoutbox-Nachrichten der Tipper.',
+      'fields' => [
+        'shout_id' => [
+          'type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE,
+        ],
+        'uid' => [
+          'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0,
+          'description' => 'Drupal User ID.',
+        ],
+        'tipper_name' => [
+          'type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => '',
+          'description' => 'Anzeigename des Tippers.',
+        ],
+        'message' => [
+          'type' => 'varchar', 'length' => 500, 'not null' => TRUE, 'default' => '',
+          'description' => 'Nachricht.',
+        ],
+        'tournament_id' => [
+          'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+          'description' => 'Zugehöriges Turnier (optional).',
+        ],
+        'created' => [
+          'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0,
+        ],
+      ],
+      'primary key' => ['shout_id'],
+      'indexes' => [
+        'tournament' => ['tournament_id'],
+        'created'    => ['created'],
+      ],
+    ]);
+  }
+}
+
+/**
+ * Update 8005: Sieger-Felder zur Tournament-Tabelle hinzufügen.
+ */
+function soccerbet_update_8005(): void {
+  $schema = \Drupal::database()->schema();
+  $fields = [
+    'winner_tipper_id' => [
+      'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+      'description' => 'Tipper-ID des Turniersiegers (1. Platz).',
+    ],
+    'second_tipper_id' => [
+      'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+      'description' => 'Tipper-ID des 2. Platzes.',
+    ],
+    'third_tipper_id' => [
+      'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
+      'description' => 'Tipper-ID des 3. Platzes.',
+    ],
+  ];
+  foreach ($fields as $name => $spec) {
+    if (!$schema->fieldExists('soccerbet_tournament', $name)) {
+      $schema->addField('soccerbet_tournament', $name, $spec);
+    }
+  }
+}
+
+/**
+ * Update 8006: N:M-Tabelle tournament_groups anlegen und bestehende
+ * tipper_grp_id-Zuordnungen aus soccerbet_tournament migrieren.
+ */
+function soccerbet_update_8006(): void {
+  $db     = \Drupal::database();
+  $schema = $db->schema();
+
+  if (!$schema->tableExists('soccerbet_tournament_groups')) {
+    $schema->createTable('soccerbet_tournament_groups', [
+      'description' => 'N:M-Verknüpfung zwischen Turnieren und Tippergruppen.',
+      'fields' => [
+        'tournament_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+        'tipper_grp_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+      ],
+      'primary key' => ['tournament_id', 'tipper_grp_id'],
+      'indexes' => ['tipper_grp' => ['tipper_grp_id']],
+    ]);
+  }
+
+  // Bestehende Zuordnungen aus tipper_grp_id-Spalte übernehmen
+  $tournaments = $db->select('soccerbet_tournament', 't')
+    ->fields('t', ['tournament_id', 'tipper_grp_id'])
+    ->condition('tipper_grp_id', 0, '>')
+    ->execute()->fetchAll();
+
+  foreach ($tournaments as $t) {
+    $db->merge('soccerbet_tournament_groups')
+      ->keys(['tournament_id' => $t->tournament_id, 'tipper_grp_id' => $t->tipper_grp_id])
+      ->execute();
+  }
+}
+
+/**
+ * Update 8007: api_id Spalte zu soccerbet_games hinzufügen.
+ */
+function soccerbet_update_8007(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->fieldExists('soccerbet_games', 'api_id')) {
+    $schema->addField('soccerbet_games', 'api_id', [
+      'type'        => 'int',
+      'unsigned'    => TRUE,
+      'not null'    => FALSE,
+      'description' => 'Externe Spiel-ID der API (z.B. football-data.org match id).',
+    ]);
+    $schema->addIndex('soccerbet_games', 'api_id', ['api_id'], [
+      'fields' => ['api_id' => ['type' => 'int', 'unsigned' => TRUE]],
+    ]);
+  }
+}

@@ -1,0 +1,107 @@
+{#
+/**
+ * @file
+ * Rangliste eines Turniers.
+ *
+ * Variablen:
+ * - rows: Array mit Tipper-Einträgen (rank, name, paid, ergebnisse, tendenzen, total, diff)
+ * - tournament: Turnier-Objekt
+ * - played_games: Anzahl bereits gespielter Spiele
+ */
+#}
+<div class="soccerbet-standings">
+
+  <h2 class="soccerbet-standings__title">
+    {{ 'Rangliste'|t }}
+    {% if tournament %}
+      – {{ tournament.tournament_desc }}
+    {% endif %}
+  </h2>
+
+  {% if played_games == 0 %}
+    <p class="soccerbet-standings__empty">
+      {{ 'Noch keine Spiele gespielt oder keine Tipps abgegeben.'|t }}
+    </p>
+  {% elseif rows is empty %}
+    <p class="soccerbet-standings__empty">
+      {{ 'Keine Teilnehmer in diesem Turnier.'|t }}
+    </p>
+  {% else %}
+    <table class="soccerbet-standings__table">
+      <thead>
+        <tr>
+          <th class="col-rank">{{ 'Rang'|t }}</th>
+          <th class="col-name">{{ 'Name'|t }}</th>
+          <th class="col-exact">{{ 'Richtige Ergebnisse'|t }}</th>
+          <th class="col-tend">{{ 'Richtige Tendenzen'|t }}</th>
+          <th class="col-total">{{ 'Punkte'|t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in rows %}
+          <tr class="soccerbet-standings__row
+            {% if row.diff > 0 %} row--up
+            {% elseif row.diff < 0 %} row--down
+            {% else %} row--equal{% endif %}">
+
+            <td class="col-rank">
+              {{ row.rank }}
+              {% if row.diff != 0 and row.rank_before != 0 %}
+                <span class="rank-diff rank-diff--{{ row.diff > 0 ? 'up' : 'down' }}">
+                  ({{ row.diff > 0 ? '+' : '' }}{{ row.diff }})
+                </span>
+              {% endif %}
+            </td>
+
+            <td class="col-name">
+              <a href="{{ path('soccerbet.standings_tipper', {tournament_id: tournament.tournament_id, tipper_id: row.tipper_id}) }}">
+                {{- row.name -}}
+              </a>
+              {% if row.stars > 0 %}
+                <span class="soccerbet-stars" title="{{ row.stars ~ ' × Turniersieger'|t }}">
+                  {% for i in 1..row.stars %}★{% endfor %}
+                </span>
+              {% endif %}
+              {% if not row.paid %}
+                <span class="soccerbet-badge soccerbet-badge--unpaid">
+                  {{ 'Einsatz offen'|t }}
+                </span>
+              {% endif %}
+            </td>
+
+            <td class="col-exact">{{ row.ergebnisse }}</td>
+            <td class="col-tend">{{ row.tendenzen }}</td>
+            <td class="col-total"><strong>{{ row.total }}</strong></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {# Steps-Navigation (bei historischer Rückschau) #}
+    {% if step_mode is defined and step_mode %}
+      <nav class="soccerbet-steps" aria-label="{{ 'Spielrunde wählen'|t }}">
+        {% if step_limit > 1 %}
+          <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: step_limit - 1}) }}"
+             class="soccerbet-steps__btn">← {{ 'Vorherige Runde'|t }}</a>
+        {% endif %}
+        <span class="soccerbet-steps__info">
+          {{ 'Runde @current von @max'|t({'@current': step_limit, '@max': max_games}) }}
+        </span>
+        {% if step_limit < max_games %}
+          <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: step_limit + 1}) }}"
+             class="soccerbet-steps__btn">{{ 'Nächste Runde'|t }} →</a>
+        {% endif %}
+      </nav>
+    {% else %}
+      {# Link zur Steps-Navigation #}
+      {% if played_games > 1 %}
+        <div class="soccerbet-standings__links">
+          <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: played_games}) }}">
+            {{ 'Ranglisten-Verlauf anzeigen'|t }}
+          </a>
+        </div>
+      {% endif %}
+    {% endif %}
+  {% endif %}
+
+</div>

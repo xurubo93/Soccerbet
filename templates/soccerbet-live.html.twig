@@ -1,0 +1,123 @@
+{#
+/**
+ * @file
+ * Live-Rangliste.
+ */
+#}
+{% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
+
+<div class="soccerbet-live" id="soccerbet-live-root"
+     data-tournament-id="{{ tournament_id }}"
+     data-refresh-url="{{ path('soccerbet.live.json', {tournament_id: tournament_id}) }}">
+
+  <div class="soccerbet-live__header">
+    <h2 class="soccerbet-live__title">
+      {% if is_live %}<span class="soccerbet-live__dot" aria-label="{{ 'Live'|t }}"></span>{% endif %}
+      {{ 'Live-Rangliste'|t }}{% if tournament %} – {{ tournament.tournament_desc }}{% endif %}
+    </h2>
+    <button class="soccerbet-live__refresh button button--small" type="button">
+      ↻ {{ 'Aktualisieren'|t }}
+    </button>
+  </div>
+
+  {# Scoreboard #}
+  <div id="soccerbet-live-games">
+    {% if live_games is empty %}
+      <p class="soccerbet-live__no-games">{{ 'Derzeit laufen keine Spiele.'|t }}</p>
+    {% else %}
+      <div class="soccerbet-live__scoreboard">
+        {% for game in live_games %}
+          <div class="soccerbet-live__match" data-game-id="{{ game.game_id }}">
+            <div class="soccerbet-live__match-team soccerbet-live__match-team--home">
+              {{ flag_helper.flag(game.team1_flag, game.team1_name, 36, 24) }}
+              <span>{{ game.team1_name }}</span>
+            </div>
+            <div class="soccerbet-live__match-score">
+              {% if game.score1 is not null %}
+                <strong>{{ game.score1 }} : {{ game.score2 }}</strong>
+              {% else %}
+                <span class="soccerbet-live__match-score--pending">– : –</span>
+              {% endif %}
+            </div>
+            <div class="soccerbet-live__match-team soccerbet-live__match-team--away">
+              <span>{{ game.team2_name }}</span>
+              {{ flag_helper.flag(game.team2_flag, game.team2_name, 36, 24) }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  {# Rangliste #}
+  <div id="soccerbet-live-ranking">
+    {% if ranking is empty %}
+      <p class="soccerbet-live__empty">{{ 'Keine Teilnehmer.'|t }}</p>
+    {% else %}
+      <div class="soccerbet-live__table-wrap"><table class="soccerbet-live__table">
+        <thead>
+          <tr>
+            <th class="col-rank">{{ 'Rang'|t }}</th>
+            <th class="col-name">{{ 'Name'|t }}</th>
+            {% for game in live_games %}
+              <th class="col-tipp" title="{{ game.team1_name }} vs {{ game.team2_name }}">
+                {{ game.team1_name|slice(0,3)|upper }} : {{ game.team2_name|slice(0,3)|upper }}
+              </th>
+            {% endfor %}
+            <th class="col-total">{{ 'Punkte'|t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in ranking %}
+            <tr class="soccerbet-live__row">
+
+              {# Rang mit Veränderung #}
+              <td class="col-rank">
+                {{ row.rank }}
+                {% if row.rank_diff > 0 %}
+                  <span class="rank-diff rank-diff--up">(+{{ row.rank_diff }})</span>
+                {% elseif row.rank_diff < 0 %}
+                  <span class="rank-diff rank-diff--down">({{ row.rank_diff }})</span>
+                {% endif %}
+              </td>
+
+              <td class="col-name">
+                <a href="{{ row.detail_url }}">{{ row.name }}</a>
+                {% if row.stars > 0 %}
+                  <span class="soccerbet-stars" title="{{ row.stars ~ ' × Turniersieger'|t }}">
+                    {% for i in 1..row.stars %}★{% endfor %}
+                  </span>
+                {% endif %}
+              </td>
+
+              {# Tipp-Zellen: Tipp oben, Punkte in Klammern darunter #}
+              {% for game in live_games %}
+                {% set gid = game.game_id %}
+                {% set tipp = row.live_tipps[gid] ?? {tipp: '—', status: 'none', points: 0} %}
+                <td class="col-tipp">
+                  <span class="soccerbet-live__tipp soccerbet-live__tipp--{{ tipp.status }}">
+                    <span class="soccerbet-live__tipp-score">{{ tipp.tipp }}</span>
+                    {% if tipp.status in ['exact', 'tendency', 'wrong'] %}
+                      <span class="soccerbet-live__tipp-pts">({{ tipp.points }})</span>
+                    {% endif %}
+                  </span>
+                </td>
+              {% endfor %}
+
+              <td class="col-total"><strong>{{ row.total }}</strong></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table></div>
+
+      <div class="soccerbet-live__legend">
+        <span class="soccerbet-live__tipp soccerbet-live__tipp--exact">2:1<br><small>(3)</small></span> {{ 'Richtiges Ergebnis'|t }}
+        <span class="soccerbet-live__tipp soccerbet-live__tipp--tendency">1:0<br><small>(1)</small></span> {{ 'Richtige Tendenz'|t }}
+        <span class="soccerbet-live__tipp soccerbet-live__tipp--wrong">0:2<br><small>(0)</small></span> {{ 'Falsch'|t }}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="soccerbet-live__updated" id="soccerbet-live-updated"></div>
+
+</div>

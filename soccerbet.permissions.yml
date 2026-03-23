@@ -1,0 +1,24 @@
+access soccerbet content:
+  title: 'Tippspiel-Inhalte anzeigen'
+  description: 'Ranglisten, Spielpläne und eigene Tipps einsehen.'
+  restrict access: false
+
+place soccerbet bets:
+  title: 'Tipps abgeben'
+  description: 'Eigene Tipps für Spiele eingeben und bearbeiten.'
+  restrict access: false
+
+administer soccerbet:
+  title: 'Tippspiel verwalten'
+  description: 'Turniere, Teams, Spiele und Teilnehmer administrieren.'
+  restrict access: true
+
+edit soccerbet scores:
+  title: 'Spielergebnisse eintragen'
+  description: 'Ergebnisse nach Spielende eintragen und bearbeiten.'
+  restrict access: true
+
+manage soccerbet payments:
+  title: 'Zahlungen verwalten'
+  description: 'Einsätze als bezahlt markieren und Notizen hinterlegen.'
+  restrict access: true

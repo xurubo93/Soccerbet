@@ -1,0 +1,482 @@
+/* ==========================================================================
+   Soccer Bet 2.0 – Vollständige Styles
+   ========================================================================== */
+
+:root {
+  --sb-color-exact:     #d4edda;
+  --sb-color-tendency:  #fff3cd;
+  --sb-color-wrong:     #f8f8f8;
+  --sb-color-no-tipp:   #fdf0f0;
+  --sb-color-qualifier: #e8f4fd;
+  --sb-border:          #dee2e6;
+  --sb-text-muted:      #6c757d;
+  --sb-radius:          4px;
+}
+
+/* --- Rangliste ---------------------------------------------------------- */
+.soccerbet-standings__table { width:100%; border-collapse:collapse; font-size:.95rem; }
+.soccerbet-standings__table th,
+.soccerbet-standings__table td { padding:.55rem .75rem; text-align:left; border-bottom:1px solid var(--sb-border); }
+.soccerbet-standings__table thead th { background:#f8f9fa; font-weight:600; font-size:.85rem; text-transform:uppercase; letter-spacing:.03em; color:var(--sb-text-muted); }
+.soccerbet-standings__table tbody tr:hover { background:#f8f9fa; }
+.col-rank,.col-exact,.col-tend,.col-total { text-align:center; }
+.col-rank { width:60px; } .col-exact,.col-tend { width:90px; } .col-total { width:70px; font-size:1.05em; }
+.row--up   td:first-child::before { content:'▲ '; color:#28a745; font-size:.7em; }
+.row--down td:first-child::before { content:'▼ '; color:#dc3545; font-size:.7em; }
+.rank-diff { font-size:.78em; margin-left:3px; }
+.rank-diff--up { color:#28a745; } .rank-diff--down { color:#dc3545; }
+.soccerbet-badge { display:inline-block; font-size:.7em; padding:2px 7px; border-radius:3px; margin-left:6px; vertical-align:middle; font-weight:500; }
+.soccerbet-badge--unpaid { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
+.soccerbet-standings__links { margin-top:1rem; font-size:.9em; }
+.soccerbet-steps { display:flex; align-items:center; gap:1rem; margin-top:1.5rem; padding:.75rem 1rem; background:#f8f9fa; border:1px solid var(--sb-border); border-radius:var(--sb-radius); }
+.soccerbet-steps__btn { padding:.4rem 1rem; background:#0071b8; color:#fff; border-radius:var(--sb-radius); text-decoration:none; font-size:.9em; white-space:nowrap; }
+.soccerbet-steps__btn:hover { background:#005a93; }
+.soccerbet-steps__info { flex:1; text-align:center; font-size:.9em; color:var(--sb-text-muted); }
+
+/* --- Tipp-Formular ------------------------------------------------------ */
+.soccerbet-game { padding:.75rem .5rem; border-bottom:1px solid var(--sb-border); }
+.soccerbet-game--locked { opacity:.65; background:#fafafa; }
+.soccerbet-game__meta { font-size:.8em; color:var(--sb-text-muted); margin-bottom:.6rem; text-align:center; }
+.soccerbet-game__result { font-weight:600; color:#28a745; }
+.soccerbet-game__locked-info { font-size:.8em; color:#dc3545; margin-top:.5rem; text-align:center; }
+
+/* Matchup: drei Spalten – Team1 | : | Team2 */
+.soccerbet-game__matchup {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Teamkarte */
+.soccerbet-game__team-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+  min-width: 90px;
+  flex: 1;
+  max-width: 160px;
+}
+.soccerbet-game__flag { line-height: 0; }
+.soccerbet-game__flag .soccerbet-flag { width: 48px; height: auto; border-radius: 3px; box-shadow: 0 1px 3px rgba(0,0,0,.18); }
+.soccerbet-game__team-name { font-weight: 600; font-size: .9em; text-align: center; }
+
+/* Trennzeichen */
+.soccerbet-game__vs { font-weight: 700; font-size: 1.4em; color: var(--sb-text-muted); flex-shrink: 0; }
+
+/* Tipp-Eingabe */
+.soccerbet-tipp-input { width: 56px !important; text-align: center; padding: 6px !important; font-size: 1.15em !important; border: 2px solid var(--sb-border) !important; border-radius: var(--sb-radius) !important; }
+.soccerbet-tipp-input:focus { border-color: #0071b8 !important; outline: none; }
+.soccerbet-winner-select { font-size:.85em; margin-left:auto; }
+.soccerbet-submit { margin-top:1.5rem !important; padding:.6rem 2rem !important; font-size:1rem !important; }
+
+/* --- Tipper-Detail ------------------------------------------------------ */
+.soccerbet-tipper-detail__name { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+.soccerbet-tipper-detail__summary { font-size:1rem; color:var(--sb-text-muted); margin-bottom:1.5rem; }
+.summary-separator { margin:0 .5rem; }
+.soccerbet-tipper-detail__summary strong { color:#212529; font-size:1.15em; }
+.soccerbet-tipper-detail__table { width:100%; border-collapse:collapse; font-size:.9rem; }
+.soccerbet-tipper-detail__table th,
+.soccerbet-tipper-detail__table td { padding:.45rem .6rem; text-align:center; border-bottom:1px solid var(--sb-border); }
+.soccerbet-tipper-detail__table .col-game { text-align:left; }
+.soccerbet-tipper-detail__table thead th { font-size:.8rem; color:var(--sb-text-muted); text-transform:uppercase; }
+.row--exact    { background:var(--sb-color-exact); }
+.row--tendency { background:var(--sb-color-tendency); }
+.row--wrong    { background:var(--sb-color-wrong); }
+.row--no-tipp  { background:var(--sb-color-no-tipp); }
+.row--total    { background:#f8f9fa; font-weight:600; }
+.tipp--missing { color:#aaa; font-style:italic; font-size:.85em; }
+.soccerbet-tipper-detail__back { margin-top:1.5rem; }
+.soccerbet-tipper-detail__back a { color:#0071b8; text-decoration:none; }
+.soccerbet-tipper-detail__back a:hover { text-decoration:underline; }
+
+/* --- Gruppentabellen ---------------------------------------------------- */
+.soccerbet-tables__grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); gap:2rem; }
+.soccerbet-tables__group-title { font-size:1rem; font-weight:600; margin-bottom:.5rem; padding-bottom:.25rem; border-bottom:2px solid #0071b8; color:#0071b8; }
+.soccerbet-tables__table { width:100%; border-collapse:collapse; font-size:.88rem; }
+.soccerbet-tables__table th,
+.soccerbet-tables__table td { padding:.4rem .5rem; text-align:center; border-bottom:1px solid var(--sb-border); }
+.soccerbet-tables__table .col-team { text-align:left; }
+.row--qualifier { background:var(--sb-color-qualifier); }
+.diff--pos { color:#28a745; } .diff--neg { color:#dc3545; }
+.soccerbet-team-flag { vertical-align:middle; margin-right:5px; border:1px solid #ddd; }
+
+/* --- Tipps-Übersicht Admin ---------------------------------------------- */
+.soccerbet-tipps-overview { font-size:.85rem; white-space:nowrap; }
+.soccerbet-tipps-overview th { max-width:100px; overflow:hidden; text-overflow:ellipsis; }
+
+/* --- Responsive --------------------------------------------------------- */
+@media (max-width:640px) {
+  .soccerbet-standings__table .col-exact,
+  .soccerbet-standings__table .col-tend { display:none; }
+  .soccerbet-tables__grid { grid-template-columns:1fr; }
+  .soccerbet-game__team-card { min-width: 70px; }
+  .soccerbet-game__flag .soccerbet-flag { width: 36px; }
+  .soccerbet-game__team-name { font-size: .8em; }
+  .soccerbet-tipper-detail__table .col-base,
+  .soccerbet-tipper-detail__table .col-bonus,
+  .soccerbet-tipper-detail__table .col-special { display:none; }
+}
+
+/* --- Score-Update Admin ------------------------------------------ */
+.soccerbet-oldb-tournament {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: var(--sb-color-qualifier, #e8f4fd);
+  border-radius: var(--sb-radius);
+}
+.soccerbet-update-status {
+  font-size: 0.82em;
+  color: var(--sb-text-muted);
+  margin-top: 4px;
+}
+
+/* --- Turnier-Info-Banner in Formularen ---------------------------------- */
+.soccerbet-form-tournament-info {
+  display: inline-block;
+  background: var(--sb-color-qualifier, #e8f4fd);
+  border: 1px solid #b5d4f4;
+  border-radius: var(--sb-radius);
+  padding: 6px 14px;
+  margin-bottom: 1.25rem;
+  font-size: 0.92em;
+  color: #185FA5;
+}
+
+/* --- Flaggen ------------------------------------------------------------ */
+.soccerbet-flag {
+  vertical-align: middle;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  margin-right: 6px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.08);
+}
+.soccerbet-flag-preview {
+  margin: 6px 0 12px;
+  font-size: 0.9em;
+  color: var(--sb-text-muted);
+}
+.soccerbet-flag-preview__label {
+  margin-right: 6px;
+}
+
+/* --- Tippergruppen-Formular: Tipper-Zeilen ----------------------------- */
+.soccerbet-tipper-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--sb-border);
+}
+.soccerbet-tipper-row:last-child {
+  border-bottom: none;
+}
+.soccerbet-tipper-row .form-item {
+  margin: 0;
+}
+
+/* --- Tippergruppen-Formular: Tipper-Tabelle ----------------------------- */
+.soccerbet-tipper-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+.soccerbet-tipper-table th,
+.soccerbet-tipper-table td {
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--sb-border);
+  vertical-align: middle;
+}
+.soccerbet-tipper-table th {
+  background: var(--sb-color-qualifier);
+  font-weight: 600;
+  text-align: left;
+}
+.soccerbet-tipper-table .form-item {
+  margin: 0;
+}
+
+/* --- Tippabgabe: Mobiler Scroll-Link ----------------------------------- */
+.soccerbet-mobile-jump {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--sb-color-qualifier, #e8f4fd);
+  padding: 8px 16px;
+  border-bottom: 1px solid #b5d4f4;
+  text-align: center;
+}
+.soccerbet-mobile-jump__link {
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+/* --- Tippabgabe: Gespielte Spiele (zugeklappt) -------------------------- */
+.soccerbet-played-games > summary {
+  color: var(--sb-text-muted, #666);
+  font-size: 0.9em;
+}
+
+/* --- Shoutbox ----------------------------------------------------------- */
+.soccerbet-shoutbox {
+  border: 1px solid var(--sb-border);
+  border-radius: var(--sb-radius);
+  overflow: hidden;
+}
+.soccerbet-shoutbox__title {
+  background: var(--sb-color-qualifier);
+  margin: 0;
+  padding: 8px 14px;
+  font-size: 1em;
+  border-bottom: 1px solid var(--sb-border);
+}
+.soccerbet-shoutbox-form {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--sb-border);
+  background: #fafafa;
+}
+.soccerbet-shoutbox-form .form-item {
+  margin: 0 0 6px;
+}
+.soccerbet-shoutbox__messages {
+  max-height: 400px;
+  overflow-y: auto;
+}
+.soccerbet-shoutbox__message {
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--sb-border);
+}
+.soccerbet-shoutbox__message:last-child {
+  border-bottom: none;
+}
+.soccerbet-shoutbox__meta {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 0.82em;
+  margin-bottom: 3px;
+}
+.soccerbet-shoutbox__author {
+  font-weight: 700;
+  color: var(--sb-color-primary, #185FA5);
+}
+.soccerbet-shoutbox__time {
+  color: var(--sb-text-muted, #888);
+}
+.soccerbet-shoutbox__delete {
+  margin-left: auto;
+  color: #c00;
+  text-decoration: none;
+  font-size: 0.9em;
+  opacity: 0.6;
+}
+.soccerbet-shoutbox__delete:hover { opacity: 1; }
+.soccerbet-shoutbox__text {
+  font-size: 0.92em;
+  word-break: break-word;
+}
+.soccerbet-shoutbox__empty {
+  padding: 14px;
+  color: var(--sb-text-muted, #888);
+  font-style: italic;
+}
+
+/* --- Sieger-Sterne ----------------------------------------------------- */
+.soccerbet-stars {
+  color: #f0a500;
+  font-size: 0.85em;
+  letter-spacing: -1px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+
+/* ======================================================================
+   Live-Rangliste
+   ====================================================================== */
+
+/* Pulsierender Dot im Titel */
+.soccerbet-live__dot {
+  display: inline-block;
+  width: 12px; height: 12px;
+  background: #e00;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: soccerbet-pulse 1.4s ease-in-out infinite;
+}
+@keyframes soccerbet-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .4; transform: scale(.7); }
+}
+
+/* Pulsierender Dot im Menü */
+.soccerbet-menu-live-dot {
+  display: inline-block;
+  width: 9px; height: 9px;
+  background: #e00;
+  border-radius: 50%;
+  margin-left: 5px;
+  vertical-align: middle;
+  animation: soccerbet-pulse 1.4s ease-in-out infinite;
+}
+
+/* Header */
+.soccerbet-live__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.soccerbet-live__title { margin: 0; font-size: 1.3em; }
+
+/* ----------------------------------------------------------------
+   Scoreboard: Mobile = 1 Spalte (full-width), Desktop = nebeneinander
+   ---------------------------------------------------------------- */
+.soccerbet-live__scoreboard {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-bottom: 1.5rem;
+}
+@media (min-width: 768px) {
+  .soccerbet-live__scoreboard {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .soccerbet-live__match {
+    flex: 1 1 300px;
+    max-width: 480px;
+  }
+}
+.soccerbet-live__match {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  background: var(--sb-color-qualifier, #e8f4fd);
+  border: 1px solid var(--sb-border);
+  border-radius: var(--sb-radius);
+  padding: .75rem 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+.soccerbet-live__match-team {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+}
+.soccerbet-live__match-team span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.soccerbet-live__match-team--away { justify-content: flex-end; text-align: right; }
+.soccerbet-live__match-score {
+  font-size: 1.4em;
+  font-weight: 700;
+  min-width: 70px;
+  text-align: center;
+  color: #c00;
+  flex-shrink: 0;
+}
+.soccerbet-live__match-score--pending { color: var(--sb-text-muted); }
+
+/* ----------------------------------------------------------------
+   Ranglisten-Tabelle
+   ---------------------------------------------------------------- */
+.soccerbet-live__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .9rem;
+}
+.soccerbet-live__table th,
+.soccerbet-live__table td {
+  padding: .4rem .5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--sb-border);
+}
+.soccerbet-live__table .col-name { text-align: left; }
+.soccerbet-live__table thead th {
+  font-size: .78rem;
+  color: var(--sb-text-muted);
+  text-transform: uppercase;
+}
+
+/* Rang-Veränderung */
+.rank-diff--up   { color: #28a745; font-size: .75em; margin-left: 3px; }
+.rank-diff--down { color: #dc3545; font-size: .75em; margin-left: 3px; }
+
+/* ----------------------------------------------------------------
+   Tipp-Zelle: Tipp oben, Punkte in Klammern darunter
+   ---------------------------------------------------------------- */
+.soccerbet-live__tipp {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  padding: 3px 7px;
+  border-radius: 4px;
+  line-height: 1.3;
+}
+.soccerbet-live__tipp-score {
+  font-weight: 700;
+  font-size: .9em;
+}
+.soccerbet-live__tipp-pts {
+  font-size: .75em;
+  font-weight: 600;
+  opacity: .85;
+}
+
+/* Status-Farben */
+.soccerbet-live__tipp--exact    { background: #d4edda; color: #155724; }
+.soccerbet-live__tipp--tendency { background: #fff3cd; color: #856404; }
+.soccerbet-live__tipp--wrong    { background: #e9ecef; color: #6c757d; }
+.soccerbet-live__tipp--none,
+.soccerbet-live__tipp--pending  { color: var(--sb-text-muted); background: transparent; }
+
+/* Legende */
+.soccerbet-live__legend {
+  margin-top: 1rem;
+  font-size: .82em;
+  color: var(--sb-text-muted);
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Aktualisierungszeit */
+.soccerbet-live__updated {
+  margin-top: .5rem;
+  font-size: .8em;
+  color: var(--sb-text-muted);
+  text-align: right;
+}
+
+.soccerbet-live__no-games,
+.soccerbet-live__empty { color: var(--sb-text-muted); font-style: italic; }
+
+/* --- Sticky Submit-Button auf der Tipp-Abgabe-Seite ------------------- */
+.soccerbet-submit-sticky {
+  position: sticky;
+  bottom: 0;
+  z-index: 50;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(6px);
+  padding: 10px 16px;
+  margin: 0 -16px;
+  border-top: 1px solid var(--sb-border);
+  text-align: center;
+}
+.soccerbet-submit-sticky .button--primary {
+  min-width: 200px;
+}

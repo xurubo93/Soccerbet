@@ -1,0 +1,41 @@
+id: soccerbet_tippers
+label: 'Soccerbet: Tipper (Teilnehmer)'
+migration_group: soccerbet
+
+migration_dependencies:
+  required:
+    - soccerbet_tipper_groups
+
+source:
+  plugin: soccerbet_tippers
+  key: migrate
+
+destination:
+  plugin: soccerbet_tippers_destination
+
+process:
+  tipper_id:
+    plugin: get
+    source: tipper_id
+
+  uid:
+    plugin: get
+    source: uid
+
+  tipper_name:
+    plugin: get
+    source: tipper_name
+
+  tipper_grp_id:
+    plugin: migration_lookup
+    migration: soccerbet_tipper_groups
+    source: tipper_grp_id
+    no_stub: true
+
+  created:
+    plugin: get
+    source: created
+
+  changed:
+    plugin: get
+    source: changed

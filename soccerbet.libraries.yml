@@ -1,0 +1,32 @@
+global:
+  version: 2.0.0
+  css:
+    theme:
+      css/soccerbet.css: {}
+  js:
+    js/soccerbet.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+
+admin:
+  version: 2.0.0
+  css:
+    theme:
+      css/soccerbet-admin.css: {}
+  js:
+    js/soccerbet-admin.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
+    - core/drupal.ajax
+
+live:
+  version: VERSION
+  js:
+    js/soccerbet-live.js: { scope: footer }
+  dependencies:
+    - core/drupal
+    - core/once

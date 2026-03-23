@@ -1,0 +1,112 @@
+<?php
+
+/**
+ * @file
+ * Soccer Bet – Fußball-Tippspiel Modul für Drupal 11.
+ */
+
+declare(strict_types=1);
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function soccerbet_help(string $route_name, RouteMatchInterface $route_match): string {
+  return match($route_name) {
+    'help.page.soccerbet' => '<p>' . t('Fußball-Tippspiel: Verwalte Turniere, Teams, Spiele und Teilnehmer-Ranglisten.') . '</p>',
+    default => '',
+  };
+}
+
+/**
+ * Implements hook_theme().
+ */
+function soccerbet_theme(): array {
+  return [
+    'soccerbet_standings' => [
+      'variables' => [
+        'rows'        => [],
+        'tournament'  => NULL,
+        'played_games' => 0,
+      ],
+      'template' => 'soccerbet-standings',
+    ],
+    'soccerbet_place_bets' => [
+      'variables' => [
+        'form'       => NULL,
+        'games'      => [],
+        'tournament' => NULL,
+      ],
+      'template' => 'soccerbet-place-bets',
+    ],
+    'soccerbet_tipper_detail' => [
+      'variables' => [
+        'tipper'     => NULL,
+        'points'     => [],
+        'tournament' => NULL,
+      ],
+      'template' => 'soccerbet-tipper-detail',
+    ],
+    'soccerbet_tables' => [
+      'variables' => [
+        'groups'     => [],
+        'tournament' => NULL,
+      ],
+      'template' => 'soccerbet-tables',
+    ],
+    'soccerbet_live' => [
+      'variables' => [
+        'tournament'    => NULL,
+        'live_games'    => [],
+        'ranking'       => [],
+        'is_live'       => FALSE,
+        'tournament_id' => 0,
+      ],
+      'template' => 'soccerbet-live',
+    ],
+    'soccerbet_shoutbox' => [
+      'variables' => [
+        'messages'      => [],
+        'form'          => NULL,
+        'can_delete'    => FALSE,
+        'tournament_id' => 0,
+      ],
+      'template' => 'soccerbet-shoutbox',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_migrate_import_MIGRATION_ID_finish().
+ *
+ * Nach der Tournament-Migration: aktives Turnier in soccerbet.settings setzen.
+ */
+function soccerbet_migrate_import_soccerbet_tournaments_finish(string $migration_id, array $context): void {
+  // Das aktive Turnier (is_active = 1) als default_tournament konfigurieren
+  $active_id = \Drupal::database()
+    ->select('soccerbet_tournament', 't')
+    ->fields('t', ['tournament_id'])
+    ->condition('t.is_active', 1)
+    ->orderBy('t.tournament_id', 'DESC')
+    ->range(0, 1)
+    ->execute()
+    ->fetchField();
+
+  if ($active_id) {
+    \Drupal::configFactory()
+      ->getEditable('soccerbet.settings')
+      ->set('default_tournament', (int) $active_id)
+      ->save();
+    \Drupal::logger('soccerbet')->info(
+      'Standard-Turnier nach Migration auf ID @id gesetzt.',
+      ['@id' => $active_id]
+    );
+  }
+}
+function soccerbet_page_attachments(array &$attachments): void {
+  $route = \Drupal::routeMatch()->getRouteName();
+  if (str_starts_with($route, 'soccerbet.')) {
+    $attachments['#attached']['library'][] = 'soccerbet/global';
+  }
+}

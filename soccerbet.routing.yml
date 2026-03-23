@@ -1,0 +1,326 @@
+# ============================================================
+# Öffentliche Bereiche
+# ============================================================
+
+soccerbet.standings:
+  path: '/soccerbet/standings/{tournament_id}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\StandingsController::standings'
+    _title: 'Rangliste'
+    tournament_id: 0
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d*'
+
+soccerbet.standings_step:
+  path: '/soccerbet/standings/{tournament_id}/step/{limit}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\StandingsController::standingsStep'
+    _title: 'Rangliste nach Spielrunde'
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d+'
+    limit: '\d+'
+
+soccerbet.standings_tipper:
+  path: '/soccerbet/standings/{tournament_id}/tipper/{tipper_id}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\StandingsController::tipperDetail'
+    _title: 'Tipper-Detail'
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d+'
+    tipper_id: '\d+'
+
+soccerbet.tables:
+  path: '/soccerbet/tables/{tournament_id}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\TablesController::tables'
+    _title: 'Gruppentabellen'
+    tournament_id: 0
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d*'
+
+soccerbet.place_bets:
+  path: '/soccerbet/tipps'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\PlaceBetsForm'
+    _title: 'Tipps abgeben'
+  requirements:
+    _permission: 'place soccerbet bets'
+
+# ============================================================
+# Admin: Übersicht
+# ============================================================
+
+soccerbet.admin:
+  path: '/soccerbet/admin'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\AdminController::overview'
+    _title: 'Tippspiel-Administration'
+  requirements:
+    _permission: 'administer soccerbet'
+
+# ============================================================
+# Admin: Turniere
+# ============================================================
+
+soccerbet.admin.tournament.list:
+  path: '/soccerbet/admin/tournament'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\TournamentController::list'
+    _title: 'Turniere'
+  requirements:
+    _permission: 'administer soccerbet'
+
+soccerbet.admin.tournament.create:
+  path: '/soccerbet/admin/tournament/create'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TournamentForm'
+    _title: 'Turnier erstellen'
+  requirements:
+    _permission: 'administer soccerbet'
+
+soccerbet.admin.tournament.edit:
+  path: '/soccerbet/admin/tournament/{tournament_id}/edit'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TournamentForm'
+    _title: 'Turnier bearbeiten'
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d+'
+
+soccerbet.admin.tournament.delete:
+  path: '/soccerbet/admin/tournament/{tournament_id}/delete'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TournamentDeleteForm'
+    _title: 'Turnier löschen'
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d+'
+
+soccerbet.admin.tournament.members:
+  path: '/soccerbet/admin/tournament/{tournament_id}/members'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TournamentMembersForm'
+    _title: 'Turnier-Teilnehmer verwalten'
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d+'
+
+# ============================================================
+# Admin: Teams
+# ============================================================
+
+soccerbet.admin.teams.list:
+  path: '/soccerbet/admin/teams/{tournament_id}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\TeamController::list'
+    _title: 'Teams'
+    tournament_id: 0
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d*'
+
+soccerbet.admin.teams.create:
+  path: '/soccerbet/admin/teams/{tournament_id}/create'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TeamForm'
+    _title: 'Team erstellen'
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d+'
+
+soccerbet.admin.teams.edit:
+  path: '/soccerbet/admin/teams/{team_id}/edit'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TeamForm'
+    _title: 'Team bearbeiten'
+  requirements:
+    _permission: 'administer soccerbet'
+    team_id: '\d+'
+
+soccerbet.admin.teams.delete:
+  path: '/soccerbet/admin/teams/{team_id}/delete'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TeamDeleteForm'
+    _title: 'Team löschen'
+  requirements:
+    _permission: 'administer soccerbet'
+    team_id: '\d+'
+
+# ============================================================
+# Admin: Spiele
+# ============================================================
+
+soccerbet.admin.games.list:
+  path: '/soccerbet/admin/games/{tournament_id}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\GameController::list'
+    _title: 'Spiele'
+    tournament_id: 0
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d*'
+
+soccerbet.admin.games.create:
+  path: '/soccerbet/admin/games/{tournament_id}/create'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\GameForm'
+    _title: 'Spiel erstellen'
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d+'
+
+soccerbet.admin.games.edit:
+  path: '/soccerbet/admin/games/{game_id}/edit'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\GameForm'
+    _title: 'Spiel bearbeiten'
+  requirements:
+    _permission: 'administer soccerbet'
+    game_id: '\d+'
+
+soccerbet.admin.games.score:
+  path: '/soccerbet/admin/games/{game_id}/score'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\GameScoreForm'
+    _title: 'Ergebnis eintragen'
+  requirements:
+    _permission: 'edit soccerbet scores'
+    game_id: '\d+'
+
+soccerbet.admin.games.delete:
+  path: '/soccerbet/admin/games/{game_id}/delete'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\GameDeleteForm'
+    _title: 'Spiel löschen'
+  requirements:
+    _permission: 'administer soccerbet'
+    game_id: '\d+'
+
+# ============================================================
+# Admin: Tippergruppen
+# ============================================================
+
+soccerbet.admin.tippergroups.list:
+  path: '/soccerbet/admin/tippergroups'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\TipperGroupController::list'
+    _title: 'Tippergruppen'
+  requirements:
+    _permission: 'administer soccerbet'
+
+soccerbet.admin.tippergroups.create:
+  path: '/soccerbet/admin/tippergroups/create'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TipperGroupForm'
+    _title: 'Tippergruppe erstellen'
+  requirements:
+    _permission: 'administer soccerbet'
+
+soccerbet.admin.tippergroups.edit:
+  path: '/soccerbet/admin/tippergroups/{tipper_grp_id}/edit'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TipperGroupForm'
+    _title: 'Tippergruppe bearbeiten'
+  requirements:
+    _permission: 'administer soccerbet'
+    tipper_grp_id: '\d+'
+
+# ============================================================
+# Admin: Zahlungen
+# ============================================================
+
+soccerbet.admin.payments:
+  path: '/soccerbet/admin/payments/{tournament_id}'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\PaymentForm'
+    _title: 'Zahlungen verwalten'
+    tournament_id: 0
+  requirements:
+    _permission: 'manage soccerbet payments'
+    tournament_id: '\d*'
+
+# ============================================================
+# Admin: Tipps
+# ============================================================
+
+soccerbet.admin.tipps.overview:
+  path: '/soccerbet/admin/tipps/{tournament_id}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\TippsController::adminOverview'
+    _title: 'Tipps-Übersicht'
+    tournament_id: 0
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d*'
+
+soccerbet.admin.tipps.edit:
+  path: '/admin/soccerbet/tournament/{tournament_id}/tipper/{tipper_id}/tipps'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\PlaceBetsForm'
+    _title: 'Tipps bearbeiten'
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d+'
+    tipper_id: '\d+'
+
+# ============================================================
+# Einstellungen
+# ============================================================
+
+soccerbet.settings:
+  path: '/admin/config/soccerbet'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\SettingsForm'
+    _title: 'Tippspiel-Einstellungen'
+  requirements:
+    _permission: 'administer soccerbet'
+
+# Score-Update / OpenLigaDB
+soccerbet.admin.score_update:
+  path: '/soccerbet/admin/score-update'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\ScoreUpdateForm'
+    _title: 'Score-Update & OpenLigaDB'
+  requirements:
+    _permission: 'administer soccerbet'
+
+soccerbet.shoutbox.delete:
+  path: '/soccerbet/shoutbox/delete/{shout_id}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\ShoutboxController::delete'
+    _title: 'Nachricht löschen'
+  requirements:
+    _permission: 'administer soccerbet'
+    shout_id: '\d+'
+
+soccerbet.admin.tournament.import:
+  path: '/admin/soccerbet/tournament/{tournament_id}/import'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\OpenLigaDbImportForm'
+    _title: 'OpenLigaDB Import'
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d+'
+
+soccerbet.live:
+  path: '/soccerbet/live/{tournament_id}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\LiveController::live'
+    _title: 'Live-Rangliste'
+    tournament_id: 0
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d*'
+
+soccerbet.live.json:
+  path: '/soccerbet/live/{tournament_id}/json'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\LiveController::liveJson'
+    tournament_id: 0
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d*'

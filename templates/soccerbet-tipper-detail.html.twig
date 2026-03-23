@@ -1,0 +1,101 @@
+{#
+/**
+ * @file
+ * Detail-Ansicht der Tipps und Punkte eines einzelnen Tippers.
+ *
+ * Variablen:
+ * - tipper: Array mit name, basispunkte, bonuspunkte, sonderpunkte,
+ *           totalpergame, tipp, game_desc, game_score, ergebnisse,
+ *           tendenzen, total, tipper_has_paid
+ * - tournament: Turnier-Objekt
+ */
+#}
+<div class="soccerbet-tipper-detail">
+
+  <h2 class="soccerbet-tipper-detail__name">
+    {{ tipper.name }}
+    {% if not tipper.tipper_has_paid %}
+      <span class="soccerbet-badge soccerbet-badge--unpaid">{{ 'Einsatz offen'|t }}</span>
+    {% endif %}
+  </h2>
+
+  <div class="soccerbet-tipper-detail__summary">
+    <span class="summary-item">
+      <strong>{{ tipper.total }}</strong> {{ 'Punkte gesamt'|t }}
+    </span>
+    <span class="summary-separator">·</span>
+    <span class="summary-item">
+      {{ tipper.ergebnisse }} {{ 'richtige Ergebnisse'|t }}
+    </span>
+    <span class="summary-separator">·</span>
+    <span class="summary-item">
+      {{ tipper.tendenzen }} {{ 'richtige Tendenzen'|t }}
+    </span>
+  </div>
+
+  {% if tipper.game_desc is not empty %}
+    <table class="soccerbet-tipper-detail__table">
+      <thead>
+        <tr>
+          <th class="col-game">{{ 'Spiel'|t }}</th>
+          <th class="col-result">{{ 'Ergebnis'|t }}</th>
+          <th class="col-tipp">{{ 'Dein Tipp'|t }}</th>
+          <th class="col-base" title="{{ 'Basispunkte: 3 = richtiges Ergebnis, 1 = richtige Tendenz'|t }}">{{ 'Basis'|t }}</th>
+          <th class="col-bonus" title="{{ 'Bonuspunkte: +1 pro Tendenz-Tipper, +2 pro Falsch-Tipper (bei richtigem Ergebnis); +1 pro Falsch-Tipper (bei richtiger Tendenz)'|t }}">{{ 'Bonus'|t }}</th>
+          <th class="col-special" title="{{ 'Sonderpunkte: richtiger Aufsteiger in KO-Runde = Anzahl Teilnehmer'|t }}">{{ 'Sonder'|t }}</th>
+          <th class="col-total">{{ 'Total'|t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for game_id, game_desc in tipper.game_desc %}
+          {% set base    = tipper.basispunkte[game_id]  ?? 0 %}
+          {% set bonus   = tipper.bonuspunkte[game_id]  ?? 0 %}
+          {% set special = tipper.sonderpunkte[game_id] ?? 0 %}
+          {% set total   = tipper.totalpergame[game_id] ?? 0 %}
+          {% set tipp    = tipper.tipp[game_id]         ?? 'N.A.' %}
+          {% set score   = tipper.game_score[game_id]   ?? '—' %}
+
+          <tr class="
+            {% if base == 3 %}row--exact
+            {% elseif base == 1 %}row--tendency
+            {% elseif tipp == 'N.A.' %}row--no-tipp
+            {% else %}row--wrong{% endif %}">
+            <td class="col-game">{{ game_desc }}</td>
+            <td class="col-result">{{ score }}</td>
+            <td class="col-tipp">
+              {% if tipp == 'N.A.' %}
+                <span class="tipp--missing">{{ 'kein Tipp'|t }}</span>
+              {% else %}
+                {{ tipp }}
+              {% endif %}
+            </td>
+            <td class="col-base">{{ base }}</td>
+            <td class="col-bonus">{{ bonus > 0 ? '+' ~ bonus : '—' }}</td>
+            <td class="col-special">{{ special > 0 ? '+' ~ special : '—' }}</td>
+            <td class="col-total"><strong>{{ total }}</strong></td>
+          </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr class="row--total">
+          <td colspan="3"><strong>{{ 'Gesamt'|t }}</strong></td>
+          <td>{{ tipper.ergebnisse ~ '×3' }}</td>
+          <td></td>
+          <td></td>
+          <td><strong>{{ tipper.total }}</strong></td>
+        </tr>
+      </tfoot>
+    </table>
+  {% else %}
+    <p class="soccerbet-tipper-detail__empty">
+      {{ 'Noch keine Spiele gespielt.'|t }}
+    </p>
+  {% endif %}
+
+  <div class="soccerbet-tipper-detail__back">
+    <a href="{{ path('soccerbet.standings', {tournament_id: tournament.tournament_id}) }}">
+      ← {{ 'Zurück zur Rangliste'|t }}
+    </a>
+  </div>
+
+</div>

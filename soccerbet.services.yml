@@ -1,0 +1,101 @@
+services:
+
+  soccerbet.team_name_translator:
+    class: Drupal\soccerbet\Service\TeamNameTranslator
+    arguments:
+      - '@module_handler'
+      - '@language_manager'
+
+  soccerbet.team_flag_resolver:
+    class: Drupal\soccerbet\Service\TeamFlagResolver
+    arguments:
+      - '@module_handler'
+
+  # ── API-Clients ──────────────────────────────────────────────────────
+  soccerbet.openligadb_client:
+    class: Drupal\soccerbet\Service\OpenLigaDbClient
+    arguments:
+      - '@http_client'
+      - '@cache.default'
+      - '@logger.factory'
+
+  soccerbet.footballdata_client:
+    class: Drupal\soccerbet\Service\FootballDataClient
+    arguments:
+      - '@http_client'
+      - '@cache.default'
+      - '@config.factory'
+      - '@logger.factory'
+
+  soccerbet.api_client_factory:
+    class: Drupal\soccerbet\Service\ApiClientFactory
+    arguments:
+      - '@soccerbet.openligadb_client'
+      - '@soccerbet.footballdata_client'
+      - '@config.factory'
+
+  # ── Import-Services ───────────────────────────────────────────────────
+  soccerbet.api_import:
+    class: Drupal\soccerbet\Service\ApiImportService
+    arguments:
+      - '@database'
+      - '@soccerbet.api_client_factory'
+      - '@soccerbet.team_flag_resolver'
+      - '@soccerbet.team_name_translator'
+      - '@current_user'
+      - '@logger.factory'
+
+  # Legacy-Alias: OpenLigaDB-Only Import (für Rückwärtskompatibilität)
+  soccerbet.oldb_import:
+    class: Drupal\soccerbet\Service\OpenLigaDbImportService
+    arguments:
+      - '@database'
+      - '@soccerbet.openligadb_client'
+      - '@soccerbet.team_flag_resolver'
+      - '@current_user'
+      - '@logger.factory'
+
+  # ── Score-Update ─────────────────────────────────────────────────────
+  soccerbet.score_update:
+    class: Drupal\soccerbet\Service\ScoreUpdateService
+    arguments:
+      - '@database'
+      - '@soccerbet.api_client_factory'
+      - '@config.factory'
+      - '@logger.factory'
+
+  soccerbet.cron_subscriber:
+    class: Drupal\soccerbet\EventSubscriber\SoccerbetCronSubscriber
+    arguments:
+      - '@soccerbet.score_update'
+      - '@config.factory'
+      - '@state'
+      - '@logger.factory'
+    tags:
+      - { name: event_subscriber }
+
+  # ── Sonstige Services ────────────────────────────────────────────────
+  soccerbet.shoutbox:
+    class: Drupal\soccerbet\Service\ShoutboxService
+    arguments:
+      - '@database'
+      - '@current_user'
+
+  soccerbet.scoring:
+    class: Drupal\soccerbet\Service\ScoringService
+    arguments:
+      - '@database'
+      - '@config.factory'
+
+  soccerbet.tournament_manager:
+    class: Drupal\soccerbet\Service\TournamentManager
+    arguments:
+      - '@database'
+      - '@config.factory'
+      - '@current_user'
+
+  soccerbet.tipper_manager:
+    class: Drupal\soccerbet\Service\TipperManager
+    arguments:
+      - '@database'
+      - '@current_user'

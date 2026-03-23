@@ -1,0 +1,82 @@
+id: soccerbet_games
+label: 'Soccerbet: Spiele'
+migration_group: soccerbet
+
+migration_dependencies:
+  required:
+    - soccerbet_tournaments
+    - soccerbet_teams
+
+source:
+  plugin: soccerbet_games
+  key: migrate
+
+destination:
+  plugin: soccerbet_games_destination
+
+process:
+  game_id:
+    plugin: get
+    source: game_id
+
+  tournament_id:
+    plugin: migration_lookup
+    migration: soccerbet_tournaments
+    source: tournament_id
+    no_stub: true
+
+  team_id_1:
+    plugin: migration_lookup
+    migration: soccerbet_teams
+    source: team_id_1
+    no_stub: true
+
+  team_id_2:
+    plugin: migration_lookup
+    migration: soccerbet_teams
+    source: team_id_2
+    no_stub: true
+
+  game_date:
+    plugin: get
+    source: game_date_iso
+
+  game_location:
+    plugin: get
+    source: game_location
+
+  game_stadium:
+    plugin: get
+    source: game_stadium
+
+  phase:
+    plugin: get
+    source: phase
+
+  team1_score:
+    plugin: get
+    source: team1_score
+
+  team2_score:
+    plugin: get
+    source: team2_score
+
+  winner_team_id:
+    plugin: get
+    source: winner_team_id
+
+  published:
+    plugin: get
+    source: published
+
+  uid:
+    plugin: get
+    source: uid
+
+  created:
+    plugin: get
+    source: created
+
+  changed:
+    plugin: get
+    source: changed

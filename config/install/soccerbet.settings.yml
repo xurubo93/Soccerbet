@@ -1,0 +1,9 @@
+default_tournament: 0
+points_exact: 3
+points_tendency: 1
+betting_closes_minutes_before: 0
+show_payment_status_in_standings: true
+allow_tipper_self_register: false
+score_update_enabled: false
+api_provider: openligadb
+footballdata_api_key: ''

@@ -1,0 +1,146 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\soccerbet\Form;
+
+use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Globale Tippspiel-Einstellungen.
+ */
+final class SettingsForm extends ConfigFormBase {
+
+  protected function getEditableConfigNames(): array {
+    return ['soccerbet.settings'];
+  }
+
+  public function getFormId(): string {
+    return 'soccerbet_settings_form';
+  }
+
+  public function buildForm(array $form, FormStateInterface $form_state): array {
+    $config = $this->config('soccerbet.settings');
+
+    $form['scoring'] = [
+      '#type'  => 'fieldset',
+      '#title' => $this->t('Punktevergabe'),
+    ];
+    $form['scoring']['points_exact'] = [
+      '#type'          => 'number',
+      '#title'         => $this->t('Punkte für exaktes Ergebnis'),
+      '#default_value' => $config->get('points_exact'),
+      '#min'           => 1,
+      '#max'           => 10,
+      '#required'      => TRUE,
+    ];
+    $form['scoring']['points_tendency'] = [
+      '#type'          => 'number',
+      '#title'         => $this->t('Punkte für richtige Tendenz'),
+      '#default_value' => $config->get('points_tendency'),
+      '#min'           => 0,
+      '#max'           => 5,
+      '#required'      => TRUE,
+    ];
+
+    $form['gameplay'] = [
+      '#type'  => 'fieldset',
+      '#title' => $this->t('Spielablauf'),
+    ];
+    $form['gameplay']['betting_closes_minutes_before'] = [
+      '#type'          => 'number',
+      '#title'         => $this->t('Tipp-Sperre X Minuten vor Anpfiff'),
+      '#description'   => $this->t('0 = Tipps bis Anpfiff möglich.'),
+      '#default_value' => $config->get('betting_closes_minutes_before'),
+      '#min'           => 0,
+    ];
+    $form['gameplay']['allow_tipper_self_register'] = [
+      '#type'          => 'checkbox',
+      '#title'         => $this->t('Selbst-Registrierung als Tipper erlauben'),
+      '#default_value' => $config->get('allow_tipper_self_register'),
+    ];
+
+    $form['display'] = [
+      '#type'  => 'fieldset',
+      '#title' => $this->t('Anzeige'),
+    ];
+    $form['display']['show_payment_status_in_standings'] = [
+      '#type'          => 'checkbox',
+      '#title'         => $this->t('Zahlungsstatus in Rangliste anzeigen'),
+      '#description'   => $this->t('Tipper ohne bezahlten Einsatz werden markiert.'),
+      '#default_value' => $config->get('show_payment_status_in_standings'),
+    ];
+
+    // Aktives Turnier auswählen
+    $tournaments = $this->getTournamentOptions();
+    $form['display']['default_tournament'] = [
+      '#type'          => 'select',
+      '#title'         => $this->t('Standard-Turnier'),
+      '#description'   => $this->t('Wird auf der Rangliste und Tipp-Seite vorausgewählt.'),
+      '#options'       => [0 => $this->t('— bitte wählen —')] + $tournaments,
+      '#default_value' => $config->get('default_tournament'),
+    ];
+
+    // API-Konfiguration
+    $form['api'] = [
+      '#type'  => 'fieldset',
+      '#title' => $this->t('API-Konfiguration'),
+    ];
+    $form['api']['api_provider'] = [
+      '#type'          => 'radios',
+      '#title'         => $this->t('Datenquelle'),
+      '#options'       => [
+        'openligadb'   => $this->t('OpenLigaDB <em>(kostenlos, kein Key nötig – Schwerpunkt Deutschland/Österreich)</em>'),
+        'footballdata' => $this->t('football-data.org <em>(kostenlos mit Key – internationale Ligen, strukturiertere Daten)</em>'),
+      ],
+      '#default_value' => $config->get('api_provider') ?? 'openligadb',
+    ];
+    $form['api']['footballdata_api_key'] = [
+      '#type'          => 'textfield',
+      '#title'         => $this->t('API-Key (football-data.org)'),
+      '#description'   => $this->t('Kostenlos registrieren auf <a href="https://www.football-data.org/client/register" target="_blank">football-data.org</a>. Nur benötigt wenn football-data.org als Quelle gewählt ist.'),
+      '#default_value' => $config->get('footballdata_api_key') ?? '',
+      '#size'          => 40,
+      '#states'        => [
+        'visible' => [
+          ':input[name="api_provider"]' => ['value' => 'footballdata'],
+        ],
+      ],
+    ];
+
+    return parent::buildForm($form, $form_state);
+  }
+
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $this->config('soccerbet.settings')
+      ->set('points_exact',                      (int)  $form_state->getValue('points_exact'))
+      ->set('points_tendency',                   (int)  $form_state->getValue('points_tendency'))
+      ->set('betting_closes_minutes_before',     (int)  $form_state->getValue('betting_closes_minutes_before'))
+      ->set('allow_tipper_self_register',        (bool) $form_state->getValue('allow_tipper_self_register'))
+      ->set('show_payment_status_in_standings',  (bool) $form_state->getValue('show_payment_status_in_standings'))
+      ->set('default_tournament',                (int)  $form_state->getValue('default_tournament'))
+      ->set('api_provider',                      (string) $form_state->getValue('api_provider'))
+      ->set('footballdata_api_key',              trim($form_state->getValue('footballdata_api_key') ?? ''))
+      ->save();
+
+    parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Liefert alle Turniere als Select-Optionen.
+   */
+  private function getTournamentOptions(): array {
+    $rows = \Drupal::database()->select('soccerbet_tournament', 't')
+      ->fields('t', ['tournament_id', 'tournament_desc'])
+      ->orderBy('t.start_date', 'DESC')
+      ->execute()
+      ->fetchAll();
+    $options = [];
+    foreach ($rows as $row) {
+      $options[$row->tournament_id] = $row->tournament_desc;
+    }
+    return $options;
+  }
+
+}

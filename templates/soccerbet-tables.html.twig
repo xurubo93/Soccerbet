@@ -1,0 +1,78 @@
+{#
+/**
+ * @file
+ * Gruppentabellen eines Turniers.
+ *
+ * Variablen:
+ * - groups: Array group_key => [team, ...] (sortiert nach Punkten)
+ * - tournament: Turnier-Objekt
+ */
+#}
+{% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
+<div class="soccerbet-tables">
+
+  <h2 class="soccerbet-tables__title">
+    {{ 'Tabellen'|t }}
+    {% if tournament %}
+      – {{ tournament.tournament_desc }}
+    {% endif %}
+  </h2>
+
+  {% if groups is empty %}
+    <p class="soccerbet-tables__empty">{{ 'Keine Teams vorhanden.'|t }}</p>
+  {% else %}
+    <div class="soccerbet-tables__grid">
+      {% for group_key, teams in groups %}
+        <div class="soccerbet-tables__group">
+
+          {% if group_key != '_' %}
+            <h3 class="soccerbet-tables__group-title">
+              {{ 'Gruppe'|t }} {{ group_key }}
+            </h3>
+          {% endif %}
+
+          <table class="soccerbet-tables__table">
+            <thead>
+              <tr>
+                <th class="col-pos">#</th>
+                <th class="col-team">{{ 'Mannschaft'|t }}</th>
+                <th class="col-num" title="{{ 'Spiele'|t }}">Sp</th>
+                <th class="col-num" title="{{ 'Siege'|t }}">S</th>
+                <th class="col-num" title="{{ 'Unentschieden'|t }}">U</th>
+                <th class="col-num" title="{{ 'Niederlagen'|t }}">N</th>
+                <th class="col-goals">{{ 'Tore'|t }}</th>
+                <th class="col-diff" title="{{ 'Tordifferenz'|t }}">+/-</th>
+                <th class="col-pts"><strong>{{ 'Pkt'|t }}</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for pos, team in teams %}
+                {% set diff = team.goals_shot - team.goals_got %}
+                <tr class="soccerbet-tables__row{% if pos < 2 %} row--qualifier{% endif %}">
+                  <td class="col-pos">{{ pos + 1 }}</td>
+                  <td class="col-team">
+                    {% if team.team_flag %}
+                      {{ flag_helper.flag(team.team_flag, team.team_name, 28, 19) }}
+                    {% endif %}
+                    {{ team.team_name }}
+                  </td>
+                  <td class="col-num">{{ team.games_played }}</td>
+                  <td class="col-num">{{ team.games_won }}</td>
+                  <td class="col-num">{{ team.games_drawn }}</td>
+                  <td class="col-num">{{ team.games_lost }}</td>
+                  <td class="col-goals">{{ team.goals_shot }}:{{ team.goals_got }}</td>
+                  <td class="col-diff {{ diff > 0 ? 'diff--pos' : (diff < 0 ? 'diff--neg' : '') }}">
+                    {{ diff > 0 ? '+' }}{{ diff }}
+                  </td>
+                  <td class="col-pts"><strong>{{ team.points }}</strong></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+</div>

@@ -1,0 +1,56 @@
+id: soccerbet_tipps
+label: 'Soccerbet: Tipps'
+migration_group: soccerbet
+
+migration_dependencies:
+  required:
+    - soccerbet_tippers
+    - soccerbet_games
+
+source:
+  plugin: soccerbet_tipps
+  key: migrate
+
+destination:
+  plugin: soccerbet_tipps_destination
+
+process:
+  tipp_id:
+    plugin: get
+    source: tipp_id
+
+  tipper_id:
+    plugin: migration_lookup
+    migration: soccerbet_tippers
+    source: tipper_id
+    no_stub: true
+
+  game_id:
+    plugin: migration_lookup
+    migration: soccerbet_games
+    source: game_id
+    no_stub: true
+
+  team1_tipp:
+    plugin: get
+    source: team1_tipp
+
+  team2_tipp:
+    plugin: get
+    source: team2_tipp
+
+  winner_team_id:
+    plugin: get
+    source: winner_team_id
+
+  uid:
+    plugin: get
+    source: uid
+
+  created:
+    plugin: get
+    source: created
+
+  changed:
+    plugin: get
+    source: changed

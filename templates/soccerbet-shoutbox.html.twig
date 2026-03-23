@@ -1,0 +1,46 @@
+{#
+/**
+ * @file
+ * Shoutbox-Block.
+ *
+ * Variablen:
+ * - messages: Array von Nachrichten-Objekten (shout_id, tipper_name, message, created)
+ * - form: Eingabe-Formular (nur für eingeloggte User)
+ * - can_delete: TRUE wenn der User Nachrichten löschen darf
+ * - tournament_id: Aktuelle Turnier-ID
+ */
+#}
+<div class="soccerbet-shoutbox">
+
+  <h3 class="soccerbet-shoutbox__title">{{ 'Shoutbox'|t }}</h3>
+
+  {# Eingabe-Formular #}
+  {% if form is defined %}
+    {{ form }}
+  {% endif %}
+
+  {# Nachrichten #}
+  <div class="soccerbet-shoutbox__messages">
+    {% if messages is empty %}
+      <p class="soccerbet-shoutbox__empty">{{ 'Noch keine Nachrichten.'|t }}</p>
+    {% else %}
+      {% for msg in messages %}
+        <div class="soccerbet-shoutbox__message">
+          <div class="soccerbet-shoutbox__meta">
+            <span class="soccerbet-shoutbox__author">{{ msg.tipper_name }}</span>
+            <span class="soccerbet-shoutbox__time">
+              {{ msg.created|format_date('custom', 'd.m. H:i') }}
+            </span>
+            {% if can_delete %}
+              <a href="{{ path('soccerbet.shoutbox.delete', {shout_id: msg.shout_id}) }}"
+                 class="soccerbet-shoutbox__delete"
+                 title="{{ 'Löschen'|t }}">✕</a>
+            {% endif %}
+          </div>
+          <div class="soccerbet-shoutbox__text">{{ msg.message }}</div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+</div>

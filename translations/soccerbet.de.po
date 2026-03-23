@@ -1,0 +1,405 @@
+# Soccerbet – Deutsche Übersetzung der Teamnamen
+# Quelle: football-data.org Teamnamen → Deutsche Anzeigenamen
+# Format: msgid = englischer Name (wie von API geliefert), msgstr = Deutscher Name
+msgid ""
+msgstr ""
+"Project-Id-Version: soccerbet\n"
+"POT-Creation-Date: 2026-03-22\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: de\n"
+
+# ── Nationalmannschaften ─────────────────────────────────────────────
+msgid "Germany"
+msgstr "Deutschland"
+
+msgid "Austria"
+msgstr "Österreich"
+
+msgid "Switzerland"
+msgstr "Schweiz"
+
+msgid "France"
+msgstr "Frankreich"
+
+msgid "England"
+msgstr "England"
+
+msgid "Scotland"
+msgstr "Schottland"
+
+msgid "Wales"
+msgstr "Wales"
+
+msgid "Northern Ireland"
+msgstr "Nordirland"
+
+msgid "Republic of Ireland"
+msgstr "Irland"
+
+msgid "Spain"
+msgstr "Spanien"
+
+msgid "Portugal"
+msgstr "Portugal"
+
+msgid "Italy"
+msgstr "Italien"
+
+msgid "Netherlands"
+msgstr "Niederlande"
+
+msgid "Belgium"
+msgstr "Belgien"
+
+msgid "Denmark"
+msgstr "Dänemark"
+
+msgid "Sweden"
+msgstr "Schweden"
+
+msgid "Norway"
+msgstr "Norwegen"
+
+msgid "Finland"
+msgstr "Finnland"
+
+msgid "Poland"
+msgstr "Polen"
+
+msgid "Czech Republic"
+msgstr "Tschechien"
+
+msgid "Czechia"
+msgstr "Tschechien"
+
+msgid "Slovakia"
+msgstr "Slowakei"
+
+msgid "Hungary"
+msgstr "Ungarn"
+
+msgid "Romania"
+msgstr "Rumänien"
+
+msgid "Bulgaria"
+msgstr "Bulgarien"
+
+msgid "Croatia"
+msgstr "Kroatien"
+
+msgid "Serbia"
+msgstr "Serbien"
+
+msgid "Slovenia"
+msgstr "Slowenien"
+
+msgid "Bosnia and Herzegovina"
+msgstr "Bosnien-Herzegowina"
+
+msgid "North Macedonia"
+msgstr "Nordmazedonien"
+
+msgid "Kosovo"
+msgstr "Kosovo"
+
+msgid "Albania"
+msgstr "Albanien"
+
+msgid "Montenegro"
+msgstr "Montenegro"
+
+msgid "Greece"
+msgstr "Griechenland"
+
+msgid "Turkey"
+msgstr "Türkei"
+
+msgid "Russia"
+msgstr "Russland"
+
+msgid "Ukraine"
+msgstr "Ukraine"
+
+msgid "Belarus"
+msgstr "Weißrussland"
+
+msgid "Georgia"
+msgstr "Georgien"
+
+msgid "Armenia"
+msgstr "Armenien"
+
+msgid "Azerbaijan"
+msgstr "Aserbaidschan"
+
+msgid "Kazakhstan"
+msgstr "Kasachstan"
+
+msgid "Israel"
+msgstr "Israel"
+
+msgid "Iceland"
+msgstr "Island"
+
+msgid "Luxembourg"
+msgstr "Luxemburg"
+
+msgid "Ivory Coast"
+msgstr "Elfenbeinküste"
+
+msgid "Côte d'Ivoire"
+msgstr "Elfenbeinküste"
+
+# ── WM-Teams außereuropäisch ─────────────────────────────────────────
+msgid "Brazil"
+msgstr "Brasilien"
+
+msgid "Argentina"
+msgstr "Argentinien"
+
+msgid "Uruguay"
+msgstr "Uruguay"
+
+msgid "Colombia"
+msgstr "Kolumbien"
+
+msgid "Chile"
+msgstr "Chile"
+
+msgid "Peru"
+msgstr "Peru"
+
+msgid "Ecuador"
+msgstr "Ecuador"
+
+msgid "Venezuela"
+msgstr "Venezuela"
+
+msgid "Paraguay"
+msgstr "Paraguay"
+
+msgid "Bolivia"
+msgstr "Bolivien"
+
+msgid "Mexico"
+msgstr "Mexiko"
+
+msgid "United States"
+msgstr "USA"
+
+msgid "USA"
+msgstr "USA"
+
+msgid "Canada"
+msgstr "Kanada"
+
+msgid "Costa Rica"
+msgstr "Costa Rica"
+
+msgid "Honduras"
+msgstr "Honduras"
+
+msgid "Panama"
+msgstr "Panama"
+
+msgid "Japan"
+msgstr "Japan"
+
+msgid "South Korea"
+msgstr "Südkorea"
+
+msgid "Korea Republic"
+msgstr "Südkorea"
+
+msgid "Australia"
+msgstr "Australien"
+
+msgid "Iran"
+msgstr "Iran"
+
+msgid "Saudi Arabia"
+msgstr "Saudi-Arabien"
+
+msgid "Qatar"
+msgstr "Katar"
+
+msgid "Morocco"
+msgstr "Marokko"
+
+msgid "Nigeria"
+msgstr "Nigeria"
+
+msgid "Ghana"
+msgstr "Ghana"
+
+msgid "Senegal"
+msgstr "Senegal"
+
+msgid "Cameroon"
+msgstr "Kamerun"
+
+msgid "Egypt"
+msgstr "Ägypten"
+
+msgid "South Africa"
+msgstr "Südafrika"
+
+# ── Bundesliga ───────────────────────────────────────────────────────
+msgid "Bayern Munich"
+msgstr "FC Bayern München"
+
+msgid "FC Bayern München"
+msgstr "FC Bayern München"
+
+msgid "Borussia Dortmund"
+msgstr "Borussia Dortmund"
+
+msgid "Bayer Leverkusen"
+msgstr "Bayer 04 Leverkusen"
+
+msgid "RB Leipzig"
+msgstr "RB Leipzig"
+
+msgid "Eintracht Frankfurt"
+msgstr "Eintracht Frankfurt"
+
+msgid "VfB Stuttgart"
+msgstr "VfB Stuttgart"
+
+msgid "SC Freiburg"
+msgstr "SC Freiburg"
+
+msgid "1. FC Union Berlin"
+msgstr "Union Berlin"
+
+msgid "Borussia Mönchengladbach"
+msgstr "Borussia Mönchengladbach"
+
+msgid "TSG Hoffenheim"
+msgstr "TSG 1899 Hoffenheim"
+
+msgid "FC Augsburg"
+msgstr "FC Augsburg"
+
+msgid "Werder Bremen"
+msgstr "SV Werder Bremen"
+
+msgid "VfL Wolfsburg"
+msgstr "VfL Wolfsburg"
+
+msgid "VfL Bochum"
+msgstr "VfL Bochum"
+
+msgid "1. FC Köln"
+msgstr "1. FC Köln"
+
+msgid "Mainz 05"
+msgstr "1. FSV Mainz 05"
+
+msgid "Hertha BSC"
+msgstr "Hertha BSC"
+
+msgid "FC Schalke 04"
+msgstr "FC Schalke 04"
+
+msgid "Hamburger SV"
+msgstr "Hamburger SV"
+
+msgid "Fortuna Düsseldorf"
+msgstr "Fortuna Düsseldorf"
+
+msgid "1. FC Heidenheim 1846"
+msgstr "1. FC Heidenheim"
+
+msgid "SV Darmstadt 98"
+msgstr "SV Darmstadt 98"
+
+msgid "Holstein Kiel"
+msgstr "Holstein Kiel"
+
+msgid "FC St. Pauli"
+msgstr "FC St. Pauli"
+
+# ── Champions League ─────────────────────────────────────────────────
+msgid "Manchester City FC"
+msgstr "Manchester City"
+
+msgid "Manchester United FC"
+msgstr "Manchester United"
+
+msgid "Liverpool FC"
+msgstr "Liverpool"
+
+msgid "Arsenal FC"
+msgstr "Arsenal"
+
+msgid "Chelsea FC"
+msgstr "Chelsea"
+
+msgid "Tottenham Hotspur FC"
+msgstr "Tottenham Hotspur"
+
+msgid "Newcastle United FC"
+msgstr "Newcastle United"
+
+msgid "Real Madrid CF"
+msgstr "Real Madrid"
+
+msgid "FC Barcelona"
+msgstr "Barcelona"
+
+msgid "Club Atlético de Madrid"
+msgstr "Atlético Madrid"
+
+msgid "Sevilla FC"
+msgstr "Sevilla"
+
+msgid "Juventus FC"
+msgstr "Juventus"
+
+msgid "FC Internazionale Milano"
+msgstr "Inter Mailand"
+
+msgid "AC Milan"
+msgstr "AC Mailand"
+
+msgid "SSC Napoli"
+msgstr "Neapel"
+
+msgid "AS Roma"
+msgstr "AS Rom"
+
+msgid "Paris Saint-Germain FC"
+msgstr "Paris Saint-Germain"
+
+msgid "Olympique de Marseille"
+msgstr "Marseille"
+
+msgid "Olympique Lyonnais"
+msgstr "Lyon"
+
+msgid "SL Benfica"
+msgstr "Benfica"
+
+msgid "FC Porto"
+msgstr "Porto"
+
+msgid "Sporting CP"
+msgstr "Sporting Lissabon"
+
+msgid "AFC Ajax"
+msgstr "Ajax Amsterdam"
+
+msgid "PSV Eindhoven"
+msgstr "PSV Eindhoven"
+
+msgid "Feyenoord"
+msgstr "Feyenoord"
+
+msgid "Celtic FC"
+msgstr "Celtic Glasgow"
+
+msgid "Rangers FC"
+msgstr "Glasgow Rangers"

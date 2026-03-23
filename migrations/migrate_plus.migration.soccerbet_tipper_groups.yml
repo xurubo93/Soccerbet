@@ -1,0 +1,40 @@
+id: soccerbet_tipper_groups
+label: 'Soccerbet: Tippergruppen'
+migration_group: soccerbet
+
+# Reihenfolge: Gruppen zuerst (keine Abhängigkeiten)
+migration_dependencies:
+  required: []
+
+source:
+  plugin: soccerbet_tipper_groups
+  # Verbindung zur Quell-Datenbank (in settings.php als 'migrate' definieren)
+  key: migrate
+
+destination:
+  plugin: soccerbet_tipper_groups_destination
+
+process:
+  tipper_grp_id:
+    plugin: get
+    source: tipper_grp_id
+
+  tipper_grp_name:
+    plugin: get
+    source: tipper_grp_name
+
+  tipper_admin_id:
+    plugin: get
+    source: tipper_admin_id
+
+  uid:
+    plugin: get
+    source: c_uid
+
+  created:
+    plugin: get
+    source: created
+
+  changed:
+    plugin: get
+    source: changed

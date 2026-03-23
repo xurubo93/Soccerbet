@@ -1,0 +1,56 @@
+id: soccerbet_tournaments
+label: 'Soccerbet: Turniere'
+migration_group: soccerbet
+
+migration_dependencies:
+  required:
+    - soccerbet_tipper_groups
+
+source:
+  plugin: soccerbet_tournaments
+  key: migrate
+
+destination:
+  plugin: soccerbet_tournaments_destination
+
+process:
+  tournament_id:
+    plugin: get
+    source: tournament_id
+
+  tournament_desc:
+    plugin: get
+    source: tournament_desc
+
+  tipper_grp_id:
+    plugin: migration_lookup
+    migration: soccerbet_tipper_groups
+    source: tipper_grp_id
+
+  start_date:
+    plugin: get
+    source: start_date_iso
+
+  end_date:
+    plugin: get
+    source: end_date_iso
+
+  group_count:
+    plugin: get
+    source: group_count
+
+  is_active:
+    plugin: get
+    source: is_active
+
+  uid:
+    plugin: get
+    source: uid
+
+  created:
+    plugin: get
+    source: created
+
+  changed:
+    plugin: get
+    source: changed

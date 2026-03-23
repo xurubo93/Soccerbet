@@ -1,0 +1,8 @@
+id: soccerbet
+label: 'Soccerbet Migration (D6 → D11)'
+description: 'Migriert alle Soccerbet-Daten aus einer Drupal 6 Datenbank.'
+
+# Gemeinsame Quell-Datenbank-Konfiguration für alle Migrationen
+shared_configuration:
+  source:
+    key: migrate

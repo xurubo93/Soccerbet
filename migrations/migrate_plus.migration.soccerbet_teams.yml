@@ -1,0 +1,77 @@
+id: soccerbet_teams
+label: 'Soccerbet: Teams'
+migration_group: soccerbet
+
+migration_dependencies:
+  required:
+    - soccerbet_tournaments
+
+source:
+  plugin: soccerbet_teams
+  key: migrate
+
+destination:
+  plugin: soccerbet_teams_destination
+
+process:
+  team_id:
+    plugin: get
+    source: team_id
+
+  tournament_id:
+    plugin: migration_lookup
+    migration: soccerbet_tournaments
+    source: tournament_id
+    no_stub: true
+
+  team_name:
+    plugin: get
+    source: team_name
+
+  team_flag:
+    plugin: get
+    source: team_flag
+
+  team_group:
+    plugin: get
+    source: team_group
+
+  games_played:
+    plugin: get
+    source: games_played
+
+  games_won:
+    plugin: get
+    source: games_won
+
+  games_drawn:
+    plugin: get
+    source: games_drawn
+
+  games_lost:
+    plugin: get
+    source: games_lost
+
+  goals_shot:
+    plugin: get
+    source: goals_shot
+
+  goals_got:
+    plugin: get
+    source: goals_got
+
+  points:
+    plugin: get
+    source: points
+
+  uid:
+    plugin: get
+    source: uid
+
+  created:
+    plugin: get
+    source: created
+
+  changed:
+    plugin: get
+    source: changed
