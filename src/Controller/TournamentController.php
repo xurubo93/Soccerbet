@@ -43,8 +43,8 @@ final class TournamentController extends ControllerBase {
 
       $rows[] = [
         $t->tournament_desc,
-        $start_ts ? $formatter->format($start_ts, 'short') : '—',
-        $end_ts   ? $formatter->format($end_ts,   'short') : '—',
+        $start_ts ? $formatter->format($start_ts, 'custom', 'd.m.Y') : '—',
+        $end_ts   ? $formatter->format($end_ts,   'custom', 'd.m.Y') : '—',
         $t->is_active ? $this->t('✓ Aktiv') : '—',
         [
           'data' => [
@@ -69,10 +69,18 @@ final class TournamentController extends ControllerBase {
         '#attributes' => ['class' => ['button', 'button--primary']],
       ],
       'table' => [
-        '#theme'  => 'table',
-        '#header' => [$this->t('Name'), $this->t('Start'), $this->t('Ende'), $this->t('Status'), $this->t('Aktionen')],
-        '#rows'   => $rows,
-        '#empty'  => $this->t('Noch keine Turniere angelegt.'),
+        '#theme'      => 'table',
+        '#header'     => [
+          $this->t('Name'),
+          ['data' => $this->t('Start'),   'class' => ['priority-medium']],
+          ['data' => $this->t('Ende'),    'class' => ['priority-medium']],
+          ['data' => $this->t('Status'),  'class' => ['priority-low']],
+          $this->t('Aktionen'),
+        ],
+        '#rows'       => $rows,
+        '#empty'      => $this->t('Noch keine Turniere angelegt.'),
+        '#attributes' => ['class' => ['responsive-enabled']],
+        '#attached'   => ['library' => ['core/drupal.tableresponsive']],
       ],
     ];
   }
