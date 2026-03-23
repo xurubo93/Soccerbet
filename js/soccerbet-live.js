@@ -13,9 +13,13 @@
         const updatedEl  = root.querySelector('#soccerbet-live-updated');
         if (!refreshUrl || !btn) return;
 
-        btn.addEventListener('click', function () {
-          btn.disabled = true;
-          btn.textContent = Drupal.t('Wird geladen…');
+        let autoTimer = null;
+
+        function doRefresh(silent) {
+          if (!silent) {
+            btn.disabled = true;
+            btn.textContent = Drupal.t('Wird geladen…');
+          }
           fetch(refreshUrl, { headers: { Accept: 'application/json' } })
             .then(r => r.json())
             .then(data => {
@@ -25,15 +29,29 @@
               if (updatedEl) {
                 updatedEl.textContent = Drupal.t('Zuletzt aktualisiert: @t', { '@t': data.updated });
               }
+              scheduleAutoRefresh(data.is_live);
             })
             .catch(() => {
-              if (updatedEl) updatedEl.textContent = Drupal.t('Aktualisierung fehlgeschlagen.');
+              if (!silent && updatedEl) updatedEl.textContent = Drupal.t('Aktualisierung fehlgeschlagen.');
+              scheduleAutoRefresh(false);
             })
             .finally(() => {
-              btn.disabled = false;
-              btn.textContent = '↻ ' + Drupal.t('Aktualisieren');
+              if (!silent) {
+                btn.disabled = false;
+                btn.textContent = '↻ ' + Drupal.t('Aktualisieren');
+              }
             });
-        });
+        }
+
+        function scheduleAutoRefresh(isLive) {
+          clearTimeout(autoTimer);
+          autoTimer = setTimeout(() => doRefresh(true), isLive ? 30000 : 300000);
+        }
+
+        btn.addEventListener('click', function () { doRefresh(false); });
+
+        // Ersten Auto-Refresh starten
+        scheduleAutoRefresh(root.querySelector('.soccerbet-live__dot') !== null);
       });
 
     }
@@ -74,12 +92,12 @@
     }
 
     // Tabellenkopf
-    let html = '<table class="soccerbet-live__table"><thead><tr>'
+    let html = '<div class="soccerbet-live__table-wrap"><table class="soccerbet-live__table"><thead><tr>'
       + '<th class="col-rank">' + Drupal.t('Rang') + '</th>'
       + '<th class="col-name">' + Drupal.t('Name') + '</th>';
     (games || []).forEach(g => {
-      html += '<th class="col-tipp">'
-        + g.team1_name.substring(0,3).toUpperCase() + '<br>'
+      html += '<th class="col-tipp" title="' + esc(g.team1_name) + ' vs ' + esc(g.team2_name) + '">'
+        + g.team1_name.substring(0,3).toUpperCase() + ' : '
         + g.team2_name.substring(0,3).toUpperCase() + '</th>';
     });
     html += '<th class="col-total">' + Drupal.t('Punkte') + '</th></tr></thead><tbody>';
@@ -89,9 +107,9 @@
       let rankHtml = row.rank;
       const diff = row.rank_diff || 0;
       if (diff > 0) {
-        rankHtml += ' <span class="soccerbet-live__diff soccerbet-live__diff--up">▲' + diff + '</span>';
+        rankHtml += ' <span class="rank-diff rank-diff--up">(+' + diff + ')</span>';
       } else if (diff < 0) {
-        rankHtml += ' <span class="soccerbet-live__diff soccerbet-live__diff--down">▼' + Math.abs(diff) + '</span>';
+        rankHtml += ' <span class="rank-diff rank-diff--down">(' + diff + ')</span>';
       }
 
       html += '<tr class="soccerbet-live__row">'
@@ -103,19 +121,20 @@
         const ptsHtml = ['exact','tendency','wrong'].includes(t.status)
           ? '<span class="soccerbet-live__tipp-pts">(' + t.points + ')</span>'
           : '';
-        html += '<td class="col-tipp soccerbet-live__tipp-cell soccerbet-live__tipp-cell--' + t.status + '">'
+        html += '<td class="col-tipp">'
+          + '<span class="soccerbet-live__tipp soccerbet-live__tipp--' + t.status + '">'
           + '<span class="soccerbet-live__tipp-score">' + esc(t.tipp) + '</span>'
-          + ptsHtml + '</td>';
+          + ptsHtml + '</span></td>';
       });
 
       html += '<td class="col-total"><strong>' + row.total + '</strong></td></tr>';
     });
 
-    html += '</tbody></table>';
+    html += '</tbody></table></div>';
     html += '<div class="soccerbet-live__legend">'
-      + '<span class="soccerbet-live__tipp-cell soccerbet-live__tipp-cell--exact">■</span> ' + Drupal.t('Richtiges Ergebnis') + ' '
-      + '<span class="soccerbet-live__tipp-cell soccerbet-live__tipp-cell--tendency">■</span> ' + Drupal.t('Richtige Tendenz') + ' '
-      + '<span class="soccerbet-live__tipp-cell soccerbet-live__tipp-cell--wrong">■</span> ' + Drupal.t('Falsch')
+      + '<span class="soccerbet-live__tipp soccerbet-live__tipp--exact">2:1<br><small>(3)</small></span> ' + Drupal.t('Richtiges Ergebnis') + ' '
+      + '<span class="soccerbet-live__tipp soccerbet-live__tipp--tendency">1:0<br><small>(1)</small></span> ' + Drupal.t('Richtige Tendenz') + ' '
+      + '<span class="soccerbet-live__tipp soccerbet-live__tipp--wrong">0:2<br><small>(0)</small></span> ' + Drupal.t('Falsch')
       + '</div>';
     wrap.innerHTML = html;
   }

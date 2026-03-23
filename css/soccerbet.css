@@ -178,6 +178,10 @@
 }
 
 /* --- Tippergruppen-Formular: Tipper-Tabelle ----------------------------- */
+.soccerbet-tipper-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 .soccerbet-tipper-table {
   width: 100%;
   border-collapse: collapse;
@@ -196,6 +200,11 @@
 }
 .soccerbet-tipper-table .form-item {
   margin: 0;
+}
+.soccerbet-tipper-uid-select {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* --- Tippabgabe: Mobiler Scroll-Link ----------------------------------- */

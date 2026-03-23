@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\soccerbet\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\soccerbet\Service\TipperManager;
 use Drupal\soccerbet\Service\TournamentManager;
@@ -35,14 +34,10 @@ final class GameController extends ControllerBase {
     }
 
     $tournament_options = $this->tournamentManager->getOptions();
-    $select = [];
-    if (count($tournament_options) > 1) {
-      $links = [];
-      foreach ($tournament_options as $tid => $name) {
-        $links[] = Link::fromTextAndUrl($name, Url::fromRoute('soccerbet.admin.games.list', ['tournament_id' => $tid]))->toRenderable();
-      }
-      $select = ['#theme' => 'item_list', '#items' => $links, '#title' => $this->t('Turnier wählen:')];
-    }
+    $tournament_name = $tournament_options[$tournament_id] ?? $this->t('Unbekannt');
+    $select = [
+      '#markup' => '<p class="soccerbet-admin-hint">' . $this->t('Turnier: <strong>@name</strong>', ['@name' => $tournament_name]) . '</p>',
+    ];
 
     $games = $this->tipperManager->loadGamesByTournament($tournament_id);
     $rows  = [];

@@ -76,7 +76,7 @@ final class TipperGroupForm extends FormBase {
 
       // Tabellen-Header als Markup
       $form['members']['header'] = [
-        '#markup' => '<table class="soccerbet-tipper-table">'
+        '#markup' => '<div class="soccerbet-tipper-table-wrap"><table class="soccerbet-tipper-table">'
           . '<thead><tr>'
           . '<th>' . $this->t('Tipp-Name') . '</th>'
           . '<th>' . $this->t('Drupal-User') . '</th>'
@@ -87,10 +87,7 @@ final class TipperGroupForm extends FormBase {
       foreach ($members as $member) {
         $tipper_id = (int) $member->tipper_id;
 
-        $form['members'][$tipper_id] = [
-          '#type'       => 'container',
-          '#attributes' => ['class' => ['soccerbet-tipper-row']],
-        ];
+        $form['members'][$tipper_id] = [];
 
         $form['members'][$tipper_id]['_row_open'] = [
           '#markup' => '<tr>',
@@ -102,7 +99,7 @@ final class TipperGroupForm extends FormBase {
           '#title_display' => 'invisible',
           '#default_value' => $member->tipper_name,
           '#maxlength'     => 64,
-          '#size'          => 28,
+          '#size'          => 16,
           '#required'      => TRUE,
           '#prefix'        => '<td>',
           '#suffix'        => '</td>',
@@ -114,6 +111,7 @@ final class TipperGroupForm extends FormBase {
           '#title_display' => 'invisible',
           '#options'       => [0 => $this->t('— kein User —')] + $user_options,
           '#default_value' => (int) $member->uid,
+          '#attributes'    => ['class' => ['soccerbet-tipper-uid-select']],
           '#prefix'        => '<td>',
           '#suffix'        => '</td>',
         ];
@@ -128,7 +126,7 @@ final class TipperGroupForm extends FormBase {
       }
 
       $form['members']['footer'] = [
-        '#markup' => '</tbody></table>',
+        '#markup' => '</tbody></table></div>',
       ];
 
       // ---------------------------------------------------------------- //
