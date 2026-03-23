@@ -28,6 +28,16 @@
 .soccerbet-badge { display:inline-block; font-size:.7em; padding:2px 7px; border-radius:3px; margin-left:6px; vertical-align:middle; font-weight:500; }
 .soccerbet-badge--unpaid { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
 .soccerbet-standings__links { margin-top:1rem; font-size:.9em; }
+.soccerbet-standings__past { margin-top:2rem; padding-top:1rem; border-top:1px solid var(--sb-border); }
+.soccerbet-standings__past-title { font-size:1em; margin:0 0 .75rem; color:var(--sb-text-muted); text-transform:uppercase; letter-spacing:.04em; }
+.soccerbet-standings__past-table { width:100%; border-collapse:collapse; font-size:.9em; }
+.soccerbet-standings__past-table th { text-align:left; padding:.4rem .6rem; border-bottom:2px solid var(--sb-border); font-weight:600; }
+.soccerbet-standings__past-table td { padding:.4rem .6rem; border-bottom:1px solid var(--sb-border); vertical-align:top; }
+.soccerbet-standings__past-place { display:block; }
+.soccerbet-standings__past-place--1 { font-weight:700; }
+.soccerbet-standings__past-place--2 { color:var(--sb-text-muted); }
+.soccerbet-standings__past-place--3 { color:var(--sb-text-muted); font-size:.9em; }
+.soccerbet-standings__past-empty { color:var(--sb-text-muted); }
 .soccerbet-steps { display:flex; align-items:center; gap:1rem; margin-top:1.5rem; padding:.75rem 1rem; background:#f8f9fa; border:1px solid var(--sb-border); border-radius:var(--sb-radius); }
 .soccerbet-steps__btn { padding:.4rem 1rem; background:#0071b8; color:#fff; border-radius:var(--sb-radius); text-decoration:none; font-size:.9em; white-space:nowrap; }
 .soccerbet-steps__btn:hover { background:#005a93; }

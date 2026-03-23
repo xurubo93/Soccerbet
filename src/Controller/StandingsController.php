@@ -46,12 +46,16 @@ final class StandingsController extends ControllerBase {
     $rows         = $this->scoring->getRanking($tournament_id);
     $played_games = $this->scoring->getPlayedGamesCount($tournament_id);
 
+    // Frühere Turniere derselben Tippergruppen ermitteln
+    $past_tournaments = $this->loadPastTournaments($tournament_id);
+
     return [
-      '#theme'        => 'soccerbet_standings',
-      '#rows'         => $rows,
-      '#tournament'   => $tournament,
-      '#played_games' => $played_games,
-      '#cache'        => [
+      '#theme'            => 'soccerbet_standings',
+      '#rows'             => $rows,
+      '#tournament'       => $tournament,
+      '#played_games'     => $played_games,
+      '#past_tournaments' => $past_tournaments,
+      '#cache'            => [
         'tags'    => ['soccerbet_standings:' . $tournament_id],
         'max-age' => 60,
       ],
@@ -114,6 +118,37 @@ final class StandingsController extends ControllerBase {
       '#tournament' => $tournament,
       '#cache'      => ['max-age' => 60],
     ];
+  }
+
+  /**
+   * Gibt frühere Turniere derselben Tippergruppen zurück (ohne das aktuelle).
+   *
+   * @return array<int, object>  Turnier-Objekte mit zusätzlichem `url`-Property
+   */
+  private function loadPastTournaments(int $tournament_id): array {
+    $group_ids = $this->tournamentManager->loadTipperGroupIds($tournament_id);
+    if (empty($group_ids)) {
+      return [];
+    }
+
+    $seen = [];
+    $result = [];
+    foreach ($group_ids as $grp_id) {
+      foreach ($this->tournamentManager->loadAll($grp_id) as $t) {
+        $tid = (int) $t->tournament_id;
+        if ($tid === $tournament_id || isset($seen[$tid])) {
+          continue;
+        }
+        $seen[$tid] = TRUE;
+        $t->url   = \Drupal\Core\Url::fromRoute('soccerbet.standings', ['tournament_id' => $tid])->toString();
+        $t->top3  = array_slice($this->scoring->getRanking($tid), 0, 3);
+        $result[] = $t;
+      }
+    }
+
+    // Neueste zuerst (loadAll liefert bereits DESC, aber nach Merge neu sortieren)
+    usort($result, fn($a, $b) => strcmp((string) $b->start_date, (string) $a->start_date));
+    return $result;
   }
 
   /**

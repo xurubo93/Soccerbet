@@ -32,8 +32,8 @@
         <tr>
           <th class="col-rank">{{ 'Rang'|t }}</th>
           <th class="col-name">{{ 'Name'|t }}</th>
-          <th class="col-exact">{{ 'Richtige Ergebnisse'|t }}</th>
-          <th class="col-tend">{{ 'Richtige Tendenzen'|t }}</th>
+          <th class="col-exact">{{ 'Ergebnisse'|t }}</th>
+          <th class="col-tend">{{ 'Tendenzen'|t }}</th>
           <th class="col-total">{{ 'Punkte'|t }}</th>
         </tr>
       </thead>
@@ -96,12 +96,42 @@
       {# Link zur Steps-Navigation #}
       {% if played_games > 1 %}
         <div class="soccerbet-standings__links">
-          <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: played_games}) }}">
-            {{ 'Ranglisten-Verlauf anzeigen'|t }}
+          <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: 1}) }}">
+            {{ 'Von Runde zu Runde blättern'|t }}
           </a>
         </div>
       {% endif %}
     {% endif %}
+  {% endif %}
+
+  {% if past_tournaments is not empty %}
+    <div class="soccerbet-standings__past">
+      <h3 class="soccerbet-standings__past-title">{{ 'Frühere Turniere'|t }}</h3>
+      <table class="soccerbet-standings__past-table">
+        <thead>
+          <tr>
+            <th>{{ 'Turnier'|t }}</th>
+            <th>{{ 'Top 3'|t }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for t in past_tournaments %}
+            <tr>
+              <td><a href="{{ t.url }}">{{ t.tournament_desc }}</a></td>
+              <td>
+                {% for row in t.top3 %}
+                  <span class="soccerbet-standings__past-place soccerbet-standings__past-place--{{ loop.index }}">
+                    {{- row.rank }}. {{ row.name -}}
+                  </span>
+                {% else %}
+                  <span class="soccerbet-standings__past-empty">—</span>
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   {% endif %}
 
 </div>

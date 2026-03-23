@@ -26,9 +26,13 @@ function soccerbet_theme(): array {
   return [
     'soccerbet_standings' => [
       'variables' => [
-        'rows'        => [],
-        'tournament'  => NULL,
-        'played_games' => 0,
+        'rows'             => [],
+        'tournament'       => NULL,
+        'played_games'     => 0,
+        'past_tournaments' => [],
+        'step_mode'        => FALSE,
+        'step_limit'       => 0,
+        'max_games'        => 0,
       ],
       'template' => 'soccerbet-standings',
     ],
