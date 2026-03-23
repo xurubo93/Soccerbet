@@ -36,7 +36,6 @@
         });
       });
 
-      once('soccerbet-live-menu', 'body', context).forEach(checkLiveMenu);
     }
   };
 
@@ -124,29 +123,17 @@
   function updateLiveDot(root, isLive) {
     const dot = root.querySelector('.soccerbet-live__dot');
     if (dot) dot.style.display = isLive ? '' : 'none';
-    const menuLink = document.querySelector('.menu-item--live a');
-    if (menuLink) menuLink.classList.toggle('soccerbet-live-active', !!isLive);
-  }
-
-  function checkLiveMenu() {
-    const menuLink = document.querySelector('.menu-item--live a');
-    if (!menuLink || document.querySelector('#soccerbet-live-root')) return;
-    const href = menuLink.getAttribute('href') || '';
-    if (!href) return;
-    const jsonUrl = href.replace(/\/$/, '') + '/json';
-    fetch(jsonUrl, { headers: { Accept: 'application/json' } })
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (data && data.is_live) {
-          menuLink.classList.add('soccerbet-live-active');
-          if (!menuLink.querySelector('.soccerbet-menu-live-dot')) {
-            const dot = document.createElement('span');
-            dot.className = 'soccerbet-menu-live-dot';
-            menuLink.appendChild(dot);
-          }
-        }
-      })
-      .catch(() => {});
+    const menuLink = document.querySelector('a.menu-item--live');
+    if (!menuLink) return;
+    menuLink.classList.toggle('soccerbet-live-active', !!isLive);
+    let menuDot = menuLink.querySelector('.soccerbet-menu-dot');
+    if (isLive && !menuDot) {
+      menuDot = document.createElement('span');
+      menuDot.className = 'soccerbet-menu-dot';
+      menuLink.appendChild(menuDot);
+    } else if (!isLive && menuDot) {
+      menuDot.remove();
+    }
   }
 
   function esc(str) {

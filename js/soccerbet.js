@@ -81,4 +81,46 @@
     },
   };
 
+  /**
+   * Live-Menüpunkt: pulsierender Dot wenn ein Spiel live ist.
+   * Läuft auf allen Soccerbet-Seiten außer der Live-Seite selbst.
+   * Prüft beim Seitenload und danach jede Minute erneut.
+   */
+  Drupal.behaviors.soccerbetLiveMenuDot = {
+    attach(context) {
+      once('soccerbet-live-menu', 'body', context).forEach(function () {
+        if (document.querySelector('#soccerbet-live-root')) return;
+
+        const url = drupalSettings?.soccerbet?.liveJsonUrl;
+        if (!url) return;
+
+        function checkLive() {
+          fetch(url, { headers: { Accept: 'application/json' } })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+              setLiveMenuDot(!!(data && data.is_live));
+            })
+            .catch(() => {});
+        }
+
+        checkLive();
+        setInterval(checkLive, 60000);
+      });
+    },
+  };
+
+  function setLiveMenuDot(isLive) {
+    const menuLink = document.querySelector('a.menu-item--live');
+    if (!menuLink) return;
+    menuLink.classList.toggle('soccerbet-live-active', isLive);
+    let dot = menuLink.querySelector('.soccerbet-menu-dot');
+    if (isLive && !dot) {
+      dot = document.createElement('span');
+      dot.className = 'soccerbet-menu-dot';
+      menuLink.appendChild(dot);
+    } else if (!isLive && dot) {
+      dot.remove();
+    }
+  }
+
 })(jQuery, Drupal, once);

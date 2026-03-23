@@ -313,13 +313,14 @@
 }
 
 /* Pulsierender Dot im Menü */
-.soccerbet-menu-live-dot {
+.soccerbet-menu-dot {
   display: inline-block;
   width: 9px; height: 9px;
   background: #e00;
   border-radius: 50%;
   margin-left: 5px;
-  vertical-align: middle;
+  vertical-align: middle; /* inline context */
+  align-self: center;     /* flex context */
   animation: soccerbet-pulse 1.4s ease-in-out infinite;
 }
 

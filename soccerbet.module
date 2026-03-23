@@ -106,7 +106,16 @@ function soccerbet_migrate_import_soccerbet_tournaments_finish(string $migration
 }
 function soccerbet_page_attachments(array &$attachments): void {
   $route = \Drupal::routeMatch()->getRouteName();
-  if (str_starts_with($route, 'soccerbet.')) {
-    $attachments['#attached']['library'][] = 'soccerbet/global';
+  if (!str_starts_with($route, 'soccerbet.')) {
+    return;
+  }
+  $attachments['#attached']['library'][] = 'soccerbet/global';
+
+  // Live-JSON-URL für den Menüpunkt-Dot per drupalSettings übergeben.
+  $tournament_id = (int) \Drupal::config('soccerbet.settings')->get('default_tournament');
+  if ($tournament_id > 0) {
+    $attachments['#attached']['drupalSettings']['soccerbet']['liveJsonUrl'] =
+      \Drupal\Core\Url::fromRoute('soccerbet.live.json', ['tournament_id' => $tournament_id])
+        ->toString();
   }
 }
