@@ -379,6 +379,21 @@ function soccerbet_schema(): array {
     ],
   ];
 
+  $schema['soccerbet_winner_tipp'] = [
+    'description' => 'Turniersieger-Tipps der Tipper.',
+    'fields' => [
+      'wt_id'         => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+      'tournament_id' => ['type' => 'int',    'unsigned' => TRUE, 'not null' => TRUE],
+      'tipper_id'     => ['type' => 'int',    'unsigned' => TRUE, 'not null' => TRUE],
+      'team_id'       => ['type' => 'int',    'unsigned' => TRUE, 'not null' => TRUE],
+      'phase_index'   => ['type' => 'int',    'size' => 'tiny',   'not null' => TRUE, 'default' => 0],
+      'changed_at'    => ['type' => 'int',    'unsigned' => TRUE,  'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['wt_id'],
+    'unique keys' => ['tournament_tipper' => ['tournament_id', 'tipper_id']],
+    'indexes'     => ['tournament_id' => ['tournament_id']],
+  ];
+
   return $schema;
 }
 
@@ -572,6 +587,35 @@ function soccerbet_update_8006(): void {
 /**
  * Update 8007: api_id Spalte zu soccerbet_games hinzufügen.
  */
+/**
+ * Turniersieger-Tipp: neue Tabelle + Konfiguration.
+ */
+function soccerbet_update_8008(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->tableExists('soccerbet_winner_tipp')) {
+    $schema->createTable('soccerbet_winner_tipp', [
+      'description' => 'Turniersieger-Tipps der Tipper.',
+      'fields' => [
+        'wt_id'         => ['type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE],
+        'tournament_id' => ['type' => 'int',    'unsigned' => TRUE, 'not null' => TRUE],
+        'tipper_id'     => ['type' => 'int',    'unsigned' => TRUE, 'not null' => TRUE],
+        'team_id'       => ['type' => 'int',    'unsigned' => TRUE, 'not null' => TRUE],
+        'phase_index'   => ['type' => 'int',    'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+        'changed_at'    => ['type' => 'int',    'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['wt_id'],
+      'unique keys' => ['tournament_tipper' => ['tournament_id', 'tipper_id']],
+      'indexes'     => ['tournament_id' => ['tournament_id']],
+    ]);
+  }
+
+  // Standardpunkte setzen
+  $config = \Drupal::configFactory()->getEditable('soccerbet.settings');
+  if (!$config->get('winner_bet_points')) {
+    $config->set('winner_bet_points', [10, 7, 5, 3, 1])->save();
+  }
+}
+
 function soccerbet_update_8007(): void {
   $schema = \Drupal::database()->schema();
   if (!$schema->fieldExists('soccerbet_games', 'api_id')) {

@@ -82,6 +82,26 @@ final class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('default_tournament'),
     ];
 
+    // Turniersieger-Tipp
+    $form['winner_bet'] = [
+      '#type'        => 'fieldset',
+      '#title'       => $this->t('Turniersieger-Tipp'),
+      '#description' => $this->t('Punkte je nach Zeitpunkt der Tipp-Abgabe. Phase 0 = vor Turnierstart, Phase 1 = nach Gruppenphase, usw.'),
+    ];
+    $points = $config->get('winner_bet_points') ?? [10, 7, 5, 3, 1];
+    foreach ($points as $i => $pts) {
+      $form['winner_bet']['winner_bet_points_' . $i] = [
+        '#type'          => 'number',
+        '#title'         => $i === 0
+          ? $this->t('Punkte vor Turnierstart')
+          : $this->t('Punkte nach Phase @n', ['@n' => $i]),
+        '#default_value' => $pts,
+        '#min'           => 0,
+        '#max'           => 99,
+        '#required'      => TRUE,
+      ];
+    }
+
     // API-Konfiguration
     $form['api'] = [
       '#type'  => 'fieldset',
@@ -122,6 +142,10 @@ final class SettingsForm extends ConfigFormBase {
       ->set('default_tournament',                (int)  $form_state->getValue('default_tournament'))
       ->set('api_provider',                      (string) $form_state->getValue('api_provider'))
       ->set('footballdata_api_key',              trim($form_state->getValue('footballdata_api_key') ?? ''))
+      ->set('winner_bet_points', array_values(array_map(
+        fn($i) => (int) $form_state->getValue('winner_bet_points_' . $i),
+        range(0, 4)
+      )))
       ->save();
 
     parent::submitForm($form, $form_state);

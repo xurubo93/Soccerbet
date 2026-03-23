@@ -9,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\soccerbet\Service\TipperManager;
 use Drupal\soccerbet\Service\TournamentManager;
+use Drupal\soccerbet\Service\WinnerBetService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -25,12 +26,14 @@ final class PlaceBetsForm extends FormBase {
   public function __construct(
     private readonly TipperManager $tipperManager,
     private readonly TournamentManager $tournamentManager,
+    private readonly WinnerBetService $winnerBet,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('soccerbet.tipper_manager'),
       $container->get('soccerbet.tournament_manager'),
+      $container->get('soccerbet.winner_bet'),
     );
   }
 
@@ -193,7 +196,41 @@ final class PlaceBetsForm extends FormBase {
       }
     }
 
-    // Mobiler Schnell-Link ganz oben einfügen
+    // Turniersieger-Tipp – immer ganz oben, immer offen
+    $teams = $this->tipperManager->loadTeamsByTournament($tournament_id);
+    usort($teams, fn($a, $b) => strcmp($a->team_name, $b->team_name));
+    $team_options = [0 => $this->t('— bitte wählen —')];
+    foreach ($teams as $team) {
+      $flag = $team->team_flag ? ($this->flagEmoji($team->team_flag) . ' ') : '';
+      $team_options[(int) $team->team_id] = $flag . $team->team_name;
+    }
+    $existing_bet = $this->winnerBet->loadBet($tournament_id, $tipper_id);
+    $phase_index  = $this->winnerBet->getCurrentPhaseIndex($tournament_id);
+    $next_points  = $this->winnerBet->getPointsForPhaseIndex($phase_index);
+
+    $form['winner_bet'] = [
+      '#type'       => 'fieldset',
+      '#title'      => $this->t('Turniersieger-Tipp'),
+      '#attributes' => ['class' => ['soccerbet-winner-bet']],
+      '#weight'     => -200,
+    ];
+    $form['winner_bet']['info'] = [
+      '#markup' => '<p class="soccerbet-winner-bet__info">'
+        . $this->t('Aktuell mögliche Punkte bei richtigem Tipp: <strong>@pts</strong>', ['@pts' => $next_points])
+        . ($existing_bet ? ' · ' . $this->t('Dein aktueller Tipp: <strong>@team</strong> (@pts Punkte)', [
+            '@team' => $team_options[(int) $existing_bet->team_id] ?? '?',
+            '@pts'  => $this->winnerBet->getPointsForPhaseIndex((int) $existing_bet->phase_index),
+          ]) : '')
+        . '</p>',
+    ];
+    $form['winner_bet']['winner_team_id'] = [
+      '#type'          => 'select',
+      '#title'         => $this->t('Welche Mannschaft wird Turniersieger?'),
+      '#options'       => $team_options,
+      '#default_value' => $existing_bet ? (int) $existing_bet->team_id : 0,
+    ];
+
+    // Mobiler Schnell-Link
     if ($first_open_anchor) {
       $form['mobile_jump'] = [
         '#markup' => '<div class="soccerbet-mobile-jump">'
@@ -203,21 +240,21 @@ final class PlaceBetsForm extends FormBase {
         '#weight' => -100,
       ];
     }
-    if ($has_open_games) {
-      $form['submit_wrapper'] = [
-        '#type'       => 'container',
-        '#attributes' => ['class' => ['soccerbet-submit-sticky']],
-      ];
-      $form['submit_wrapper']['submit'] = [
-        '#type'       => 'submit',
-        '#value'      => $this->t('Tipps speichern'),
-        '#attributes' => ['class' => ['button', 'button--primary', 'soccerbet-submit']],
-      ];
-    }
-    else {
+
+    // Submit-Button immer anzeigen (für Turniersieger-Tipp auch wenn alle Spiele gesperrt)
+    $form['submit_wrapper'] = [
+      '#type'       => 'container',
+      '#attributes' => ['class' => ['soccerbet-submit-sticky']],
+    ];
+    $form['submit_wrapper']['submit'] = [
+      '#type'       => 'submit',
+      '#value'      => $this->t('Tipps speichern'),
+      '#attributes' => ['class' => ['button', 'button--primary', 'soccerbet-submit']],
+    ];
+    if (!$has_open_games) {
       $form['no_games'] = [
         '#markup' => '<p class="soccerbet-bets__no-games">'
-          . $this->t('Alle Tipps sind gesperrt – das Turnier läuft oder ist beendet.')
+          . $this->t('Spieltipps sind gesperrt – das Turnier läuft oder ist beendet.')
           . '</p>',
       ];
     }
@@ -423,12 +460,18 @@ final class PlaceBetsForm extends FormBase {
       $saved_count++;
     }
 
+    // Turniersieger-Tipp speichern
+    $winner_team_id = (int) ($values['winner_team_id'] ?? 0);
+    if ($winner_team_id > 0) {
+      $this->winnerBet->saveBet($tournament_id, $tipper_id, $winner_team_id);
+    }
+
     if ($saved_count > 0) {
       $this->messenger()->addStatus(
         $this->t('@count Tipp(s) wurden gespeichert.', ['@count' => $saved_count])
       );
     }
-    else {
+    elseif ($winner_team_id === 0) {
       $this->messenger()->addWarning($this->t('Keine Tipps wurden geändert.'));
     }
 
@@ -474,5 +517,17 @@ final class PlaceBetsForm extends FormBase {
       . ' width="28" height="19"'
       . ' class="soccerbet-flag"'
       . ' loading="lazy">';
+  }
+
+  /**
+   * Konvertiert einen ISO-3166-1-Alpha-2-Code in ein Emoji-Flag (z. B. "de" → 🇩🇪).
+   */
+  private function flagEmoji(string $code): string {
+    $code = strtoupper(trim($code));
+    if (strlen($code) !== 2) {
+      return '';
+    }
+    return mb_chr(0x1F1E6 + ord($code[0]) - ord('A'))
+         . mb_chr(0x1F1E6 + ord($code[1]) - ord('A'));
   }
 }

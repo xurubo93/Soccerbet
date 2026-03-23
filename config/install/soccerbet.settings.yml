@@ -7,3 +7,9 @@ allow_tipper_self_register: false
 score_update_enabled: false
 api_provider: openligadb
 footballdata_api_key: ''
+winner_bet_points:
+  - 10
+  - 7
+  - 5
+  - 3
+  - 1

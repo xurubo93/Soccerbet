@@ -13,6 +13,12 @@
   --sb-radius:          4px;
 }
 
+/* --- Rangliste Tabs ----------------------------------------------------- */
+.soccerbet-standings__tabs { display:flex; gap:.25rem; margin-bottom:1rem; border-bottom:2px solid var(--sb-border); }
+.soccerbet-standings__tab { padding:.5rem 1.1rem; text-decoration:none; color:var(--sb-text-muted); border-radius:var(--sb-radius) var(--sb-radius) 0 0; font-size:.9rem; font-weight:500; border:1px solid transparent; border-bottom:none; position:relative; bottom:-2px; }
+.soccerbet-standings__tab--active { color:var(--sb-color-primary, #0071b8); border-color:var(--sb-border); background:#fff; }
+.soccerbet-standings__tab-badge { display:inline-block; background:var(--sb-color-primary, #0071b8); color:#fff; font-size:.7em; padding:1px 5px; border-radius:10px; margin-left:4px; vertical-align:middle; }
+
 /* --- Rangliste ---------------------------------------------------------- */
 .soccerbet-standings__table { width:100%; border-collapse:collapse; font-size:.95rem; }
 .soccerbet-standings__table th,
@@ -28,6 +34,23 @@
 .soccerbet-badge { display:inline-block; font-size:.7em; padding:2px 7px; border-radius:3px; margin-left:6px; vertical-align:middle; font-weight:500; }
 .soccerbet-badge--unpaid { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
 .soccerbet-standings__links { margin-top:1rem; font-size:.9em; }
+/* --- Bonus-Tab ---------------------------------------------------------- */
+.col-bonus-pts,.col-bonus-result { text-align:center; }
+.soccerbet-bonus__row--correct { background:#d4edda !important; }
+.soccerbet-bonus__row--wrong { color:var(--sb-text-muted); }
+.soccerbet-bonus__correct { color:#155724; font-weight:700; }
+.soccerbet-bonus__wrong { color:#6c757d; }
+/* --- Live Turniersieger-Spalte ------------------------------------------ */
+.col-winner-bet { text-align:center; white-space:nowrap; }
+.soccerbet-live__winner-bet { display:inline-block; padding:.1em .3em; border-radius:.25em; font-size:.85em; white-space:nowrap; }
+.soccerbet-live__winner-bet--pending { background:#fff3cd; color:#856404; }
+.soccerbet-live__winner-bet--correct { background:#d4edda; color:#155724; font-weight:700; }
+.soccerbet-live__winner-bet--wrong   { background:#f8d7da; color:#721c24; }
+.soccerbet-live__winner-bet--none    { color:var(--sb-text-muted); }
+
+/* --- Turniersieger-Tipp Formular ---------------------------------------- */
+.soccerbet-winner-bet { margin-bottom:1.5rem; }
+.soccerbet-winner-bet__info { margin-bottom:.75rem; font-size:.9em; }
 .soccerbet-standings__past { margin-top:2rem; padding-top:1rem; border-top:1px solid var(--sb-border); }
 .soccerbet-standings__past-title { font-size:1em; margin:0 0 .75rem; color:var(--sb-text-muted); text-transform:uppercase; letter-spacing:.04em; }
 .soccerbet-standings__past-table { width:100%; border-collapse:collapse; font-size:.9em; }

@@ -99,3 +99,9 @@ services:
     arguments:
       - '@database'
       - '@current_user'
+
+  soccerbet.winner_bet:
+    class: Drupal\soccerbet\Service\WinnerBetService
+    arguments:
+      - '@database'
+      - '@config.factory'

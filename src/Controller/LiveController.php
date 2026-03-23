@@ -8,7 +8,9 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\soccerbet\Service\ScoringService;
 use Drupal\soccerbet\Service\TournamentManager;
+use Drupal\soccerbet\Service\WinnerBetService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,6 +23,7 @@ final class LiveController extends ControllerBase {
     private readonly Connection $db,
     private readonly TournamentManager $tournamentManager,
     private readonly ScoringService $scoring,
+    private readonly WinnerBetService $winnerBet,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -28,6 +31,7 @@ final class LiveController extends ControllerBase {
       $container->get('database'),
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.scoring'),
+      $container->get('soccerbet.winner_bet'),
     );
   }
 
@@ -51,16 +55,17 @@ final class LiveController extends ControllerBase {
     $live_data   = $this->buildLiveData($tournament_id, $live_games);
 
     return [
-      '#theme'         => 'soccerbet_live',
-      '#tournament'    => $tournament,
-      '#live_games'    => $live_data['games'],
-      '#ranking'       => $live_data['ranking'],
-      '#is_live'       => !empty($live_games),
-      '#tournament_id' => $tournament_id,
-      '#attached'      => [
+      '#theme'          => 'soccerbet_live',
+      '#tournament'     => $tournament,
+      '#live_games'     => $live_data['games'],
+      '#ranking'        => $live_data['ranking'],
+      '#is_live'        => !empty($live_games),
+      '#final_started'  => $live_data['final_started'],
+      '#tournament_id'  => $tournament_id,
+      '#attached'       => [
         'library' => ['soccerbet/live'],
       ],
-      '#cache'         => ['max-age' => 0],
+      '#cache'          => ['max-age' => 0],
     ];
   }
 
@@ -77,10 +82,11 @@ final class LiveController extends ControllerBase {
     $live_data  = $this->buildLiveData($tournament_id, $live_games);
 
     return new JsonResponse([
-      'is_live'  => !empty($live_games),
-      'games'    => $live_data['games'],
-      'ranking'  => $live_data['ranking'],
-      'updated'  => date('H:i:s'),
+      'is_live'       => !empty($live_games),
+      'games'         => $live_data['games'],
+      'ranking'       => $live_data['ranking'],
+      'final_started' => $live_data['final_started'],
+      'updated'       => date('H:i:s'),
     ]);
   }
 
@@ -155,6 +161,12 @@ final class LiveController extends ControllerBase {
       ->execute()->fetchCol() as $winner_id) {
       $stars[(int) $winner_id] = ($stars[(int) $winner_id] ?? 0) + 1;
     }
+
+    // Turniersieger-Tipp: ab Finalanpfiff anzeigen
+    $final_started       = $this->winnerBet->isFinalStarted($tournament_id);
+    $winner_bets_by_tipper = $final_started
+      ? $this->winnerBet->loadBetsKeyedByTipper($tournament_id)
+      : [];
 
     // Spiele aufbereiten
     $games_out = [];
@@ -282,6 +294,18 @@ final class LiveController extends ControllerBase {
         ? $full_total                  // korrekt, nicht nochmals addieren
         : $full_total + $live_points;  // manuell addieren
 
+      // Turniersieger-Bonus ab Finalanpfiff
+      $winner_bet        = $winner_bets_by_tipper[$tipper_id] ?? NULL;
+      $winner_bet_pts    = $winner_bet ? (int) ($winner_bet->display_points ?? 0) : 0;
+      $winner_bet_entry  = $winner_bet ? [
+        'team_name'  => $winner_bet->team_name,
+        'pts'        => $winner_bet_pts,
+        'is_correct' => $winner_bet->is_correct,
+        'is_pending' => $winner_bet->is_pending,
+      ] : NULL;
+      $total += $winner_bet_pts;
+      $base_total += $winner_bet_pts; // Bonus in Vorher-Rang einbeziehen
+
       $ranking[] = [
         'tipper_id'   => $tipper_id,
         'name'        => $tipper->tipper_name,
@@ -294,6 +318,7 @@ final class LiveController extends ControllerBase {
         'live_points' => $live_points,
         'base_total'  => $base_total,
         'total'       => $total,
+        'winner_bet'  => $winner_bet_entry,
       ];
     }
 
@@ -323,7 +348,7 @@ final class LiveController extends ControllerBase {
     }
     unset($row);
 
-    return ['games' => $games_out, 'ranking' => $ranking];
+    return ['games' => $games_out, 'ranking' => $ranking, 'final_started' => $final_started];
   }
 
   private function resolveTournamentId(int $tournament_id): int {

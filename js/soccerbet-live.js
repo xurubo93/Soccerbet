@@ -24,7 +24,7 @@
             .then(r => r.json())
             .then(data => {
               renderGames(root, data.games);
-              renderRanking(root, data.games, data.ranking);
+              renderRanking(root, data.games, data.ranking, data.final_started);
               updateLiveDot(root, data.is_live);
               if (updatedEl) {
                 updatedEl.textContent = Drupal.t('Zuletzt aktualisiert: @t', { '@t': data.updated });
@@ -83,7 +83,7 @@
     wrap.innerHTML = html;
   }
 
-  function renderRanking(root, games, ranking) {
+  function renderRanking(root, games, ranking, finalStarted) {
     const wrap = root.querySelector('#soccerbet-live-ranking');
     if (!wrap || !ranking) return;
     if (ranking.length === 0) {
@@ -100,6 +100,9 @@
         + g.team1_name.substring(0,3).toUpperCase() + ' : '
         + g.team2_name.substring(0,3).toUpperCase() + '</th>';
     });
+    if (finalStarted) {
+      html += '<th class="col-winner-bet" title="' + Drupal.t('Turniersieger-Tipp') + '">🏆</th>';
+    }
     html += '<th class="col-total">' + Drupal.t('Punkte') + '</th></tr></thead><tbody>';
 
     ranking.forEach(row => {
@@ -126,6 +129,20 @@
           + '<span class="soccerbet-live__tipp-score">' + esc(t.tipp) + '</span>'
           + ptsHtml + '</span></td>';
       });
+
+      if (finalStarted) {
+        const wb = row.winner_bet;
+        if (wb) {
+          const wbStatus = wb.is_pending ? 'pending' : (wb.is_correct ? 'correct' : 'wrong');
+          html += '<td class="col-winner-bet">'
+            + '<span class="soccerbet-live__winner-bet soccerbet-live__winner-bet--' + wbStatus + '">'
+            + esc(wb.team_name.substring(0,3).toUpperCase())
+            + ' <span class="soccerbet-live__tipp-pts">(' + wb.pts + ')</span>'
+            + '</span></td>';
+        } else {
+          html += '<td class="col-winner-bet"><span class="soccerbet-live__winner-bet soccerbet-live__winner-bet--none">—</span></td>';
+        }
+      }
 
       html += '<td class="col-total"><strong>' + row.total + '</strong></td></tr>';
     });

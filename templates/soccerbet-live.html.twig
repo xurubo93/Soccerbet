@@ -64,6 +64,9 @@
                 {{ game.team1_name|slice(0,3)|upper }} : {{ game.team2_name|slice(0,3)|upper }}
               </th>
             {% endfor %}
+            {% if final_started %}
+              <th class="col-winner-bet" title="{{ 'Turniersieger-Tipp'|t }}">🏆</th>
+            {% endif %}
             <th class="col-total">{{ 'Punkte'|t }}</th>
           </tr>
         </thead>
@@ -103,6 +106,19 @@
                   </span>
                 </td>
               {% endfor %}
+
+              {% if final_started %}
+                <td class="col-winner-bet">
+                  {% if row.winner_bet %}
+                    <span class="soccerbet-live__winner-bet soccerbet-live__winner-bet--{% if row.winner_bet.is_pending %}pending{% elseif row.winner_bet.is_correct %}correct{% else %}wrong{% endif %}">
+                      {{ row.winner_bet.team_name|slice(0,3)|upper }}
+                      <span class="soccerbet-live__tipp-pts">({{ row.winner_bet.pts }})</span>
+                    </span>
+                  {% else %}
+                    <span class="soccerbet-live__winner-bet soccerbet-live__winner-bet--none">—</span>
+                  {% endif %}
+                </td>
+              {% endif %}
 
               <td class="col-total"><strong>{{ row.total }}</strong></td>
             </tr>

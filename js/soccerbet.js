@@ -110,6 +110,31 @@
   };
 
   /**
+   * Rangliste Tabs: Rangliste ↔ Bonus umschalten.
+   */
+  Drupal.behaviors.soccerbetStandingsTabs = {
+    attach(context) {
+      once('soccerbet-standings-tabs', '.soccerbet-standings__tabs', context).forEach(function (nav) {
+        nav.addEventListener('click', function (e) {
+          const tab = e.target.closest('.soccerbet-standings__tab');
+          if (!tab) return;
+          e.preventDefault();
+
+          const tabId = tab.dataset.tab;
+          nav.querySelectorAll('.soccerbet-standings__tab').forEach(t => {
+            t.classList.toggle('soccerbet-standings__tab--active', t.dataset.tab === tabId);
+          });
+
+          const standings = nav.closest('.soccerbet-standings') || document;
+          standings.querySelectorAll('.soccerbet-standings__tab-content').forEach(panel => {
+            panel.hidden = panel.id !== 'tab-' + tabId;
+          });
+        });
+      });
+    },
+  };
+
+  /**
    * Ranglisten-Verlauf: AJAX-Navigation (kein Page-Reload, kein Scroll-Reset).
    */
   Drupal.behaviors.soccerbetStepsAjax = {

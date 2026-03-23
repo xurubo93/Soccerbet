@@ -18,6 +18,22 @@
     {% endif %}
   </h2>
 
+  {# Tab-Navigation #}
+  <nav class="soccerbet-standings__tabs" aria-label="{{ 'Ansicht wählen'|t }}">
+    <a href="#tab-rangliste" class="soccerbet-standings__tab soccerbet-standings__tab--active" data-tab="rangliste">
+      {{ 'Rangliste'|t }}
+    </a>
+    <a href="#tab-bonus" class="soccerbet-standings__tab" data-tab="bonus">
+      {{ 'Bonus'|t }}
+      {% if winner_bets is not empty %}
+        <span class="soccerbet-standings__tab-badge">{{ winner_bets|length }}</span>
+      {% endif %}
+    </a>
+  </nav>
+
+  {# Rangliste-Tab #}
+  <div id="tab-rangliste" class="soccerbet-standings__tab-content">
+
   {% if played_games == 0 %}
     <p class="soccerbet-standings__empty">
       {{ 'Noch keine Spiele gespielt oder keine Tipps abgegeben.'|t }}
@@ -102,6 +118,44 @@
     </table>
 
   {% endif %}
+
+  </div>{# end tab-rangliste #}
+
+  {# Bonus-Tab #}
+  <div id="tab-bonus" class="soccerbet-standings__tab-content" hidden>
+    <table class="soccerbet-standings__table soccerbet-bonus__table">
+      <thead>
+        <tr>
+          <th class="col-name">{{ 'Tipper'|t }}</th>
+          <th class="col-bonus-team">{{ 'Turniersieger-Tipp'|t }}</th>
+          <th class="col-bonus-pts">{{ 'Mögliche Punkte'|t }}</th>
+          <th class="col-bonus-result">{{ 'Ergebnis'|t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for bet in winner_bets %}
+          <tr class="soccerbet-bonus__row{% if bet.is_correct %} soccerbet-bonus__row--correct{% elseif bet.actual_points is not null %} soccerbet-bonus__row--wrong{% endif %}">
+            <td class="col-name">{{ bet.tipper_name }}</td>
+            <td class="col-bonus-team">{{ bet.team_name }}</td>
+            <td class="col-bonus-pts"><strong>{{ bet.possible_points }}</strong></td>
+            <td class="col-bonus-result">
+              {% if bet.actual_points is not null %}
+                {% if bet.is_correct %}
+                  <span class="soccerbet-bonus__correct">✓ +{{ bet.actual_points }}</span>
+                {% else %}
+                  <span class="soccerbet-bonus__wrong">✗ 0</span>
+                {% endif %}
+              {% else %}
+                <span class="soccerbet-text-muted">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4">{{ 'Noch keine Turniersieger-Tipps abgegeben.'|t }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>{# end tab-bonus #}
 
   {% if past_tournaments is not empty %}
     <div class="soccerbet-standings__past">

@@ -7,6 +7,7 @@ namespace Drupal\soccerbet\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\soccerbet\Service\ScoringService;
 use Drupal\soccerbet\Service\TournamentManager;
+use Drupal\soccerbet\Service\WinnerBetService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,12 +18,14 @@ final class StandingsController extends ControllerBase {
   public function __construct(
     private readonly ScoringService $scoring,
     private readonly TournamentManager $tournamentManager,
+    private readonly WinnerBetService $winnerBet,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('soccerbet.scoring'),
       $container->get('soccerbet.tournament_manager'),
+      $container->get('soccerbet.winner_bet'),
     );
   }
 
@@ -48,6 +51,33 @@ final class StandingsController extends ControllerBase {
 
     // Frühere Turniere derselben Tippergruppen ermitteln
     $past_tournaments = $this->loadPastTournaments($tournament_id);
+    $winner_bets      = $this->winnerBet->loadBetsForTournament($tournament_id);
+
+    // Bonus-Punkte zum Gesamtscore addieren (nur wenn Turnier beendet)
+    $bonus_by_tipper = [];
+    foreach ($winner_bets as $bet) {
+      if ($bet->display_points !== NULL) {
+        $bonus_by_tipper[(int) $bet->tipper_id] = (int) $bet->display_points;
+      }
+    }
+    if (!empty($bonus_by_tipper)) {
+      foreach ($rows as &$row) {
+        if (isset($bonus_by_tipper[$row['tipper_id']])) {
+          $row['total'] += $bonus_by_tipper[$row['tipper_id']];
+        }
+      }
+      unset($row);
+      // Nach neuem Total neu sortieren und Ränge vergeben
+      usort($rows, fn($a, $b) => $b['total'] - $a['total']);
+      $rank = 1;
+      foreach ($rows as $i => &$row) {
+        if ($i > 0 && $row['total'] < $rows[$i - 1]['total']) {
+          $rank = $i + 1;
+        }
+        $row['rank'] = $rank;
+      }
+      unset($row);
+    }
 
     return [
       '#theme'            => 'soccerbet_standings',
@@ -55,6 +85,7 @@ final class StandingsController extends ControllerBase {
       '#tournament'       => $tournament,
       '#played_games'     => $played_games,
       '#past_tournaments' => $past_tournaments,
+      '#winner_bets'      => $winner_bets,
       '#cache'            => [
         'tags'    => ['soccerbet_standings:' . $tournament_id],
         'max-age' => 60,
