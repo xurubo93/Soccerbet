@@ -163,6 +163,21 @@ function soccerbet_migrate_import_soccerbet_tournaments_finish(string $migration
     );
   }
 }
+/**
+ * Implements hook_user_login().
+ *
+ * Nach Login oder Neu-Registrierung: ausstehende Gruppen-Einladung aus der
+ * Session lesen und als destination setzen, damit der Beitritt abgeschlossen wird.
+ */
+function soccerbet_user_login($account): void {
+  $request = \Drupal::request();
+  $invite_url = $request->getSession()->get('soccerbet_invite_url');
+  if ($invite_url) {
+    $request->getSession()->remove('soccerbet_invite_url');
+    $request->query->set('destination', $invite_url);
+  }
+}
+
 function soccerbet_page_attachments(array &$attachments): void {
   $route = \Drupal::routeMatch()->getRouteName();
   if (!str_starts_with($route, 'soccerbet.')) {

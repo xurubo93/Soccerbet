@@ -160,12 +160,14 @@ final class GroupPageController extends ControllerBase {
 
     $uid = (int) $this->currentUser()->id();
 
-    // Nicht eingeloggt → zum Login weiterleiten, danach zurück zum Einladungslink
+    // Nicht eingeloggt → Einladungs-URL in Session speichern, zum Login weiterleiten.
+    // hook_user_login() greift die URL nach Login UND nach Neu-Registrierung ab.
     if ($uid === 0) {
       $destination = Url::fromRoute('soccerbet.group.join', [
         'group_slug'   => $group_slug,
         'invite_token' => $invite_token,
       ])->toString();
+      $request->getSession()->set('soccerbet_invite_url', $destination);
       return new RedirectResponse(
         Url::fromRoute('user.login', [], ['query' => ['destination' => $destination]])->toString()
       );
