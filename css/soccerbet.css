@@ -25,7 +25,12 @@
 .soccerbet-standings__table td { padding:.55rem .75rem; text-align:left; border-bottom:1px solid var(--sb-border); }
 .soccerbet-standings__table thead th { background:#f8f9fa; font-weight:600; font-size:.85rem; text-transform:uppercase; letter-spacing:.03em; color:var(--sb-text-muted); }
 .soccerbet-standings__table tbody tr:hover { background:#f8f9fa; }
-.col-rank,.col-exact,.col-tend,.col-total { text-align:center; }
+.col-rank,.col-name,.col-exact,.col-tend,.col-total { text-align:center; }
+.soccerbet-standings__table .col-name,
+.soccerbet-standings__table .col-rank,
+.soccerbet-standings__table .col-exact,
+.soccerbet-standings__table .col-tend,
+.soccerbet-standings__table .col-total { text-align:center; }
 .col-rank { width:60px; } .col-exact,.col-tend { width:90px; } .col-total { width:70px; font-size:1.05em; }
 .row--up   td:first-child::before { content:'▲ '; color:#28a745; font-size:.7em; }
 .row--down td:first-child::before { content:'▼ '; color:#dc3545; font-size:.7em; }
@@ -446,7 +451,7 @@
   text-align: center;
   border-bottom: 1px solid var(--sb-border);
 }
-.soccerbet-live__table .col-name { text-align: left; }
+.soccerbet-live__table .col-name { text-align: center; }
 .soccerbet-live__table thead th {
   font-size: .78rem;
   color: var(--sb-text-muted);
