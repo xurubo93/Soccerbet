@@ -53,23 +53,20 @@ final class WinnerBetService {
    * Gibt TRUE zurück wenn das Finale bereits angepfiffen wurde.
    */
   public function isFinalStarted(int $tournament_id): bool {
+    $game = $this->loadFinalGame($tournament_id);
+    if (!$game) {
+      return FALSE;
+    }
     $now = gmdate('Y-m-d\TH:i:s', \Drupal::time()->getRequestTime());
-    return (bool) $this->db->select('soccerbet_games', 'g')
-      ->condition('g.tournament_id', $tournament_id)
-      ->condition('g.phase', 'final')
-      ->condition('g.game_date', $now, '<=')
-      ->countQuery()->execute()->fetchField();
+    return $game->game_date <= $now;
   }
 
   /**
    * Gibt TRUE zurück wenn das Finale ein eingetragenes Ergebnis hat.
    */
   public function isFinalFinished(int $tournament_id): bool {
-    return (bool) $this->db->select('soccerbet_games', 'g')
-      ->condition('g.tournament_id', $tournament_id)
-      ->condition('g.phase', 'final')
-      ->condition('g.team1_score', NULL, 'IS NOT')
-      ->countQuery()->execute()->fetchField();
+    $game = $this->loadFinalGame($tournament_id);
+    return $game !== NULL && $game->team1_score !== NULL;
   }
 
   // ------------------------------------------------------------------ //
@@ -207,15 +204,8 @@ final class WinnerBetService {
    * Ermittelt die Team-ID des Turniersiegers anhand des Finalspiels.
    */
   private function resolveWinnerTeamId(int $tournament_id): ?int {
-    $final = $this->db->select('soccerbet_games', 'g')
-      ->fields('g', ['team_id_1', 'team_id_2', 'team1_score', 'team2_score'])
-      ->condition('g.tournament_id', $tournament_id)
-      ->condition('g.phase', 'final')
-      ->condition('g.team1_score', NULL, 'IS NOT')
-      ->execute()
-      ->fetchObject();
-
-    if (!$final) {
+    $final = $this->loadFinalGame($tournament_id);
+    if (!$final || $final->team1_score === NULL) {
       return NULL;
     }
     if ((int) $final->team1_score > (int) $final->team2_score) {
@@ -225,6 +215,21 @@ final class WinnerBetService {
       return (int) $final->team_id_2;
     }
     return NULL; // Unentschieden (sollte im Finale nicht vorkommen)
+  }
+
+  /**
+   * Lädt das Finalspiel einmalig pro Request (static-Cache).
+   */
+  private function loadFinalGame(int $tournament_id): ?object {
+    static $cache = [];
+    if (!array_key_exists($tournament_id, $cache)) {
+      $cache[$tournament_id] = $this->db->select('soccerbet_games', 'g')
+        ->fields('g', ['game_date', 'team1_score', 'team2_score', 'team_id_1', 'team_id_2'])
+        ->condition('g.tournament_id', $tournament_id)
+        ->condition('g.phase', 'final')
+        ->execute()->fetchObject() ?: NULL;
+    }
+    return $cache[$tournament_id];
   }
 
 }

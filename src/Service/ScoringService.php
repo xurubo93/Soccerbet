@@ -52,11 +52,6 @@ final class ScoringService {
     // ------------------------------------------------------------------ //
     // Query 1: Alle Tipper, die am Turnier teilnehmen                     //
     // ------------------------------------------------------------------ //
-    $tippers = $this->db->select('soccerbet_tippers', 'st')
-      ->fields('st', ['tipper_id', 'tipper_name', 'uid'])
-      ->fields('stt', ['tipper_has_paid'])
-      ->join('soccerbet_tournament_tippers', 'stt', 'stt.tipper_id = st.tipper_id AND stt.tournament_id = :tid', [':tid' => $tournament_id]);
-
     $tippers = $this->db->select('soccerbet_tippers', 'st');
     $tippers->fields('st', ['tipper_id', 'tipper_name', 'uid']);
     // MAX() um bei eventuellen Duplikaten einen definierten Wert zu bekommen
@@ -194,15 +189,6 @@ final class ScoringService {
       return [];
     }
 
-    // Tipper-Namen frisch aus DB laden – unabhängig von der Punkteberechnung
-    $tipper_names = [];
-    $name_q = $this->db->select('soccerbet_tippers', 'st');
-    $name_q->fields('st', ['tipper_id', 'tipper_name']);
-    $name_q->condition('st.tipper_id', array_keys($current), 'IN');
-    foreach ($name_q->execute()->fetchAll() as $row) {
-      $tipper_names[(int) $row->tipper_id] = $row->tipper_name;
-    }
-
     // Sieger-Sterne: für jeden Tipper zählen wie oft er 1. Platz wurde
     // (über ALLE abgeschlossenen Turniere in derselben Tippergruppe)
     $stars = [];
@@ -224,7 +210,7 @@ final class ScoringService {
     foreach ($current as $tipper_id => $data) {
       $rows[] = [
         'tipper_id'  => $tipper_id,
-        'name'       => $tipper_names[$tipper_id] ?? $data['name'],
+        'name'       => $data['name'],
         'stars'      => $stars[$tipper_id] ?? 0,
         'paid'       => $data['tipper_has_paid'],
         'ergebnisse' => $data['ergebnisse'],

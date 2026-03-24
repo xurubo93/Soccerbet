@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Controller;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\soccerbet\Service\ScoringService;
 use Drupal\soccerbet\Service\TournamentManager;
@@ -171,8 +172,16 @@ final class StandingsController extends ControllerBase {
           continue;
         }
         $seen[$tid] = TRUE;
-        $t->url   = \Drupal\Core\Url::fromRoute('soccerbet.standings', ['tournament_id' => $tid])->toString();
-        $t->top3  = array_slice($this->scoring->getRanking($tid), 0, 3);
+        $t->url = \Drupal\Core\Url::fromRoute('soccerbet.standings', ['tournament_id' => $tid])->toString();
+
+        $cid = 'soccerbet:past_top3:' . $tid;
+        if ($cached = \Drupal::cache()->get($cid)) {
+          $t->top3 = $cached->data;
+        }
+        else {
+          $t->top3 = array_slice($this->scoring->getRanking($tid), 0, 3);
+          \Drupal::cache()->set($cid, $t->top3, Cache::PERMANENT, ['soccerbet_standings:' . $tid]);
+        }
         $result[] = $t;
       }
     }
