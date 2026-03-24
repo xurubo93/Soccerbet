@@ -138,7 +138,7 @@ final class GameForm extends FormBase {
     ];
     $form['published'] = [
       '#type'          => 'checkbox',
-      '#title'         => $this->t('Veröffentlicht (für Tipps sichtbar)'),
+      '#title'         => $this->t('Veröffentlicht (in Wertung einbeziehen)'),
       '#default_value' => $game?->published ?? 1,
     ];
 

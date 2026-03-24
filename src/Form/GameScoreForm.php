@@ -31,6 +31,7 @@ final class GameScoreForm extends FormBase {
     $game = $this->tipperManager->loadGame($game_id);
     $form_state->set('game_id', $game_id);
     $form_state->set('tournament_id', (int) $game->tournament_id);
+    $form_state->set('game_phase', $game->phase);
 
     // Team-Namen laden
     $team1 = $this->tipperManager->loadTeam((int) $game->team_id_1);
@@ -86,6 +87,21 @@ final class GameScoreForm extends FormBase {
     ];
 
     return $form;
+  }
+
+  public function validateForm(array &$form, FormStateInterface $form_state): void {
+    $ko_phases = ['round_of_16', 'quarter', 'semi', 'third_place', 'final'];
+    if (!in_array($form_state->get('game_phase'), $ko_phases, TRUE)) {
+      return;
+    }
+    $s1 = (int) $form_state->getValue('team1_score');
+    $s2 = (int) $form_state->getValue('team2_score');
+    if ($s1 === $s2 && (int) ($form_state->getValue('winner_team_id') ?? 0) === 0) {
+      $form_state->setErrorByName(
+        'winner_team_id',
+        $this->t('Bei Unentschieden muss ein Aufsteiger gewählt werden.')
+      );
+    }
   }
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {

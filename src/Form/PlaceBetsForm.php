@@ -192,9 +192,13 @@ final class PlaceBetsForm extends FormBase {
       // Offene Spiele – direkt sichtbar
       foreach ($open_games as $game) {
         $has_open_games = TRUE;
+        if ($ko_phase) {
+          $ko_open_game_ids[] = (int) $game->game_id;
+        }
         $this->buildGameElement($form[$phase], $game, $saved_tipps, $lock_minutes, $now, $ko_phase, 'open-' . (int) $game->game_id);
       }
     }
+    $form_state->set('ko_open_game_ids', $ko_open_game_ids ?? []);
 
     // Turniersieger-Tipp – immer ganz oben, immer offen
     $teams = $this->tipperManager->loadTeamsByTournament($tournament_id);
@@ -381,18 +385,14 @@ final class PlaceBetsForm extends FormBase {
 
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $values      = $form_state->getValues();
-    $lock_minutes = (int) \Drupal::config('soccerbet.settings')
-      ->get('betting_closes_minutes_before');
-    $now          = \Drupal::time()->getRequestTime();
 
-    // Alle game_*-Keys durchsuchen und Eingaben validieren
+    // Alle tipp1_*-Keys durchsuchen und Eingaben validieren
     foreach ($values as $key => $value) {
       if (!str_starts_with($key, 'tipp1_')) {
         continue;
       }
       $game_id = (int) substr($key, 6);
 
-      // Tipp2 muss auch ausgefüllt sein wenn Tipp1 ausgefüllt
       $tipp1 = $values['tipp1_' . $game_id];
       $tipp2 = $values['tipp2_' . $game_id];
 
@@ -406,6 +406,19 @@ final class PlaceBetsForm extends FormBase {
         $form_state->setErrorByName(
           'tipp1_' . $game_id,
           $this->t('Bitte auch das Ergebnis für Team 1 eintragen.')
+        );
+      }
+    }
+
+    // KO-Spiele: Bei Unentschieden muss ein Aufsteiger gewählt werden
+    foreach ($form_state->get('ko_open_game_ids') ?? [] as $game_id) {
+      $tipp1  = $values['tipp1_' . $game_id] ?? '';
+      $tipp2  = $values['tipp2_' . $game_id] ?? '';
+      $winner = $values['winner_' . $game_id] ?? '';
+      if ($tipp1 !== '' && $tipp2 !== '' && (int) $tipp1 === (int) $tipp2 && $winner === '') {
+        $form_state->setErrorByName(
+          'winner_' . $game_id,
+          $this->t('Bei Unentschieden muss ein Aufsteiger gewählt werden.')
         );
       }
     }
