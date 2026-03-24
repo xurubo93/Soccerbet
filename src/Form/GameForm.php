@@ -18,6 +18,7 @@ final class GameForm extends FormBase {
 
   private const PHASES = [
     'group'       => 'Gruppenphase',
+    'round_of_32' => 'Sechzehntelfinale',
     'round_of_16' => 'Achtelfinale',
     'quarter'     => 'Viertelfinale',
     'semi'        => 'Halbfinale',

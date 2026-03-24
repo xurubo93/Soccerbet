@@ -66,7 +66,7 @@ final class GameScoreForm extends FormBase {
     ];
 
     // KO-Runden: Aufsteiger wählbar
-    $ko_phases = ['round_of_16', 'quarter', 'semi', 'third_place', 'final'];
+    $ko_phases = ['round_of_32', 'round_of_16', 'quarter', 'semi', 'third_place', 'final'];
     if (in_array($game->phase, $ko_phases, TRUE)) {
       $form['winner_team_id'] = [
         '#type'          => 'radios',
@@ -90,7 +90,7 @@ final class GameScoreForm extends FormBase {
   }
 
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $ko_phases = ['round_of_16', 'quarter', 'semi', 'third_place', 'final'];
+    $ko_phases = ['round_of_32', 'round_of_16', 'quarter', 'semi', 'third_place', 'final'];
     if (!in_array($form_state->get('game_phase'), $ko_phases, TRUE)) {
       return;
     }

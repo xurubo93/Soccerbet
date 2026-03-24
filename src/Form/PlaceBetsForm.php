@@ -110,6 +110,7 @@ final class PlaceBetsForm extends FormBase {
 
     $phase_labels = [
       'group'       => $this->t('Gruppenphase'),
+      'round_of_32' => $this->t('Sechzehntelfinale'),
       'round_of_16' => $this->t('Achtelfinale'),
       'quarter'     => $this->t('Viertelfinale'),
       'semi'        => $this->t('Halbfinale'),
