@@ -394,3 +394,20 @@ soccerbet.live.json:
   requirements:
     _permission: 'access soccerbet content'
     tournament_id: '\d+'
+
+soccerbet.live.group:
+  path: '/soccerbet/live/{tournament_id}/gruppe/{group_slug}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\LiveController::liveGroup'
+    _title: 'Gruppen-Live'
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d+'
+
+soccerbet.live.group.json:
+  path: '/soccerbet/live/{tournament_id}/gruppe/{group_slug}/json'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\LiveController::liveGroupJson'
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d+'

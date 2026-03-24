@@ -83,6 +83,14 @@ final class GroupAdminBlock extends BlockBase implements ContainerFactoryPluginI
             'group_slug'    => $slug,
           ]),
         ];
+        $links[] = [
+          '#type'  => 'link',
+          '#title' => $this->t('Live'),
+          '#url'   => Url::fromRoute('soccerbet.live.group', [
+            'tournament_id' => (int) $tournament->tournament_id,
+            'group_slug'    => $slug,
+          ]),
+        ];
       }
       $links[] = [
         '#type'  => 'link',

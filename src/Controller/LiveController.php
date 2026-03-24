@@ -7,7 +7,9 @@ namespace Drupal\soccerbet\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\soccerbet\Service\ScoringService;
+use Drupal\soccerbet\Service\TipperManager;
 use Drupal\soccerbet\Service\TournamentManager;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\soccerbet\Service\WinnerBetService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -24,6 +26,7 @@ final class LiveController extends ControllerBase {
     private readonly TournamentManager $tournamentManager,
     private readonly ScoringService $scoring,
     private readonly WinnerBetService $winnerBet,
+    private readonly TipperManager $tipperManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -32,6 +35,7 @@ final class LiveController extends ControllerBase {
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.scoring'),
       $container->get('soccerbet.winner_bet'),
+      $container->get('soccerbet.tipper_manager'),
     );
   }
 
@@ -51,8 +55,8 @@ final class LiveController extends ControllerBase {
       return ['#markup' => '<p>' . $this->t('Turnier nicht gefunden.') . '</p>'];
     }
 
-    $live_games  = $this->loadLiveGames($tournament_id);
-    $live_data   = $this->buildLiveData($tournament_id, $live_games, $this->resolveGroupTipperIds($tournament_id));
+    $live_games = $this->loadLiveGames($tournament_id);
+    $live_data  = $this->buildLiveData($tournament_id, $live_games);
 
     return [
       '#theme'          => 'soccerbet_live',
@@ -62,9 +66,44 @@ final class LiveController extends ControllerBase {
       '#is_live'        => !empty($live_games),
       '#final_started'  => $live_data['final_started'],
       '#tournament_id'  => $tournament_id,
-      '#attached'       => [
-        'library' => ['soccerbet/live'],
-      ],
+      '#attached'       => ['library' => ['soccerbet/live']],
+      '#cache'          => ['max-age' => 0],
+    ];
+  }
+
+  /**
+   * Gruppen-Live-Ansicht: nur Tipper der angegebenen Gruppe.
+   */
+  public function liveGroup(int $tournament_id, string $group_slug): array {
+    try {
+      $tournament = $this->tournamentManager->load($tournament_id);
+    }
+    catch (\Exception) {
+      return ['#markup' => '<p>' . $this->t('Turnier nicht gefunden.') . '</p>'];
+    }
+
+    $group = $this->tipperManager->loadGroupBySlug($group_slug);
+    if (!$group) {
+      throw new NotFoundHttpException();
+    }
+
+    $tipper_ids = array_map(
+      fn($m) => (int) $m->tipper_id,
+      $this->tipperManager->loadTippersByGroup((int) $group->tipper_grp_id)
+    );
+
+    $live_games = $this->loadLiveGames($tournament_id);
+    $live_data  = $this->buildLiveData($tournament_id, $live_games, $tipper_ids);
+
+    return [
+      '#theme'          => 'soccerbet_live',
+      '#tournament'     => $tournament,
+      '#live_games'     => $live_data['games'],
+      '#ranking'        => $live_data['ranking'],
+      '#is_live'        => !empty($live_games),
+      '#final_started'  => $live_data['final_started'],
+      '#tournament_id'  => $tournament_id,
+      '#attached'       => ['library' => ['soccerbet/live']],
       '#cache'          => ['max-age' => 0],
     ];
   }
@@ -79,7 +118,7 @@ final class LiveController extends ControllerBase {
     }
 
     $live_games = $this->loadLiveGames($tournament_id);
-    $live_data  = $this->buildLiveData($tournament_id, $live_games, $this->resolveGroupTipperIds($tournament_id));
+    $live_data  = $this->buildLiveData($tournament_id, $live_games);
 
     return new JsonResponse([
       'is_live'       => !empty($live_games),
@@ -91,26 +130,29 @@ final class LiveController extends ControllerBase {
   }
 
   /**
-   * Gibt Tipper-IDs aller Gruppen zurück, die diesem Turnier zugeordnet sind.
-   *
-   * Gilt für alle Betrachter gleich — die Live-Ansicht ist immer gruppen-basiert.
-   *
-   * @return int[]  Leeres Array = kein Filter (alle anzeigen)
+   * AJAX-Endpunkt für die Gruppen-Live-Ansicht.
    */
-  private function resolveGroupTipperIds(int $tournament_id): array {
-    $grp_ids = $this->db->select('soccerbet_tournament_groups', 'tg')
-      ->fields('tg', ['tipper_grp_id'])
-      ->condition('tg.tournament_id', $tournament_id)
-      ->execute()->fetchCol();
-
-    if (empty($grp_ids)) {
-      return [];
+  public function liveGroupJson(Request $request, int $tournament_id, string $group_slug): JsonResponse {
+    $group = $this->tipperManager->loadGroupBySlug($group_slug);
+    if (!$group) {
+      return new JsonResponse(['error' => 'group not found'], 404);
     }
 
-    return array_map('intval', $this->db->select('soccerbet_tippers', 't')
-      ->fields('t', ['tipper_id'])
-      ->condition('t.tipper_grp_id', $grp_ids, 'IN')
-      ->execute()->fetchCol());
+    $tipper_ids = array_map(
+      fn($m) => (int) $m->tipper_id,
+      $this->tipperManager->loadTippersByGroup((int) $group->tipper_grp_id)
+    );
+
+    $live_games = $this->loadLiveGames($tournament_id);
+    $live_data  = $this->buildLiveData($tournament_id, $live_games, $tipper_ids);
+
+    return new JsonResponse([
+      'is_live'       => !empty($live_games),
+      'games'         => $live_data['games'],
+      'ranking'       => $live_data['ranking'],
+      'final_started' => $live_data['final_started'],
+      'updated'       => date('H:i:s'),
+    ]);
   }
 
   /**
