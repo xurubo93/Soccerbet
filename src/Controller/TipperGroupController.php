@@ -39,7 +39,7 @@ final class TipperGroupController extends ControllerBase {
             '#type'  => 'operations',
             '#links' => [
               'edit'   => ['title' => $this->t('Bearbeiten'), 'url' => Url::fromRoute('soccerbet.admin.tippergroups.edit', ['tipper_grp_id' => $g->tipper_grp_id])],
-              'delete' => ['title' => $this->t('Löschen'),    'url' => Url::fromRoute('soccerbet.admin.tippergroups.edit', ['tipper_grp_id' => $g->tipper_grp_id])],
+              'delete' => ['title' => $this->t('Löschen'),    'url' => Url::fromRoute('soccerbet.admin.tippergroups.delete', ['tipper_grp_id' => $g->tipper_grp_id])],
             ],
           ],
         ],

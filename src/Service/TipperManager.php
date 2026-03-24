@@ -163,13 +163,15 @@ final class TipperManager {
   }
 
   public function deleteGroup(int $tipper_grp_id): void {
-    // Tipper in dieser Gruppe erst löschen
+    // Tipper in dieser Gruppe erst löschen (inkl. Tipps + Turnier-Zuordnung)
     $tipper_ids = $this->db->select('soccerbet_tippers', 't')
       ->fields('t', ['tipper_id'])->condition('t.tipper_grp_id', $tipper_grp_id)
       ->execute()->fetchCol();
     foreach ($tipper_ids as $tid) {
       $this->deleteTipper((int) $tid);
     }
+    $this->db->delete('soccerbet_tournament_groups')->condition('tipper_grp_id', $tipper_grp_id)->execute();
+    $this->db->delete('soccerbet_invitations')->condition('tipper_grp_id', $tipper_grp_id)->execute();
     $this->db->delete('soccerbet_tipper_groups')->condition('tipper_grp_id', $tipper_grp_id)->execute();
   }
 

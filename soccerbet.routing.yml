@@ -229,6 +229,15 @@ soccerbet.admin.tippergroups.edit:
     _permission: 'administer soccerbet'
     tipper_grp_id: '\d+'
 
+soccerbet.admin.tippergroups.delete:
+  path: '/soccerbet/admin/tippergroups/{tipper_grp_id}/delete'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TipperGroupDeleteForm'
+    _title: 'Tippergruppe löschen'
+  requirements:
+    _permission: 'administer soccerbet'
+    tipper_grp_id: '\d+'
+
 # ============================================================
 # Admin: Zahlungen
 # ============================================================
