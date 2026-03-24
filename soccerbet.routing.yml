@@ -350,7 +350,7 @@ soccerbet.group.join:
     _controller: '\Drupal\soccerbet\Controller\GroupPageController::join'
     _title: 'Gruppe beitreten'
   requirements:
-    _user_is_logged_in: 'TRUE'
+    _access: 'TRUE'
 
 soccerbet.group.join.direct:
   path: '/soccerbet/gruppe/{group_slug}/beitreten'

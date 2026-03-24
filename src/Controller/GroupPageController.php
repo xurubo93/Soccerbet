@@ -158,8 +158,20 @@ final class GroupPageController extends ControllerBase {
       throw new NotFoundHttpException();
     }
 
+    $uid = (int) $this->currentUser()->id();
+
+    // Nicht eingeloggt → zum Login weiterleiten, danach zurück zum Einladungslink
+    if ($uid === 0) {
+      $destination = Url::fromRoute('soccerbet.group.join', [
+        'group_slug'   => $group_slug,
+        'invite_token' => $invite_token,
+      ])->toString();
+      return new RedirectResponse(
+        Url::fromRoute('user.login', [], ['query' => ['destination' => $destination]])->toString()
+      );
+    }
+
     $grp_id = (int) $group->tipper_grp_id;
-    $uid    = (int) $this->currentUser()->id();
     $now    = \Drupal::time()->getRequestTime();
 
     // Token validieren
