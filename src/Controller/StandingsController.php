@@ -6,6 +6,7 @@ namespace Drupal\soccerbet\Controller;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Database\Connection;
 use Drupal\soccerbet\Service\ScoringService;
 use Drupal\soccerbet\Service\TournamentManager;
 use Drupal\soccerbet\Service\WinnerBetService;
@@ -20,6 +21,7 @@ final class StandingsController extends ControllerBase {
     private readonly ScoringService $scoring,
     private readonly TournamentManager $tournamentManager,
     private readonly WinnerBetService $winnerBet,
+    private readonly Connection $db,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -27,6 +29,7 @@ final class StandingsController extends ControllerBase {
       $container->get('soccerbet.scoring'),
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.winner_bet'),
+      $container->get('database'),
     );
   }
 
@@ -47,7 +50,7 @@ final class StandingsController extends ControllerBase {
       return $this->noTournamentMessage();
     }
 
-    $rows         = $this->scoring->getRanking($tournament_id);
+    $rows         = $this->filterByGroup($this->scoring->getRanking($tournament_id), $tournament_id);
     $played_games = $this->scoring->getPlayedGamesCount($tournament_id);
 
     // Frühere Turniere derselben Tippergruppen ermitteln
@@ -108,7 +111,7 @@ final class StandingsController extends ControllerBase {
       return $this->noTournamentMessage();
     }
 
-    $rows      = $this->scoring->getRanking($tournament_id, $limit);
+    $rows      = $this->filterByGroup($this->scoring->getRanking($tournament_id, $limit), $tournament_id);
     $max_games = $this->scoring->getPlayedGamesCount($tournament_id);
 
     return [
@@ -189,6 +192,52 @@ final class StandingsController extends ControllerBase {
     // Neueste zuerst (loadAll liefert bereits DESC, aber nach Merge neu sortieren)
     usort($result, fn($a, $b) => strcmp((string) $b->start_date, (string) $a->start_date));
     return $result;
+  }
+
+  /**
+   * Filtert eine Rangliste auf die Tipper-Gruppen des aktuellen Users.
+   * Admins sehen alle. Leere Gruppen-Liste = kein Filter.
+   *
+   * @param array $rows    Ranglisten-Zeilen aus ScoringService::getRanking()
+   * @return array         Gefilterte und neu nummerierte Rangliste
+   */
+  private function filterByGroup(array $rows, int $tournament_id): array {
+    if ($this->currentUser()->hasPermission('administer soccerbet')) {
+      return $rows;
+    }
+
+    $uid = (int) $this->currentUser()->id();
+    if ($uid === 0 || empty($rows)) {
+      return $rows;
+    }
+
+    $grp_ids = $this->db->select('soccerbet_tippers', 't')
+      ->fields('t', ['tipper_grp_id'])
+      ->condition('t.uid', $uid)
+      ->execute()->fetchCol();
+
+    if (empty($grp_ids)) {
+      return $rows;
+    }
+
+    $allowed = $this->db->select('soccerbet_tippers', 't')
+      ->fields('t', ['tipper_id'])
+      ->condition('t.tipper_grp_id', $grp_ids, 'IN')
+      ->execute()->fetchCol();
+
+    $allowed = array_map('intval', $allowed);
+    $filtered = array_values(array_filter(
+      $rows,
+      fn($row) => in_array((int) $row['tipper_id'], $allowed, TRUE)
+    ));
+
+    // Ränge innerhalb der Gruppe neu vergeben
+    foreach ($filtered as $i => &$row) {
+      $row['rank'] = $i + 1;
+    }
+    unset($row);
+
+    return $filtered;
   }
 
   /**
