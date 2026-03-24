@@ -12,6 +12,15 @@ soccerbet.standings:
     _permission: 'access soccerbet content'
     tournament_id: '\d*'
 
+soccerbet.standings.group:
+  path: '/soccerbet/standings/{tournament_id}/gruppe/{group_slug}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\StandingsController::standingsGroup'
+    _title: 'Gruppen-Rangliste'
+  requirements:
+    _permission: 'access soccerbet content'
+    tournament_id: '\d+'
+
 soccerbet.standings_step:
   path: '/soccerbet/standings/{tournament_id}/step/{limit}'
   defaults:

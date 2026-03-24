@@ -8,8 +8,10 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\soccerbet\Service\ScoringService;
+use Drupal\soccerbet\Service\TipperManager;
 use Drupal\soccerbet\Service\TournamentManager;
 use Drupal\soccerbet\Service\WinnerBetService;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,6 +24,7 @@ final class StandingsController extends ControllerBase {
     private readonly TournamentManager $tournamentManager,
     private readonly WinnerBetService $winnerBet,
     private readonly Connection $db,
+    private readonly TipperManager $tipperManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -30,6 +33,7 @@ final class StandingsController extends ControllerBase {
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.winner_bet'),
       $container->get('database'),
+      $container->get('soccerbet.tipper_manager'),
     );
   }
 
@@ -50,7 +54,7 @@ final class StandingsController extends ControllerBase {
       return $this->noTournamentMessage();
     }
 
-    $rows         = $this->filterByGroup($this->scoring->getRanking($tournament_id), $tournament_id);
+    $rows         = $this->scoring->getRanking($tournament_id);
     $played_games = $this->scoring->getPlayedGamesCount($tournament_id);
 
     // Frühere Turniere derselben Tippergruppen ermitteln
@@ -111,7 +115,7 @@ final class StandingsController extends ControllerBase {
       return $this->noTournamentMessage();
     }
 
-    $rows      = $this->filterByGroup($this->scoring->getRanking($tournament_id, $limit), $tournament_id);
+    $rows      = $this->scoring->getRanking($tournament_id, $limit);
     $max_games = $this->scoring->getPlayedGamesCount($tournament_id);
 
     return [
@@ -123,6 +127,84 @@ final class StandingsController extends ControllerBase {
       '#step_limit'   => $limit,
       '#max_games'    => $max_games,
       '#cache'        => ['max-age' => 300],
+    ];
+  }
+
+  /**
+   * Gruppen-Rangliste: nur Tipper der angegebenen Tippergruppe.
+   */
+  public function standingsGroup(int $tournament_id, string $group_slug): array {
+    $tournament_id = (int) $tournament_id;
+
+    try {
+      $tournament = $this->tournamentManager->load($tournament_id);
+    }
+    catch (\Exception) {
+      return $this->noTournamentMessage();
+    }
+
+    $group = $this->tipperManager->loadGroupBySlug($group_slug);
+    if (!$group) {
+      throw new NotFoundHttpException();
+    }
+
+    $grp_id = (int) $group->tipper_grp_id;
+    $members = $this->tipperManager->loadTippersByGroup($grp_id);
+    $member_ids = array_map(fn($m) => (int) $m->tipper_id, $members);
+
+    $all_rows     = $this->scoring->getRanking($tournament_id);
+    $played_games = $this->scoring->getPlayedGamesCount($tournament_id);
+    $winner_bets  = $this->winnerBet->loadBetsForTournament($tournament_id);
+
+    // Auf Gruppen-Tipper filtern
+    $rows = array_values(array_filter(
+      $all_rows,
+      fn($row) => in_array((int) $row['tipper_id'], $member_ids, TRUE)
+    ));
+    foreach ($rows as $i => &$row) {
+      $row['rank'] = $i + 1;
+    }
+    unset($row);
+
+    // Bonus-Punkte addieren
+    $bonus_by_tipper = [];
+    foreach ($winner_bets as $bet) {
+      if ($bet->display_points !== NULL) {
+        $bonus_by_tipper[(int) $bet->tipper_id] = (int) $bet->display_points;
+      }
+    }
+    if (!empty($bonus_by_tipper)) {
+      foreach ($rows as &$row) {
+        if (isset($bonus_by_tipper[$row['tipper_id']])) {
+          $row['total'] += $bonus_by_tipper[$row['tipper_id']];
+        }
+      }
+      unset($row);
+      usort($rows, fn($a, $b) => $b['total'] - $a['total']);
+      $rank = 1;
+      foreach ($rows as $i => &$row) {
+        if ($i > 0 && $row['total'] < $rows[$i - 1]['total']) {
+          $rank = $i + 1;
+        }
+        $row['rank'] = $rank;
+      }
+      unset($row);
+    }
+
+    $past_tournaments = $this->loadPastTournaments($tournament_id);
+
+    return [
+      '#theme'            => 'soccerbet_standings',
+      '#rows'             => $rows,
+      '#tournament'       => $tournament,
+      '#played_games'     => $played_games,
+      '#past_tournaments' => $past_tournaments,
+      '#winner_bets'      => $winner_bets,
+      '#cache'            => [
+        'tags'    => ['soccerbet_standings:' . $tournament_id],
+        'max-age' => 60,
+        'contexts' => ['url'],
+      ],
     ];
   }
 
@@ -192,46 +274,6 @@ final class StandingsController extends ControllerBase {
     // Neueste zuerst (loadAll liefert bereits DESC, aber nach Merge neu sortieren)
     usort($result, fn($a, $b) => strcmp((string) $b->start_date, (string) $a->start_date));
     return $result;
-  }
-
-  /**
-   * Filtert eine Rangliste auf Tipper, deren Gruppe dem Turnier zugeordnet ist.
-   *
-   * Gilt für alle Betrachter gleich — die Rangliste ist immer gruppen-basiert.
-   * Tippers ohne gültige Gruppen-Zuordnung zum Turnier erscheinen nicht.
-   */
-  private function filterByGroup(array $rows, int $tournament_id): array {
-    if (empty($rows)) {
-      return $rows;
-    }
-
-    // Alle Gruppen-IDs die diesem Turnier zugeordnet sind
-    $grp_ids = $this->db->select('soccerbet_tournament_groups', 'tg')
-      ->fields('tg', ['tipper_grp_id'])
-      ->condition('tg.tournament_id', $tournament_id)
-      ->execute()->fetchCol();
-
-    if (empty($grp_ids)) {
-      return $rows;
-    }
-
-    // Tipper-IDs aller dieser Gruppen
-    $allowed = array_map('intval', $this->db->select('soccerbet_tippers', 't')
-      ->fields('t', ['tipper_id'])
-      ->condition('t.tipper_grp_id', $grp_ids, 'IN')
-      ->execute()->fetchCol());
-
-    $filtered = array_values(array_filter(
-      $rows,
-      fn($row) => in_array((int) $row['tipper_id'], $allowed, TRUE)
-    ));
-
-    foreach ($filtered as $i => &$row) {
-      $row['rank'] = $i + 1;
-    }
-    unset($row);
-
-    return $filtered;
   }
 
   /**

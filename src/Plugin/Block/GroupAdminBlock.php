@@ -9,6 +9,7 @@ use Drupal\Core\Database\Connection;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
+use Drupal\soccerbet\Service\TournamentManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -28,6 +29,7 @@ final class GroupAdminBlock extends BlockBase implements ContainerFactoryPluginI
     mixed $plugin_definition,
     private readonly AccountProxyInterface $currentUser,
     private readonly Connection $db,
+    private readonly TournamentManager $tournamentManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -39,6 +41,7 @@ final class GroupAdminBlock extends BlockBase implements ContainerFactoryPluginI
       $plugin_definition,
       $container->get('current_user'),
       $container->get('database'),
+      $container->get('soccerbet.tournament_manager'),
     );
   }
 
@@ -63,13 +66,29 @@ final class GroupAdminBlock extends BlockBase implements ContainerFactoryPluginI
     $items = [];
     foreach ($groups as $group) {
       $slug     = $group->group_slug;
+      $grp_id   = (int) $group->tipper_grp_id;
       $is_admin = (int) $group->tipper_admin_id === $uid;
 
-      $links = [[
+      // Neuestes Turnier der Gruppe für den Ranglisten-Link
+      $tournaments = $this->tournamentManager->loadAll($grp_id);
+      $tournament  = $tournaments[0] ?? NULL;
+
+      $links = [];
+      if ($tournament) {
+        $links[] = [
+          '#type'  => 'link',
+          '#title' => $this->t('Rangliste'),
+          '#url'   => Url::fromRoute('soccerbet.standings.group', [
+            'tournament_id' => (int) $tournament->tournament_id,
+            'group_slug'    => $slug,
+          ]),
+        ];
+      }
+      $links[] = [
         '#type'  => 'link',
-        '#title' => $this->t('Rangliste'),
+        '#title' => $this->t('Gruppenpage'),
         '#url'   => Url::fromRoute('soccerbet.group.page', ['group_slug' => $slug]),
-      ]];
+      ];
 
       if ($is_admin) {
         $links[] = [
