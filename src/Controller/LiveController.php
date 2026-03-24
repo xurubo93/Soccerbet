@@ -7,6 +7,7 @@ namespace Drupal\soccerbet\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\soccerbet\Service\ScoringService;
+use Drupal\soccerbet\Service\TipperManager;
 use Drupal\soccerbet\Service\TournamentManager;
 use Drupal\soccerbet\Service\WinnerBetService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -24,6 +25,7 @@ final class LiveController extends ControllerBase {
     private readonly TournamentManager $tournamentManager,
     private readonly ScoringService $scoring,
     private readonly WinnerBetService $winnerBet,
+    private readonly TipperManager $tipperManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -32,6 +34,7 @@ final class LiveController extends ControllerBase {
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.scoring'),
       $container->get('soccerbet.winner_bet'),
+      $container->get('soccerbet.tipper_manager'),
     );
   }
 
@@ -52,7 +55,7 @@ final class LiveController extends ControllerBase {
     }
 
     $live_games  = $this->loadLiveGames($tournament_id);
-    $live_data   = $this->buildLiveData($tournament_id, $live_games);
+    $live_data   = $this->buildLiveData($tournament_id, $live_games, $this->resolveGroupTipperIds($tournament_id));
 
     return [
       '#theme'          => 'soccerbet_live',
@@ -79,7 +82,7 @@ final class LiveController extends ControllerBase {
     }
 
     $live_games = $this->loadLiveGames($tournament_id);
-    $live_data  = $this->buildLiveData($tournament_id, $live_games);
+    $live_data  = $this->buildLiveData($tournament_id, $live_games, $this->resolveGroupTipperIds($tournament_id));
 
     return new JsonResponse([
       'is_live'       => !empty($live_games),
@@ -88,6 +91,43 @@ final class LiveController extends ControllerBase {
       'final_started' => $live_data['final_started'],
       'updated'       => date('H:i:s'),
     ]);
+  }
+
+  /**
+   * Ermittelt die Tipper-IDs für den aktuellen User-Kontext.
+   *
+   * Admins sehen alle Turnier-Tipper. Normale User sehen nur Tipper
+   * aus ihren eigenen Gruppen.
+   *
+   * @return int[]  Leeres Array = kein Filter (alle anzeigen)
+   */
+  private function resolveGroupTipperIds(int $tournament_id): array {
+    if ($this->currentUser()->hasPermission('administer soccerbet')) {
+      return [];
+    }
+
+    $uid = (int) $this->currentUser()->id();
+    if ($uid === 0) {
+      return [];
+    }
+
+    // Alle Gruppen des Users ermitteln
+    $grp_ids = $this->db->select('soccerbet_tippers', 't')
+      ->fields('t', ['tipper_grp_id'])
+      ->condition('t.uid', $uid)
+      ->execute()->fetchCol();
+
+    if (empty($grp_ids)) {
+      return [];
+    }
+
+    // Tipper-IDs aller dieser Gruppen, die auch im Turnier sind
+    $ids = $this->db->select('soccerbet_tippers', 't')
+      ->fields('t', ['tipper_id'])
+      ->condition('t.tipper_grp_id', $grp_ids, 'IN')
+      ->execute()->fetchCol();
+
+    return array_map('intval', $ids);
   }
 
   /**
@@ -121,15 +161,21 @@ final class LiveController extends ControllerBase {
    * - Spiele mit aktuellem Stand
    * - Rangliste mit Tipper-Tipps für laufende Spiele und Tipp-Bewertung
    */
-  private function buildLiveData(int $tournament_id, array $live_games): array {
+  /**
+   * @param int[] $allowed_tipper_ids  Leeres Array = alle anzeigen.
+   */
+  private function buildLiveData(int $tournament_id, array $live_games, array $allowed_tipper_ids = []): array {
     $game_ids = array_map(fn($g) => (int) $g->game_id, $live_games);
 
-    // Alle Tipper des Turniers laden
+    // Tipper des Turniers laden, optional auf Gruppe gefiltert
     $tippers_q = $this->db->select('soccerbet_tippers', 'st');
     $tippers_q->fields('st', ['tipper_id', 'tipper_name']);
     $tippers_q->join('soccerbet_tournament_tippers', 'stt',
       'stt.tipper_id = st.tipper_id AND stt.tournament_id = :tid',
       [':tid' => $tournament_id]);
+    if (!empty($allowed_tipper_ids)) {
+      $tippers_q->condition('st.tipper_id', $allowed_tipper_ids, 'IN');
+    }
     $tippers_q->orderBy('st.tipper_name');
     $tippers = $tippers_q->execute()->fetchAllAssoc('tipper_id');
 
