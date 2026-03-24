@@ -1,0 +1,38 @@
+{#
+/**
+ * @file
+ * Live-Scoreboard – laufende Spiele.
+ * Wird sowohl beim initialen Seitenaufbau als auch per AJAX verwendet.
+ *
+ * Variablen:
+ * - live_games: Array mit game_id, team1_name, team1_flag, team2_name,
+ *               team2_flag, score1, score2, game_date
+ */
+#}
+{% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
+
+{% if live_games is empty %}
+  <p class="soccerbet-live__no-games">{{ 'Derzeit laufen keine Spiele.'|t }}</p>
+{% else %}
+  <div class="soccerbet-live__scoreboard">
+    {% for game in live_games %}
+      <div class="soccerbet-live__match" data-game-id="{{ game.game_id }}">
+        <div class="soccerbet-live__match-team soccerbet-live__match-team--home">
+          {{ flag_helper.flag(game.team1_flag, game.team1_name, 36, 24) }}
+          <span>{{ game.team1_name }}</span>
+        </div>
+        <div class="soccerbet-live__match-score">
+          {% if game.score1 is not null %}
+            <strong>{{ game.score1 }} : {{ game.score2 }}</strong>
+          {% else %}
+            <span class="soccerbet-live__match-score--pending">– : –</span>
+          {% endif %}
+        </div>
+        <div class="soccerbet-live__match-team soccerbet-live__match-team--away">
+          <span>{{ game.team2_name }}</span>
+          {{ flag_helper.flag(game.team2_flag, game.team2_name, 36, 24) }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

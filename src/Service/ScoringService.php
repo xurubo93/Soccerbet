@@ -210,6 +210,7 @@ final class ScoringService {
     foreach ($current as $tipper_id => $data) {
       $rows[] = [
         'tipper_id'  => $tipper_id,
+        'uid'        => $data['uid'],
         'name'       => $data['name'],
         'stars'      => $stars[$tipper_id] ?? 0,
         'paid'       => $data['tipper_has_paid'],
@@ -267,6 +268,7 @@ final class ScoringService {
       $t = clone $tipper;
       $result[(int) $tipper_id] = [
         'name'            => $t->tipper_name,
+        'uid'             => (int) $t->uid,
         'tipper_has_paid' => (bool) $t->tipper_has_paid,
         'basispunkte'     => [],
         'bonuspunkte'     => [],

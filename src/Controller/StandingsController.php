@@ -80,6 +80,12 @@ final class StandingsController extends ControllerBase {
       unset($row);
     }
 
+    $avatars = $this->loadAvatarUrls($rows);
+    foreach ($rows as &$row) {
+      $row['avatar_url'] = $avatars[$row['uid']] ?? NULL;
+    }
+    unset($row);
+
     return [
       '#theme'            => 'soccerbet_standings',
       '#rows'             => $rows,
@@ -110,6 +116,12 @@ final class StandingsController extends ControllerBase {
 
     $rows      = $this->scoring->getRanking($tournament_id, $limit);
     $max_games = $this->scoring->getPlayedGamesCount($tournament_id);
+
+    $avatars = $this->loadAvatarUrls($rows);
+    foreach ($rows as &$row) {
+      $row['avatar_url'] = $avatars[$row['uid']] ?? NULL;
+    }
+    unset($row);
 
     return [
       '#theme'        => 'soccerbet_standings',
@@ -188,6 +200,31 @@ final class StandingsController extends ControllerBase {
 
     // Neueste zuerst (loadAll liefert bereits DESC, aber nach Merge neu sortieren)
     usort($result, fn($a, $b) => strcmp((string) $b->start_date, (string) $a->start_date));
+    return $result;
+  }
+
+  /**
+   * Gibt ein Array [uid => avatar_url_or_null] für die übergebenen Rows zurück.
+   *
+   * @param array<int, array> $rows  Ranking-Rows mit 'uid'-Key
+   * @return array<int, string|null>
+   */
+  private function loadAvatarUrls(array $rows): array {
+    $uids = array_unique(array_filter(array_column($rows, 'uid')));
+    if (empty($uids)) {
+      return [];
+    }
+    $users = $this->entityTypeManager()->getStorage('user')->loadMultiple($uids);
+    $result = [];
+    foreach ($users as $uid => $user) {
+      if (!$user->user_picture->isEmpty() && $user->user_picture->entity) {
+        $uri = $user->user_picture->entity->getFileUri();
+        $result[(int) $uid] = \Drupal::service('file_url_generator')->generateString($uri);
+      }
+      else {
+        $result[(int) $uid] = NULL;
+      }
+    }
     return $result;
   }
 

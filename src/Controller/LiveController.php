@@ -6,11 +6,11 @@ namespace Drupal\soccerbet\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\soccerbet\Service\ScoringService;
 use Drupal\soccerbet\Service\TournamentManager;
 use Drupal\soccerbet\Service\WinnerBetService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -24,6 +24,7 @@ final class LiveController extends ControllerBase {
     private readonly TournamentManager $tournamentManager,
     private readonly ScoringService $scoring,
     private readonly WinnerBetService $winnerBet,
+    private readonly RendererInterface $renderer,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -32,6 +33,7 @@ final class LiveController extends ControllerBase {
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.scoring'),
       $container->get('soccerbet.winner_bet'),
+      $container->get('renderer'),
     );
   }
 
@@ -51,21 +53,18 @@ final class LiveController extends ControllerBase {
       return ['#markup' => '<p>' . $this->t('Turnier nicht gefunden.') . '</p>'];
     }
 
-    $live_games  = $this->loadLiveGames($tournament_id);
-    $live_data   = $this->buildLiveData($tournament_id, $live_games);
+    $live_games = $this->loadLiveGames($tournament_id);
+    $live_data  = $this->buildLiveData($tournament_id, $live_games);
 
     return [
-      '#theme'          => 'soccerbet_live',
-      '#tournament'     => $tournament,
-      '#live_games'     => $live_data['games'],
-      '#ranking'        => $live_data['ranking'],
-      '#is_live'        => !empty($live_games),
-      '#final_started'  => $live_data['final_started'],
-      '#tournament_id'  => $tournament_id,
-      '#attached'       => [
-        'library' => ['soccerbet/live'],
-      ],
-      '#cache'          => ['max-age' => 0],
+      '#theme'            => 'soccerbet_live',
+      '#tournament'       => $tournament,
+      '#is_live'          => !empty($live_games),
+      '#tournament_id'    => $tournament_id,
+      '#scoreboard'       => $this->buildScoreboardRender($live_data['games']),
+      '#ranking_content'  => $this->buildRankingRender($live_data, $tournament_id),
+      '#attached'         => ['library' => ['soccerbet/live']],
+      '#cache'            => ['max-age' => 0],
     ];
   }
 
@@ -81,12 +80,14 @@ final class LiveController extends ControllerBase {
     $live_games = $this->loadLiveGames($tournament_id);
     $live_data  = $this->buildLiveData($tournament_id, $live_games);
 
+    $games_html   = (string) $this->renderer->renderRoot($this->buildScoreboardRender($live_data['games']));
+    $ranking_html = (string) $this->renderer->renderRoot($this->buildRankingRender($live_data, $tournament_id));
+
     return new JsonResponse([
-      'is_live'       => !empty($live_games),
-      'games'         => $live_data['games'],
-      'ranking'       => $live_data['ranking'],
-      'final_started' => $live_data['final_started'],
-      'updated'       => date('H:i:s'),
+      'is_live'      => !empty($live_games),
+      'games_html'   => $games_html,
+      'ranking_html' => $ranking_html,
+      'updated'      => date('H:i:s'),
     ]);
   }
 
@@ -126,7 +127,7 @@ final class LiveController extends ControllerBase {
 
     // Alle Tipper des Turniers laden
     $tippers_q = $this->db->select('soccerbet_tippers', 'st');
-    $tippers_q->fields('st', ['tipper_id', 'tipper_name']);
+    $tippers_q->fields('st', ['tipper_id', 'tipper_name', 'uid']);
     $tippers_q->join('soccerbet_tournament_tippers', 'stt',
       'stt.tipper_id = st.tipper_id AND stt.tournament_id = :tid',
       [':tid' => $tournament_id]);
@@ -308,6 +309,7 @@ final class LiveController extends ControllerBase {
 
       $ranking[] = [
         'tipper_id'   => $tipper_id,
+        'uid'         => (int) $tipper->uid,
         'name'        => $tipper->tipper_name,
         'stars'       => $stars[$tipper_id] ?? 0,
         'detail_url'  => \Drupal\Core\Url::fromRoute('soccerbet.standings_tipper', [
@@ -348,7 +350,55 @@ final class LiveController extends ControllerBase {
     }
     unset($row);
 
+    $avatars = $this->loadAvatarUrls($ranking);
+    foreach ($ranking as &$row) {
+      $row['avatar_url'] = $avatars[$row['uid']] ?? NULL;
+    }
+    unset($row);
+
     return ['games' => $games_out, 'ranking' => $ranking, 'final_started' => $final_started];
+  }
+
+  private function buildScoreboardRender(array $games): array {
+    return [
+      '#theme'      => 'soccerbet_live_scoreboard',
+      '#live_games' => $games,
+      '#cache'      => ['max-age' => 0],
+    ];
+  }
+
+  private function buildRankingRender(array $live_data, int $tournament_id): array {
+    return [
+      '#theme'         => 'soccerbet_live_ranking',
+      '#live_games'    => $live_data['games'],
+      '#ranking'       => $live_data['ranking'],
+      '#final_started' => $live_data['final_started'],
+      '#tournament_id' => $tournament_id,
+      '#cache'         => ['max-age' => 0],
+    ];
+  }
+
+  /**
+   * @param array<int, array> $rows  Ranking-Rows mit 'uid'-Key
+   * @return array<int, string|null>
+   */
+  private function loadAvatarUrls(array $rows): array {
+    $uids = array_unique(array_filter(array_column($rows, 'uid')));
+    if (empty($uids)) {
+      return [];
+    }
+    $users = $this->entityTypeManager()->getStorage('user')->loadMultiple($uids);
+    $result = [];
+    foreach ($users as $uid => $user) {
+      if (!$user->user_picture->isEmpty() && $user->user_picture->entity) {
+        $uri = $user->user_picture->entity->getFileUri();
+        $result[(int) $uid] = \Drupal::service('file_url_generator')->generateString($uri);
+      }
+      else {
+        $result[(int) $uid] = NULL;
+      }
+    }
+    return $result;
   }
 
   private function resolveTournamentId(int $tournament_id): int {

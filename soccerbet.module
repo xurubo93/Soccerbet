@@ -62,14 +62,28 @@ function soccerbet_theme(): array {
     ],
     'soccerbet_live' => [
       'variables' => [
-        'tournament'    => NULL,
+        'tournament'      => NULL,
+        'is_live'         => FALSE,
+        'tournament_id'   => 0,
+        'scoreboard'      => [],
+        'ranking_content' => [],
+      ],
+      'template' => 'soccerbet-live',
+    ],
+    'soccerbet_live_scoreboard' => [
+      'variables' => [
+        'live_games' => [],
+      ],
+      'template' => 'soccerbet-live-scoreboard',
+    ],
+    'soccerbet_live_ranking' => [
+      'variables' => [
         'live_games'    => [],
         'ranking'       => [],
-        'is_live'       => FALSE,
         'final_started' => FALSE,
         'tournament_id' => 0,
       ],
-      'template' => 'soccerbet-live',
+      'template' => 'soccerbet-live-ranking',
     ],
     'soccerbet_shoutbox' => [
       'variables' => [

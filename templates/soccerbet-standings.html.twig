@@ -94,14 +94,21 @@
             </td>
 
             <td class="col-name">
-              <a href="{{ path('soccerbet.standings_tipper', {tournament_id: tournament.tournament_id, tipper_id: row.tipper_id}) }}">
-                {{- row.name -}}
-              </a>
-              {% if row.stars > 0 %}
-                <span class="soccerbet-stars" title="{{ row.stars ~ ' × Turniersieger'|t }}">
-                  {% for i in 1..row.stars %}★{% endfor %}
+              <a class="soccerbet-tipper-card" href="{{ path('soccerbet.standings_tipper', {tournament_id: tournament.tournament_id, tipper_id: row.tipper_id}) }}">
+                <span class="soccerbet-avatar">
+                  {% if row.avatar_url %}
+                    <img src="{{ row.avatar_url }}" alt="{{ row.name }}" loading="lazy">
+                  {% endif %}
                 </span>
-              {% endif %}
+                <span class="soccerbet-tipper-card__name">
+                  <span class="soccerbet-tipper-card__label">{{ row.name }}</span>
+                  {% if row.stars > 0 %}
+                    <span class="soccerbet-stars" title="{{ row.stars ~ ' × Turniersieger'|t }}">
+                      {% for i in 1..row.stars %}★{% endfor %}
+                    </span>
+                  {% endif %}
+                </span>
+              </a>
               {% if not row.paid %}
                 <span class="soccerbet-badge soccerbet-badge--unpaid">
                   {{ 'Einsatz offen'|t }}

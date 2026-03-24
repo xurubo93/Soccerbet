@@ -328,10 +328,11 @@
 /* --- Sieger-Sterne ----------------------------------------------------- */
 .soccerbet-stars {
   color: #f0a500;
-  font-size: 0.85em;
+  font-size: 1em;
   letter-spacing: -1px;
-  margin-left: 4px;
-  vertical-align: middle;
+  display: block;
+  text-align: center;
+  line-height: 1;
 }
 
 
@@ -507,6 +508,55 @@
 
 .soccerbet-live__no-games,
 .soccerbet-live__empty { color: var(--sb-text-muted); font-style: italic; }
+
+/* --- Tipper-Karte: Avatar + Name + Sterne ------------------------------ */
+.soccerbet-tipper-card {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .25rem;
+  text-decoration: none;
+  color: inherit;
+}
+.soccerbet-tipper-card:hover .soccerbet-tipper-card__name {
+  text-decoration: underline;
+}
+.soccerbet-tipper-card__name {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 72px;
+}
+.soccerbet-tipper-card__label {
+  font-weight: 500;
+  font-size: .85em;
+  text-align: center;
+  line-height: 1.2;
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.soccerbet-avatar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--sb-border);
+  border: 2px solid var(--sb-border);
+}
+.soccerbet-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
 /* --- Sticky Submit-Button auf der Tipp-Abgabe-Seite ------------------- */
 .soccerbet-submit-sticky {
