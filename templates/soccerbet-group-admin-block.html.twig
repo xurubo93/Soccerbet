@@ -1,0 +1,25 @@
+{#
+/**
+ * @file soccerbet-group-admin-block.html.twig
+ * Block: Meine Gruppen (Teilnehmer + Gruppenadmin-Links).
+ *
+ * Variables:
+ *   groups – Array mit: label, is_admin, links[]
+ */
+#}
+{% if groups %}
+  <ul class="soccerbet-my-groups">
+    {% for group in groups %}
+      <li class="soccerbet-my-groups__item">
+        <strong class="soccerbet-my-groups__name">
+          {{ group.label }}{% if group.is_admin %} <span class="soccerbet-my-groups__admin-badge">{{ 'Admin'|t }}</span>{% endif %}
+        </strong>
+        <ul class="soccerbet-my-groups__links">
+          {% for link in group.links %}
+            <li>{{ link }}</li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

@@ -128,10 +128,14 @@ final class GroupPageController extends ControllerBase {
       );
     }
 
-    // Tipper anlegen
+    // Tipper anlegen + Rolle zuweisen
     $user        = $this->entityTypeManager()->getStorage('user')->load($uid);
     $tipper_name = $user->getDisplayName();
     $tipper_id   = $this->tipperManager->createTipper($uid, $grp_id, $tipper_name);
+    if (!$user->hasRole('soccerbet_teilnehmer')) {
+      $user->addRole('soccerbet_teilnehmer');
+      $user->save();
+    }
 
     // Turnier-Zuordnung für alle Turniere der Gruppe
     $tournaments = $this->tournamentManager->loadAll($grp_id);
@@ -209,10 +213,14 @@ final class GroupPageController extends ControllerBase {
       );
     }
 
-    // Tipper anlegen + Turnier-Zuordnung
+    // Tipper anlegen + Rolle zuweisen + Turnier-Zuordnung
     $user        = $this->entityTypeManager()->getStorage('user')->load($uid);
     $tipper_name = $user->getDisplayName();
     $tipper_id   = $this->tipperManager->createTipper($uid, $grp_id, $tipper_name);
+    if (!$user->hasRole('soccerbet_teilnehmer')) {
+      $user->addRole('soccerbet_teilnehmer');
+      $user->save();
+    }
 
     $tournaments = $this->tournamentManager->loadAll($grp_id);
     if ($tournaments) {

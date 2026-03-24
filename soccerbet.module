@@ -118,6 +118,12 @@ function soccerbet_theme(): array {
       ],
       'template' => 'soccerbet-shoutbox',
     ],
+    'soccerbet_group_admin_block' => [
+      'variables' => [
+        'groups' => [],
+      ],
+      'template' => 'soccerbet-group-admin-block',
+    ],
     'soccerbet_group_page' => [
       'variables' => [
         'group'             => NULL,

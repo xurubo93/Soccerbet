@@ -107,7 +107,9 @@ final class VerifyEmailForm extends FormBase {
     $user->save();
     $uid = (int) $user->id();
 
-    // 2. Benutzer einloggen (damit currentUser in TipperManager korrekt ist)
+    // 2. Rolle zuweisen und einloggen
+    $user->addRole('soccerbet_teilnehmer');
+    $user->save();
     user_login_finalize($user);
 
     // 3. Tippergruppe anlegen
