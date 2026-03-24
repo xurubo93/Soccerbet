@@ -562,6 +562,40 @@
   object-fit: cover;
   display: block;
 }
+.soccerbet-avatar--lg {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+}
+
+.soccerbet-tipper-detail__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.soccerbet-tipper-detail__name-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.soccerbet-tipper-detail__name-wrap .soccerbet-stars {
+  font-size: 2em;
+}
+.soccerbet-tipper-detail__name-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.soccerbet-tipper-detail__name {
+  margin: 0;
+  line-height: 1.2;
+}
+.soccerbet-game-matchup {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+}
 
 /* --- Sticky Submit-Button auf der Tipp-Abgabe-Seite ------------------- */
 .soccerbet-submit-sticky {

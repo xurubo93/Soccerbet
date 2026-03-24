@@ -50,6 +50,8 @@ function soccerbet_theme(): array {
         'tipper'     => NULL,
         'points'     => [],
         'tournament' => NULL,
+        'avatar_url' => NULL,
+        'stars'      => 0,
       ],
       'template' => 'soccerbet-tipper-detail',
     ],

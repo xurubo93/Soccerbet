@@ -156,11 +156,17 @@ final class StandingsController extends ControllerBase {
       throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
     }
 
+    $avatars    = $this->loadAvatarUrls([$tipper_data]);
+    $avatar_url = $avatars[$tipper_data['uid']] ?? NULL;
+    $stars      = $this->scoring->getStarsForTipper($tipper_id);
+
     return [
-      '#theme'      => 'soccerbet_tipper_detail',
-      '#tipper'     => $tipper_data,
-      '#tournament' => $tournament,
-      '#cache'      => ['max-age' => 60],
+      '#theme'       => 'soccerbet_tipper_detail',
+      '#tipper'      => $tipper_data,
+      '#tournament'  => $tournament,
+      '#avatar_url'  => $avatar_url,
+      '#stars'       => $stars,
+      '#cache'       => ['max-age' => 60],
     ];
   }
 

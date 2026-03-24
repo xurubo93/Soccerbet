@@ -5,11 +5,14 @@
  *
  * Variablen:
  * - tipper: Array mit name, basispunkte, bonuspunkte, sonderpunkte,
- *           totalpergame, tipp, game_desc, game_score, ergebnisse,
- *           tendenzen, total, tipper_has_paid
+ *           totalpergame, tipp, game_desc, game_flags, game_score,
+ *           ergebnisse, tendenzen, total, tipper_has_paid
  * - tournament: Turnier-Objekt
+ * - avatar_url: string|null
+ * - stars: int
  */
 #}
+{% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
 <div class="soccerbet-tipper-detail">
 
   <div class="soccerbet-tipper-detail__back">
@@ -18,12 +21,26 @@
     </a>
   </div>
 
-  <h2 class="soccerbet-tipper-detail__name">
-    {{ tipper.name }}
-    {% if not tipper.tipper_has_paid %}
-      <span class="soccerbet-badge soccerbet-badge--unpaid">{{ 'Einsatz offen'|t }}</span>
-    {% endif %}
-  </h2>
+  <div class="soccerbet-tipper-detail__header">
+    <span class="soccerbet-avatar soccerbet-avatar--lg">
+      {% if avatar_url %}
+        <img src="{{ avatar_url }}" alt="{{ tipper.name }}" loading="lazy">
+      {% endif %}
+    </span>
+    <div class="soccerbet-tipper-detail__name-wrap">
+      <div class="soccerbet-tipper-detail__name-row">
+        <h2 class="soccerbet-tipper-detail__name">{{ tipper.name }}</h2>
+        {% if not tipper.tipper_has_paid %}
+          <span class="soccerbet-badge soccerbet-badge--unpaid">{{ 'Einsatz offen'|t }}</span>
+        {% endif %}
+      </div>
+      {% if stars > 0 %}
+        <span class="soccerbet-stars" title="{{ stars ~ ' × Turniersieger'|t }}">
+          {% for i in 1..stars %}★{% endfor %}
+        </span>
+      {% endif %}
+    </div>
+  </div>
 
   <div class="soccerbet-tipper-detail__summary">
     <span class="summary-item">
@@ -60,13 +77,20 @@
           {% set total   = tipper.totalpergame[game_id] ?? 0 %}
           {% set tipp    = tipper.tipp[game_id]         ?? 'N.A.' %}
           {% set score   = tipper.game_score[game_id]   ?? '—' %}
+          {% set flags   = tipper.game_flags[game_id]   ?? {} %}
 
           <tr class="
             {% if base == 3 %}row--exact
             {% elseif base == 1 %}row--tendency
             {% elseif tipp == 'N.A.' %}row--no-tipp
             {% else %}row--wrong{% endif %}">
-            <td class="col-game">{{ game_desc }}</td>
+            <td class="col-game">
+              <span class="soccerbet-game-matchup">
+                {%- if flags.team1_flag is defined -%}{{ flag_helper.flag(flags.team1_flag, flags.team1_name, 24, 16) }}{%- endif -%}
+                <span>{{ game_desc }}</span>
+                {%- if flags.team2_flag is defined -%}{{ flag_helper.flag(flags.team2_flag, flags.team2_name, 24, 16) }}{%- endif -%}
+              </span>
+            </td>
             <td class="col-result">{{ score }}</td>
             <td class="col-tipp">
               {% if tipp == 'N.A.' %}

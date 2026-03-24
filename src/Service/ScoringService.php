@@ -80,7 +80,9 @@ final class ScoringService {
     $games_q = $this->db->select('soccerbet_games', 'sg');
     $games_q->fields('sg', ['game_id', 'team1_score', 'team2_score', 'winner_team_id', 'game_date']);
     $games_q->addField('t1', 'team_name', 'team1_name');
+    $games_q->addField('t1', 'team_flag', 'team1_flag');
     $games_q->addField('t2', 'team_name', 'team2_name');
+    $games_q->addField('t2', 'team_flag', 'team2_flag');
     $games_q->join('soccerbet_teams', 't1', 'sg.team_id_1 = t1.team_id');
     $games_q->join('soccerbet_teams', 't2', 'sg.team_id_2 = t2.team_id');
     $games_q->condition('sg.tournament_id', $tournament_id);
@@ -128,6 +130,12 @@ final class ScoringService {
       foreach ($games as $game_id => $game) {
         $tipper_points[$tipper_id]['game_desc'][$game_id]  = $game->team1_name . ' : ' . $game->team2_name;
         $tipper_points[$tipper_id]['game_score'][$game_id] = $game->team1_score . ' : ' . $game->team2_score;
+        $tipper_points[$tipper_id]['game_flags'][$game_id] = [
+          'team1_flag' => $game->team1_flag ?? '',
+          'team1_name' => $game->team1_name,
+          'team2_flag' => $game->team2_flag ?? '',
+          'team2_name' => $game->team2_name,
+        ];
 
         if (!isset($tipps[$tipper_id][$game_id])) {
           // Kein Tipp abgegeben
@@ -243,6 +251,15 @@ final class ScoringService {
   /**
    * Anzahl bereits gespielter (und veröffentlichter) Spiele.
    */
+  /**
+   * Gibt die Anzahl Turniersiege (Sterne) für einen Tipper zurück.
+   */
+  public function getStarsForTipper(int $tipper_id): int {
+    return (int) $this->db->select('soccerbet_tournament_groups', 'tg')
+      ->condition('tg.winner_tipper_id', $tipper_id)
+      ->countQuery()->execute()->fetchField();
+  }
+
   public function getPlayedGamesCount(int $tournament_id): int {
     $tournament_id = (int) $tournament_id;
     return (int) $this->db->select('soccerbet_games', 'sg')
@@ -276,6 +293,7 @@ final class ScoringService {
         'totalpergame'    => [],
         'tipp'            => [],
         'game_desc'       => [],
+        'game_flags'      => [],
         'game_score'      => [],
         'ergebnisse'      => 0,
         'tendenzen'       => 0,
