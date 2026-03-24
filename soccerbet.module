@@ -20,6 +20,44 @@ function soccerbet_help(string $route_name, RouteMatchInterface $route_match): s
 }
 
 /**
+ * Implements hook_mail().
+ */
+function soccerbet_mail(string $key, array &$message, array $params): void {
+  $site_name = \Drupal::config('system.site')->get('name');
+  switch ($key) {
+    case 'email_verify':
+      $message['subject'] = t('[@site] Bestätigungscode für dein Tippspiel „@group"', [
+        '@site'  => $site_name,
+        '@group' => $params['group_name'],
+      ]);
+      $message['body'][] = t('Hallo,');
+      $message['body'][] = t('du hast soeben das Tippspiel „@group" erstellt. Bitte bestätige deine E-Mail-Adresse mit folgendem Code:', [
+        '@group' => $params['group_name'],
+      ]);
+      $message['body'][] = '  ' . $params['code'];
+      $message['body'][] = t('Der Code ist 1 Stunde gültig. Falls du keine Registrierung beantragt hast, kannst du diese E-Mail ignorieren.');
+      $message['body'][] = $site_name;
+      break;
+
+    case 'group_invite':
+      $message['subject'] = t('[@site] Einladung zum Tippspiel „@group"', [
+        '@site'  => $site_name,
+        '@group' => $params['group_name'],
+      ]);
+      $message['body'][] = t('Hallo,');
+      $message['body'][] = t('@inviter lädt dich ein, beim Tippspiel „@group" mitzumachen.', [
+        '@inviter' => $params['inviter_name'],
+        '@group'   => $params['group_name'],
+      ]);
+      $message['body'][] = t('Über folgenden Link kannst du der Gruppe beitreten:');
+      $message['body'][] = $params['join_url'];
+      $message['body'][] = t('Der Link ist 7 Tage gültig.');
+      $message['body'][] = $site_name;
+      break;
+  }
+}
+
+/**
  * Implements hook_theme().
  */
 function soccerbet_theme(): array {
@@ -79,6 +117,19 @@ function soccerbet_theme(): array {
         'tournament_id' => 0,
       ],
       'template' => 'soccerbet-shoutbox',
+    ],
+    'soccerbet_group_page' => [
+      'variables' => [
+        'group'        => NULL,
+        'tournament'   => NULL,
+        'ranking'      => [],
+        'is_member'    => FALSE,
+        'is_owner'     => FALSE,
+        'can_join'     => FALSE,
+        'member_count' => 0,
+        'max_members'  => 5,
+      ],
+      'template' => 'soccerbet-group-page',
     ],
   ];
 }

@@ -18,6 +18,11 @@ edit soccerbet scores:
   description: 'Ergebnisse nach Spielende eintragen und bearbeiten.'
   restrict access: true
 
+create soccerbet group:
+  title: 'Tippergruppe erstellen'
+  description: 'Neue (kostenlose) Tippergruppe anlegen und Freunde einladen.'
+  restrict access: false
+
 manage soccerbet payments:
   title: 'Zahlungen verwalten'
   description: 'Einsätze als bezahlt markieren und Notizen hinterlegen.'

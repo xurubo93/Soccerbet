@@ -316,6 +316,52 @@ soccerbet.live:
     _permission: 'access soccerbet content'
     tournament_id: '\d*'
 
+# ============================================================
+# Gruppen-Registrierung & öffentliche Gruppen-Seite
+# ============================================================
+
+soccerbet.register:
+  path: '/soccerbet/register'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\RegisterGroupForm'
+    _title: 'Gratis-Tippspiel erstellen'
+  requirements:
+    _access: 'TRUE'
+
+soccerbet.register.verify:
+  path: '/soccerbet/register/verify/{token}'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\VerifyEmailForm'
+    _title: 'E-Mail bestätigen'
+  requirements:
+    _access: 'TRUE'
+
+soccerbet.group.invite:
+  path: '/soccerbet/gruppe/{group_slug}/einladen'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\InviteForm'
+    _title: 'Freunde einladen'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+soccerbet.group.join:
+  path: '/soccerbet/gruppe/{group_slug}/beitreten/{invite_token}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\GroupPageController::join'
+    _title: 'Gruppe beitreten'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+# Öffentliche Gruppen-Seite – ZULETZT damit statische Routen Vorrang haben
+soccerbet.group.page:
+  path: '/soccerbet/{group_slug}'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\GroupPageController::page'
+    _title: 'Tippgruppe'
+  requirements:
+    _access: 'TRUE'
+    group_slug: '[a-z0-9\-]+'
+
 soccerbet.live.json:
   path: '/soccerbet/live/{tournament_id}/json'
   defaults:

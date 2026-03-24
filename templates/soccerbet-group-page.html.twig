@@ -1,0 +1,75 @@
+{#
+/**
+ * @file soccerbet-group-page.html.twig
+ * Öffentliche Gruppen-Seite einer Tippergruppe.
+ *
+ * Variables:
+ *   group        – Tippergruppen-Objekt (tipper_grp_name, group_slug, …)
+ *   tournament   – Turnier-Objekt oder NULL
+ *   ranking      – Array von Ranking-Zeilen
+ *   is_member    – TRUE wenn eingeloggter User Mitglied ist
+ *   is_owner     – TRUE wenn eingeloggter User Gruppenbesitzer ist
+ *   can_join     – TRUE wenn Beitritt möglich (eingeloggt, Platz frei, nicht Mitglied)
+ *   member_count – Aktuelle Mitgliederzahl
+ *   max_members  – Maximale Mitgliederzahl
+ */
+#}
+<div class="soccerbet-group-page">
+
+  <h1 class="soccerbet-group-page__title">{{ group.tipper_grp_name }}</h1>
+
+  <p class="soccerbet-group-page__meta">
+    {{ member_count }}/{{ max_members }} {{ 'Teilnehmer'|t }}
+    {% if tournament %}
+      &middot; {{ 'Turnier: @name'|t({'@name': tournament.tournament_desc}) }}
+    {% endif %}
+  </p>
+
+  {% if can_join %}
+    <a href="{{ url('soccerbet.group.page', {group_slug: group.group_slug}) }}"
+       class="button button--primary soccerbet-group-page__join-btn">
+      {{ 'Dieser Gruppe beitreten'|t }}
+    </a>
+  {% elseif not is_logged_in %}
+    <p>
+      <a href="{{ url('user.login', {}, {query: {destination: url('soccerbet.group.page', {group_slug: group.group_slug})}}) }}">
+        {{ 'Anmelden um beizutreten'|t }}
+      </a>
+    </p>
+  {% endif %}
+
+  {% if is_owner %}
+    <p>
+      <a href="{{ url('soccerbet.group.invite', {group_slug: group.group_slug}) }}" class="button button--small">
+        {{ 'Freunde einladen'|t }}
+      </a>
+    </p>
+  {% endif %}
+
+  {% if ranking %}
+    <h2>{{ 'Aktuelle Rangliste'|t }}</h2>
+    <table class="soccerbet-group-page__ranking">
+      <thead>
+        <tr>
+          <th>{{ '#'|t }}</th>
+          <th>{{ 'Name'|t }}</th>
+          <th>{{ 'Punkte'|t }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in ranking %}
+          <tr class="{{ is_member and row.tipper_id == current_tipper_id ? 'soccerbet-group-page__row--me' : '' }}">
+            <td>{{ row.rank }}</td>
+            <td>{{ row.name }}</td>
+            <td>{{ row.total }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% elseif tournament %}
+    <p>{{ 'Noch keine Spiele gewertet.'|t }}</p>
+  {% else %}
+    <p>{{ 'Noch kein Turnier zugeordnet.'|t }}</p>
+  {% endif %}
+
+</div>

@@ -144,16 +144,48 @@ final class TipperManager {
     return $options;
   }
 
-  public function createGroup(string $name, int $admin_uid): int {
-    $now = \Drupal::time()->getRequestTime();
+  public function createGroup(string $name, int $admin_uid, string $slug = '', int $max_members = 5): int {
+    $now    = \Drupal::time()->getRequestTime();
+    $fields = [
+      'tipper_grp_name' => $name,
+      'tipper_admin_id' => $admin_uid,
+      'max_members'     => $max_members,
+      'uid'             => $this->currentUser->id(),
+      'created'         => $now,
+      'changed'         => $now,
+    ];
+    if ($slug !== '') {
+      $fields['group_slug'] = $slug;
+    }
     return (int) $this->db->insert('soccerbet_tipper_groups')
-      ->fields([
-        'tipper_grp_name' => $name,
-        'tipper_admin_id' => $admin_uid,
-        'uid'             => $this->currentUser->id(),
-        'created'         => $now,
-        'changed'         => $now,
-      ])->execute();
+      ->fields($fields)->execute();
+  }
+
+  /**
+   * Lädt eine Tippergruppe anhand ihres URL-Slugs.
+   */
+  public function loadGroupBySlug(string $slug): ?object {
+    return $this->db->select('soccerbet_tipper_groups', 'g')
+      ->fields('g')
+      ->condition('g.group_slug', $slug)
+      ->execute()->fetchObject() ?: NULL;
+  }
+
+  /**
+   * Generiert einen eindeutigen URL-Slug aus einem Gruppenname.
+   */
+  public function generateGroupSlug(string $name): string {
+    $slug = mb_strtolower($name);
+    $slug = preg_replace('/[^a-z0-9]+/', '-', $slug);
+    $slug = trim($slug, '-');
+    $slug = substr($slug, 0, 50) ?: 'gruppe';
+
+    $base = $slug;
+    $i    = 2;
+    while ($this->loadGroupBySlug($slug)) {
+      $slug = $base . '-' . $i++;
+    }
+    return $slug;
   }
 
   public function updateGroup(int $tipper_grp_id, string $name, int $admin_uid): void {

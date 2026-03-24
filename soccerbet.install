@@ -267,13 +267,81 @@ function soccerbet_schema(): array {
       ],
       'tipper_admin_id' => [
         'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
-        'description' => 'Drupal UID des Gruppen-Admins.',
+        'description' => 'Drupal UID des Gruppen-Besitzers.',
+      ],
+      'group_slug' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => FALSE,
+        'description' => 'URL-Slug für öffentliche Gruppen-Seite.',
+      ],
+      'max_members' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE,
+        'not null' => TRUE, 'default' => 5,
+        'description' => 'Maximale Teilnehmerzahl (5 = kostenlos, 15 = Premium).',
       ],
       'uid'     => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
       'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
       'changed' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
     ],
     'primary key' => ['tipper_grp_id'],
+    'unique keys' => ['group_slug' => ['group_slug']],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Ausstehende Registrierungen (E-Mail-Verifikation)
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_pending_registrations'] = [
+    'description' => 'Zwischenspeicher für noch nicht bestätigte Gruppen-Registrierungen.',
+    'fields' => [
+      'token' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => TRUE,
+        'description' => 'Zufälliger Hex-Token (URL-Parameter).',
+      ],
+      'email' => [
+        'type' => 'varchar', 'length' => 254, 'not null' => TRUE,
+      ],
+      'password' => [
+        'type' => 'varchar', 'length' => 255, 'not null' => TRUE,
+        'description' => 'Klartext-Passwort; wird nach Bestätigung sofort gelöscht.',
+      ],
+      'group_name' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => TRUE,
+      ],
+      'group_slug' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => TRUE,
+      ],
+      'verify_code' => [
+        'type' => 'varchar', 'length' => 6, 'not null' => TRUE,
+        'description' => '6-stelliger Bestätigungscode.',
+      ],
+      'tournament_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'created' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'expires' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['token'],
+  ];
+
+  // -----------------------------------------------------------------------
+  // Einladungen zu Tippergruppen
+  // -----------------------------------------------------------------------
+  $schema['soccerbet_invitations'] = [
+    'description' => 'Einladungs-Token für den Beitritt zu einer Tippergruppe.',
+    'fields' => [
+      'invite_token' => [
+        'type' => 'varchar', 'length' => 64, 'not null' => TRUE,
+      ],
+      'tipper_grp_id' => [
+        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
+      ],
+      'invited_email' => [
+        'type' => 'varchar', 'length' => 254, 'not null' => TRUE,
+      ],
+      'expires' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      'used'    => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+    ],
+    'primary key' => ['invite_token'],
+    'indexes' => ['tipper_grp_id' => ['tipper_grp_id']],
   ];
 
   // -----------------------------------------------------------------------
@@ -613,6 +681,63 @@ function soccerbet_update_8008(): void {
   $config = \Drupal::configFactory()->getEditable('soccerbet.settings');
   if (!$config->get('winner_bet_points')) {
     $config->set('winner_bet_points', [10, 7, 5, 3, 1])->save();
+  }
+}
+
+/**
+ * Update 8011: group_slug + max_members zu soccerbet_tipper_groups,
+ * neue Tabellen soccerbet_pending_registrations und soccerbet_invitations.
+ */
+function soccerbet_update_8011(): void {
+  $db     = \Drupal::database();
+  $schema = $db->schema();
+
+  // group_slug + max_members zu Tippergruppen
+  if (!$schema->fieldExists('soccerbet_tipper_groups', 'group_slug')) {
+    $schema->addField('soccerbet_tipper_groups', 'group_slug', [
+      'type' => 'varchar', 'length' => 64, 'not null' => FALSE,
+      'description' => 'URL-Slug für öffentliche Gruppen-Seite.',
+    ]);
+    $schema->addUniqueKey('soccerbet_tipper_groups', 'group_slug', ['group_slug']);
+  }
+  if (!$schema->fieldExists('soccerbet_tipper_groups', 'max_members')) {
+    $schema->addField('soccerbet_tipper_groups', 'max_members', [
+      'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE,
+      'not null' => TRUE, 'default' => 5,
+    ]);
+  }
+
+  // Ausstehende Registrierungen
+  if (!$schema->tableExists('soccerbet_pending_registrations')) {
+    $schema->createTable('soccerbet_pending_registrations', [
+      'fields' => [
+        'token'         => ['type' => 'varchar', 'length' => 64,  'not null' => TRUE],
+        'email'         => ['type' => 'varchar', 'length' => 254, 'not null' => TRUE],
+        'password'      => ['type' => 'varchar', 'length' => 255, 'not null' => TRUE],
+        'group_name'    => ['type' => 'varchar', 'length' => 64,  'not null' => TRUE],
+        'group_slug'    => ['type' => 'varchar', 'length' => 64,  'not null' => TRUE],
+        'verify_code'   => ['type' => 'varchar', 'length' => 6,   'not null' => TRUE],
+        'tournament_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+        'created'       => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'expires'       => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['token'],
+    ]);
+  }
+
+  // Einladungen
+  if (!$schema->tableExists('soccerbet_invitations')) {
+    $schema->createTable('soccerbet_invitations', [
+      'fields' => [
+        'invite_token'  => ['type' => 'varchar', 'length' => 64,  'not null' => TRUE],
+        'tipper_grp_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE],
+        'invited_email' => ['type' => 'varchar', 'length' => 254, 'not null' => TRUE],
+        'expires'       => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'used'          => ['type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['invite_token'],
+      'indexes' => ['tipper_grp_id' => ['tipper_grp_id']],
+    ]);
   }
 }
 
