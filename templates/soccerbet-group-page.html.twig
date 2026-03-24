@@ -4,14 +4,16 @@
  * Öffentliche Gruppen-Seite einer Tippergruppe.
  *
  * Variables:
- *   group        – Tippergruppen-Objekt (tipper_grp_name, group_slug, …)
- *   tournament   – Turnier-Objekt oder NULL
- *   ranking      – Array von Ranking-Zeilen
- *   is_member    – TRUE wenn eingeloggter User Mitglied ist
- *   is_owner     – TRUE wenn eingeloggter User Gruppenbesitzer ist
- *   can_join     – TRUE wenn Beitritt möglich (eingeloggt, Platz frei, nicht Mitglied)
- *   member_count – Aktuelle Mitgliederzahl
- *   max_members  – Maximale Mitgliederzahl
+ *   group             – Tippergruppen-Objekt (tipper_grp_name, group_slug, …)
+ *   tournament        – Turnier-Objekt oder NULL
+ *   ranking           – Array von Ranking-Zeilen
+ *   is_member         – TRUE wenn eingeloggter User Mitglied ist
+ *   is_owner          – TRUE wenn eingeloggter User Gruppenbesitzer ist
+ *   can_join          – TRUE wenn Beitritt möglich (eingeloggt, Platz frei, nicht Mitglied)
+ *   is_logged_in      – TRUE wenn User eingeloggt ist
+ *   member_count      – Aktuelle Mitgliederzahl
+ *   max_members       – Maximale Mitgliederzahl
+ *   current_tipper_id – Tipper-ID des aktuellen Users (für Hervorhebung)
  */
 #}
 <div class="soccerbet-group-page">
@@ -26,7 +28,7 @@
   </p>
 
   {% if can_join %}
-    <a href="{{ url('soccerbet.group.page', {group_slug: group.group_slug}) }}"
+    <a href="{{ url('soccerbet.group.join.direct', {group_slug: group.group_slug}) }}"
        class="button button--primary soccerbet-group-page__join-btn">
       {{ 'Dieser Gruppe beitreten'|t }}
     </a>
@@ -42,6 +44,10 @@
     <p>
       <a href="{{ url('soccerbet.group.invite', {group_slug: group.group_slug}) }}" class="button button--small">
         {{ 'Freunde einladen'|t }}
+      </a>
+      &nbsp;
+      <a href="{{ url('soccerbet.group.tournaments', {group_slug: group.group_slug}) }}" class="button button--small">
+        {{ 'Turnier zuordnen'|t }}
       </a>
     </p>
   {% endif %}

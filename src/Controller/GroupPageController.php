@@ -73,21 +73,80 @@ final class GroupPageController extends ControllerBase {
     $can_join = !$is_member && $count < $max && $uid > 0;
     $is_owner = $uid > 0 && (int) $group->tipper_admin_id === $uid;
 
+    // Tipper-ID des aktuellen Users für Ranglisten-Hervorhebung
+    $current_tipper_id = 0;
+    if ($is_member) {
+      $tipper = $this->tipperManager->loadTipperByUid($uid, $grp_id);
+      $current_tipper_id = $tipper ? (int) $tipper->tipper_id : 0;
+    }
+
     return [
-      '#theme'        => 'soccerbet_group_page',
-      '#group'        => $group,
-      '#tournament'   => $tournament,
-      '#ranking'      => $ranking,
-      '#is_member'    => $is_member,
-      '#is_owner'     => $is_owner,
-      '#can_join'     => $can_join,
-      '#member_count' => $count,
-      '#max_members'  => $max,
-      '#cache'        => [
+      '#theme'              => 'soccerbet_group_page',
+      '#group'              => $group,
+      '#tournament'         => $tournament,
+      '#ranking'            => $ranking,
+      '#is_member'          => $is_member,
+      '#is_owner'           => $is_owner,
+      '#can_join'           => $can_join,
+      '#is_logged_in'       => $uid > 0,
+      '#member_count'       => $count,
+      '#max_members'        => $max,
+      '#current_tipper_id'  => $current_tipper_id,
+      '#cache'              => [
         'max-age'  => 60,
         'contexts' => ['user'],
       ],
     ];
+  }
+
+  /**
+   * Direkter Beitritt ohne Einladungs-Token (öffentliche Gruppe).
+   */
+  public function joinDirect(string $group_slug): RedirectResponse {
+    $group = $this->tipperManager->loadGroupBySlug($group_slug);
+    if (!$group) {
+      throw new NotFoundHttpException();
+    }
+
+    $grp_id = (int) $group->tipper_grp_id;
+    $uid    = (int) $this->currentUser()->id();
+
+    // Bereits Mitglied?
+    if ($this->tipperManager->loadTipperByUid($uid, $grp_id)) {
+      $this->messenger()->addStatus($this->t('Du bist bereits Mitglied dieser Gruppe.'));
+      return new RedirectResponse(
+        Url::fromRoute('soccerbet.group.page', ['group_slug' => $group_slug])->toString()
+      );
+    }
+
+    // Kapazität prüfen
+    $count = count($this->tipperManager->loadTippersByGroup($grp_id));
+    if ($count >= (int) $group->max_members) {
+      $this->messenger()->addError($this->t('Diese Gruppe ist leider voll.'));
+      return new RedirectResponse(
+        Url::fromRoute('soccerbet.group.page', ['group_slug' => $group_slug])->toString()
+      );
+    }
+
+    // Tipper anlegen
+    $user        = $this->entityTypeManager()->getStorage('user')->load($uid);
+    $tipper_name = $user->getDisplayName();
+    $tipper_id   = $this->tipperManager->createTipper($uid, $grp_id, $tipper_name);
+
+    // Turnier-Zuordnung für alle Turniere der Gruppe
+    $tournaments = $this->tournamentManager->loadAll($grp_id);
+    foreach ($tournaments as $t) {
+      $this->tournamentManager->addTipper((int) $t->tournament_id, $tipper_id);
+    }
+
+    $this->messenger()->addStatus($this->t(
+      'Willkommen bei „@group\"! Du kannst jetzt Tipps abgeben.',
+      ['@group' => $group->tipper_grp_name]
+    ));
+
+    return new RedirectResponse(
+      Url::fromRoute('soccerbet.group.page', ['group_slug' => $group_slug])->toString()
+    );
   }
 
   /**

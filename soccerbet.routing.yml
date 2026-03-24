@@ -352,6 +352,22 @@ soccerbet.group.join:
   requirements:
     _user_is_logged_in: 'TRUE'
 
+soccerbet.group.join.direct:
+  path: '/soccerbet/gruppe/{group_slug}/beitreten'
+  defaults:
+    _controller: '\Drupal\soccerbet\Controller\GroupPageController::joinDirect'
+    _title: 'Gruppe beitreten'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
+soccerbet.group.tournaments:
+  path: '/soccerbet/gruppe/{group_slug}/turniere'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\GroupTournamentsForm'
+    _title: 'Turnier-Zuordnung'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+
 # Öffentliche Gruppen-Seite – ZULETZT damit statische Routen Vorrang haben
 soccerbet.group.page:
   path: '/soccerbet/{group_slug}'
