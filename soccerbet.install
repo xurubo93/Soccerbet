@@ -84,26 +84,7 @@ function soccerbet_schema(): array {
   // Tournament ↔ TipperGroup N:M Relation
   // -----------------------------------------------------------------------
   $schema['soccerbet_tournament_groups'] = [
-    'description' => 'N:M-Verknüpfung zwischen Turnieren und Tippergruppen.',
-    'fields' => [
-      'tournament_id' => [
-        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
-      ],
-      'tipper_grp_id' => [
-        'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
-      ],
-    ],
-    'primary key' => ['tournament_id', 'tipper_grp_id'],
-    'indexes' => [
-      'tipper_grp' => ['tipper_grp_id'],
-    ],
-  ];
-
-  // -----------------------------------------------------------------------
-  // Turniersieger pro Tippergruppe
-  // -----------------------------------------------------------------------
-  $schema['soccerbet_tournament_group_winners'] = [
-    'description' => 'Platzierungen (1.–3.) pro Turnier und Tippergruppe.',
+    'description' => 'N:M-Verknüpfung zwischen Turnieren und Tippergruppen, inkl. Platzierungen.',
     'fields' => [
       'tournament_id' => [
         'type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE,
@@ -126,7 +107,7 @@ function soccerbet_schema(): array {
     ],
     'primary key' => ['tournament_id', 'tipper_grp_id'],
     'indexes' => [
-      'tipper_grp_id' => ['tipper_grp_id'],
+      'tipper_grp' => ['tipper_grp_id'],
     ],
   ];
 
@@ -632,6 +613,44 @@ function soccerbet_update_8008(): void {
   $config = \Drupal::configFactory()->getEditable('soccerbet.settings');
   if (!$config->get('winner_bet_points')) {
     $config->set('winner_bet_points', [10, 7, 5, 3, 1])->save();
+  }
+}
+
+/**
+ * Update 8010: Sieger-Felder direkt in soccerbet_tournament_groups;
+ * überflüssige Tabelle soccerbet_tournament_group_winners entfernen.
+ */
+function soccerbet_update_8010(): void {
+  $db     = \Drupal::database();
+  $schema = $db->schema();
+
+  // 1. Felder zu soccerbet_tournament_groups hinzufügen
+  $field_spec = ['type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE];
+  foreach (['winner_tipper_id', 'second_tipper_id', 'third_tipper_id'] as $col) {
+    if (!$schema->fieldExists('soccerbet_tournament_groups', $col)) {
+      $schema->addField('soccerbet_tournament_groups', $col, $field_spec);
+    }
+  }
+
+  // 2. Daten aus soccerbet_tournament_group_winners übernehmen
+  if ($schema->tableExists('soccerbet_tournament_group_winners')) {
+    $rows = $db->select('soccerbet_tournament_group_winners', 'tgw')
+      ->fields('tgw')
+      ->execute()->fetchAll();
+    foreach ($rows as $row) {
+      $db->update('soccerbet_tournament_groups')
+        ->fields([
+          'winner_tipper_id' => $row->winner_tipper_id ?: NULL,
+          'second_tipper_id' => $row->second_tipper_id ?: NULL,
+          'third_tipper_id'  => $row->third_tipper_id  ?: NULL,
+        ])
+        ->condition('tournament_id', $row->tournament_id)
+        ->condition('tipper_grp_id', $row->tipper_grp_id)
+        ->execute();
+    }
+
+    // 3. Tabelle löschen
+    $schema->dropTable('soccerbet_tournament_group_winners');
   }
 }
 

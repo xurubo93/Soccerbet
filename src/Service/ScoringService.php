@@ -192,8 +192,8 @@ final class ScoringService {
     // Sieger-Sterne: für jeden Tipper zählen wie oft er 1. Platz wurde
     // (über ALLE abgeschlossenen Turniere in derselben Tippergruppe)
     $stars = [];
-    $wins_q = $this->db->select('soccerbet_tournament_group_winners', 'tgw')
-      ->fields('tgw', ['winner_tipper_id'])
+    $wins_q = $this->db->select('soccerbet_tournament_groups', 'tg')
+      ->fields('tg', ['winner_tipper_id'])
       ->isNotNull('winner_tipper_id')
       ->execute()->fetchCol();
     foreach ($wins_q as $winner_id) {

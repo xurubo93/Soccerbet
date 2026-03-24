@@ -120,24 +120,28 @@ final class TournamentManager {
   }
 
   /**
-   * Setzt die Tippergruppen-Zuordnung eines Turniers (ersetzt alle bestehenden).
+   * Setzt die Tippergruppen-Zuordnung eines Turniers.
+   * Bestehende Zeilen (inkl. Sieger-Felder) bleiben erhalten; nur entfernte
+   * Gruppen werden gelöscht, neue Gruppen werden hinzugefügt.
    *
    * @param int[] $group_ids
    */
   public function setTipperGroups(int $tournament_id, array $group_ids): void {
-    // Alle bestehenden Zuordnungen löschen
-    $this->db->delete('soccerbet_tournament_groups')
-      ->condition('tournament_id', $tournament_id)
-      ->execute();
+    $group_ids = array_values(array_unique(array_filter(array_map('intval', $group_ids))));
 
-    // Neue Zuordnungen einfügen
-    foreach (array_unique($group_ids) as $grp_id) {
-      $grp_id = (int) $grp_id;
-      if ($grp_id > 0) {
-        $this->db->merge('soccerbet_tournament_groups')
-          ->keys(['tournament_id' => $tournament_id, 'tipper_grp_id' => $grp_id])
-          ->execute();
-      }
+    // Gruppen löschen, die nicht mehr zur neuen Auswahl gehören
+    $del = $this->db->delete('soccerbet_tournament_groups')
+      ->condition('tournament_id', $tournament_id);
+    if (!empty($group_ids)) {
+      $del->condition('tipper_grp_id', $group_ids, 'NOT IN');
+    }
+    $del->execute();
+
+    // Neue Gruppen einfügen (bestehende Zeilen unberührt lassen)
+    foreach ($group_ids as $grp_id) {
+      $this->db->merge('soccerbet_tournament_groups')
+        ->keys(['tournament_id' => $tournament_id, 'tipper_grp_id' => $grp_id])
+        ->execute();
     }
   }
 
@@ -147,9 +151,9 @@ final class TournamentManager {
    * @return array<int, object>  Keyed by tipper_grp_id
    */
   public function loadGroupWinners(int $tournament_id): array {
-    $rows = $this->db->select('soccerbet_tournament_group_winners', 'tgw')
-      ->fields('tgw')
-      ->condition('tgw.tournament_id', $tournament_id)
+    $rows = $this->db->select('soccerbet_tournament_groups', 'tg')
+      ->fields('tg', ['tipper_grp_id', 'winner_tipper_id', 'second_tipper_id', 'third_tipper_id'])
+      ->condition('tg.tournament_id', $tournament_id)
       ->execute()->fetchAll();
     $result = [];
     foreach ($rows as $row) {
@@ -164,13 +168,14 @@ final class TournamentManager {
    * @param array{winner_tipper_id: ?int, second_tipper_id: ?int, third_tipper_id: ?int} $winners
    */
   public function saveGroupWinners(int $tournament_id, int $tipper_grp_id, array $winners): void {
-    $this->db->merge('soccerbet_tournament_group_winners')
-      ->keys(['tournament_id' => $tournament_id, 'tipper_grp_id' => $tipper_grp_id])
+    $this->db->update('soccerbet_tournament_groups')
       ->fields([
         'winner_tipper_id' => $winners['winner_tipper_id'] ? (int) $winners['winner_tipper_id'] : NULL,
         'second_tipper_id' => $winners['second_tipper_id'] ? (int) $winners['second_tipper_id'] : NULL,
         'third_tipper_id'  => $winners['third_tipper_id']  ? (int) $winners['third_tipper_id']  : NULL,
       ])
+      ->condition('tournament_id', $tournament_id)
+      ->condition('tipper_grp_id', $tipper_grp_id)
       ->execute();
   }
 
@@ -267,7 +272,7 @@ final class TournamentManager {
       ->condition('tournament_id', $tournament_id)->execute();
     $this->db->delete('soccerbet_tournament_tippers')
       ->condition('tournament_id', $tournament_id)->execute();
-    $this->db->delete('soccerbet_tournament_group_winners')
+    $this->db->delete('soccerbet_tournament_groups')
       ->condition('tournament_id', $tournament_id)->execute();
     $this->db->delete('soccerbet_tournament')
       ->condition('tournament_id', $tournament_id)->execute();
