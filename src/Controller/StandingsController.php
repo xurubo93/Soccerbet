@@ -195,43 +195,37 @@ final class StandingsController extends ControllerBase {
   }
 
   /**
-   * Filtert eine Rangliste auf die Tipper-Gruppen des aktuellen Users.
-   * Admins sehen alle. Leere Gruppen-Liste = kein Filter.
+   * Filtert eine Rangliste auf Tipper, deren Gruppe dem Turnier zugeordnet ist.
    *
-   * @param array $rows    Ranglisten-Zeilen aus ScoringService::getRanking()
-   * @return array         Gefilterte und neu nummerierte Rangliste
+   * Gilt für alle Betrachter gleich — die Rangliste ist immer gruppen-basiert.
+   * Tippers ohne gültige Gruppen-Zuordnung zum Turnier erscheinen nicht.
    */
   private function filterByGroup(array $rows, int $tournament_id): array {
-    if ($this->currentUser()->hasPermission('administer soccerbet')) {
+    if (empty($rows)) {
       return $rows;
     }
 
-    $uid = (int) $this->currentUser()->id();
-    if ($uid === 0 || empty($rows)) {
-      return $rows;
-    }
-
-    $grp_ids = $this->db->select('soccerbet_tippers', 't')
-      ->fields('t', ['tipper_grp_id'])
-      ->condition('t.uid', $uid)
+    // Alle Gruppen-IDs die diesem Turnier zugeordnet sind
+    $grp_ids = $this->db->select('soccerbet_tournament_groups', 'tg')
+      ->fields('tg', ['tipper_grp_id'])
+      ->condition('tg.tournament_id', $tournament_id)
       ->execute()->fetchCol();
 
     if (empty($grp_ids)) {
       return $rows;
     }
 
-    $allowed = $this->db->select('soccerbet_tippers', 't')
+    // Tipper-IDs aller dieser Gruppen
+    $allowed = array_map('intval', $this->db->select('soccerbet_tippers', 't')
       ->fields('t', ['tipper_id'])
       ->condition('t.tipper_grp_id', $grp_ids, 'IN')
-      ->execute()->fetchCol();
+      ->execute()->fetchCol());
 
-    $allowed = array_map('intval', $allowed);
     $filtered = array_values(array_filter(
       $rows,
       fn($row) => in_array((int) $row['tipper_id'], $allowed, TRUE)
     ));
 
-    // Ränge innerhalb der Gruppe neu vergeben
     foreach ($filtered as $i => &$row) {
       $row['rank'] = $i + 1;
     }

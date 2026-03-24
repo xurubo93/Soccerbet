@@ -7,7 +7,6 @@ namespace Drupal\soccerbet\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\soccerbet\Service\ScoringService;
-use Drupal\soccerbet\Service\TipperManager;
 use Drupal\soccerbet\Service\TournamentManager;
 use Drupal\soccerbet\Service\WinnerBetService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,7 +24,6 @@ final class LiveController extends ControllerBase {
     private readonly TournamentManager $tournamentManager,
     private readonly ScoringService $scoring,
     private readonly WinnerBetService $winnerBet,
-    private readonly TipperManager $tipperManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -34,7 +32,6 @@ final class LiveController extends ControllerBase {
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.scoring'),
       $container->get('soccerbet.winner_bet'),
-      $container->get('soccerbet.tipper_manager'),
     );
   }
 
@@ -94,40 +91,26 @@ final class LiveController extends ControllerBase {
   }
 
   /**
-   * Ermittelt die Tipper-IDs für den aktuellen User-Kontext.
+   * Gibt Tipper-IDs aller Gruppen zurück, die diesem Turnier zugeordnet sind.
    *
-   * Admins sehen alle Turnier-Tipper. Normale User sehen nur Tipper
-   * aus ihren eigenen Gruppen.
+   * Gilt für alle Betrachter gleich — die Live-Ansicht ist immer gruppen-basiert.
    *
    * @return int[]  Leeres Array = kein Filter (alle anzeigen)
    */
   private function resolveGroupTipperIds(int $tournament_id): array {
-    if ($this->currentUser()->hasPermission('administer soccerbet')) {
-      return [];
-    }
-
-    $uid = (int) $this->currentUser()->id();
-    if ($uid === 0) {
-      return [];
-    }
-
-    // Alle Gruppen des Users ermitteln
-    $grp_ids = $this->db->select('soccerbet_tippers', 't')
-      ->fields('t', ['tipper_grp_id'])
-      ->condition('t.uid', $uid)
+    $grp_ids = $this->db->select('soccerbet_tournament_groups', 'tg')
+      ->fields('tg', ['tipper_grp_id'])
+      ->condition('tg.tournament_id', $tournament_id)
       ->execute()->fetchCol();
 
     if (empty($grp_ids)) {
       return [];
     }
 
-    // Tipper-IDs aller dieser Gruppen, die auch im Turnier sind
-    $ids = $this->db->select('soccerbet_tippers', 't')
+    return array_map('intval', $this->db->select('soccerbet_tippers', 't')
       ->fields('t', ['tipper_id'])
       ->condition('t.tipper_grp_id', $grp_ids, 'IN')
-      ->execute()->fetchCol();
-
-    return array_map('intval', $ids);
+      ->execute()->fetchCol());
   }
 
   /**
