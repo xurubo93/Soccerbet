@@ -155,8 +155,8 @@ final class LiveController extends ControllerBase {
 
     // Sieger-Sterne: Anzahl Turniersiege pro Tipper
     $stars = [];
-    foreach ($this->db->select('soccerbet_tournament', 't')
-      ->fields('t', ['winner_tipper_id'])
+    foreach ($this->db->select('soccerbet_tournament_group_winners', 'tgw')
+      ->fields('tgw', ['winner_tipper_id'])
       ->isNotNull('winner_tipper_id')
       ->execute()->fetchCol() as $winner_id) {
       $stars[(int) $winner_id] = ($stars[(int) $winner_id] ?? 0) + 1;

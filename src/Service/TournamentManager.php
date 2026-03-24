@@ -142,6 +142,39 @@ final class TournamentManager {
   }
 
   /**
+   * Lädt die Platzierungen (1.–3.) aller Tippergruppen eines Turniers.
+   *
+   * @return array<int, object>  Keyed by tipper_grp_id
+   */
+  public function loadGroupWinners(int $tournament_id): array {
+    $rows = $this->db->select('soccerbet_tournament_group_winners', 'tgw')
+      ->fields('tgw')
+      ->condition('tgw.tournament_id', $tournament_id)
+      ->execute()->fetchAll();
+    $result = [];
+    foreach ($rows as $row) {
+      $result[(int) $row->tipper_grp_id] = $row;
+    }
+    return $result;
+  }
+
+  /**
+   * Speichert die Platzierungen einer Tippergruppe für ein Turnier.
+   *
+   * @param array{winner_tipper_id: ?int, second_tipper_id: ?int, third_tipper_id: ?int} $winners
+   */
+  public function saveGroupWinners(int $tournament_id, int $tipper_grp_id, array $winners): void {
+    $this->db->merge('soccerbet_tournament_group_winners')
+      ->keys(['tournament_id' => $tournament_id, 'tipper_grp_id' => $tipper_grp_id])
+      ->fields([
+        'winner_tipper_id' => $winners['winner_tipper_id'] ? (int) $winners['winner_tipper_id'] : NULL,
+        'second_tipper_id' => $winners['second_tipper_id'] ? (int) $winners['second_tipper_id'] : NULL,
+        'third_tipper_id'  => $winners['third_tipper_id']  ? (int) $winners['third_tipper_id']  : NULL,
+      ])
+      ->execute();
+  }
+
+  /**
    * Gibt alle Tipper zurück, die einem Turnier zugeordnet sind.
    * Berücksichtigt alle verknüpften Tippergruppen (N:M).
    *
@@ -195,15 +228,12 @@ final class TournamentManager {
   public function update(int $tournament_id, array $values): void {
     $this->db->update('soccerbet_tournament')
       ->fields([
-        'tournament_desc'  => (string) $values['tournament_desc'],
-        'start_date'       => (string) $values['start_date'],
-        'end_date'         => (string) $values['end_date'],
-        'group_count'      => (int) ($values['group_count'] ?? 0),
-        'is_active'        => (int) ($values['is_active'] ?? 0),
-        'winner_tipper_id' => $values['winner_tipper_id'] ? (int) $values['winner_tipper_id'] : NULL,
-        'second_tipper_id' => $values['second_tipper_id'] ? (int) $values['second_tipper_id'] : NULL,
-        'third_tipper_id'  => $values['third_tipper_id']  ? (int) $values['third_tipper_id']  : NULL,
-        'changed'          => \Drupal::time()->getRequestTime(),
+        'tournament_desc' => (string) $values['tournament_desc'],
+        'start_date'      => (string) $values['start_date'],
+        'end_date'        => (string) $values['end_date'],
+        'group_count'     => (int) ($values['group_count'] ?? 0),
+        'is_active'       => (int) ($values['is_active'] ?? 0),
+        'changed'         => \Drupal::time()->getRequestTime(),
       ])
       ->condition('tournament_id', $tournament_id)
       ->execute();
@@ -236,6 +266,8 @@ final class TournamentManager {
     $this->db->delete('soccerbet_teams')
       ->condition('tournament_id', $tournament_id)->execute();
     $this->db->delete('soccerbet_tournament_tippers')
+      ->condition('tournament_id', $tournament_id)->execute();
+    $this->db->delete('soccerbet_tournament_group_winners')
       ->condition('tournament_id', $tournament_id)->execute();
     $this->db->delete('soccerbet_tournament')
       ->condition('tournament_id', $tournament_id)->execute();

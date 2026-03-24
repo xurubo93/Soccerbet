@@ -103,37 +103,53 @@ final class TournamentForm extends FormBase {
 
     // Sieger-Bereich – nur im Edit-Modus sinnvoll
     if ($tournament_id > 0) {
-      $tipper_options = [0 => $this->t('— noch offen —')];
-      foreach ($this->tournamentManager->loadTipperGroupIds($tournament_id) as $group_id) {
-        foreach ($this->tipperManager->loadTippersByGroup($group_id) as $t) {
-          $tipper_options[(int) $t->tipper_id] = $t->tipper_name;
-        }
-      }
-      asort($tipper_options);
+      $groups        = $this->tournamentManager->loadTipperGroups($tournament_id);
+      $group_winners = $this->tournamentManager->loadGroupWinners($tournament_id);
+      $winner_group_ids = [];
 
       $form['winners'] = [
         '#type'        => 'fieldset',
         '#title'       => $this->t('Turniersieger ★'),
         '#description' => $this->t('Der Sieger erhält einen Stern (★) neben seinem Namen in allen Ranglisten.'),
       ];
-      $form['winners']['winner_tipper_id'] = [
-        '#type'          => 'select',
-        '#title'         => $this->t('★ 1. Platz'),
-        '#options'       => $tipper_options,
-        '#default_value' => (int) ($tournament->winner_tipper_id ?? 0),
-      ];
-      $form['winners']['second_tipper_id'] = [
-        '#type'          => 'select',
-        '#title'         => $this->t('2. Platz'),
-        '#options'       => $tipper_options,
-        '#default_value' => (int) ($tournament->second_tipper_id ?? 0),
-      ];
-      $form['winners']['third_tipper_id'] = [
-        '#type'          => 'select',
-        '#title'         => $this->t('3. Platz'),
-        '#options'       => $tipper_options,
-        '#default_value' => (int) ($tournament->third_tipper_id ?? 0),
-      ];
+
+      foreach ($groups as $group) {
+        $grp_id = (int) $group->tipper_grp_id;
+        $winner_group_ids[] = $grp_id;
+
+        $tipper_options = [0 => $this->t('— noch offen —')];
+        foreach ($this->tipperManager->loadTippersByGroup($grp_id) as $t) {
+          $tipper_options[(int) $t->tipper_id] = $t->tipper_name;
+        }
+        asort($tipper_options);
+
+        $existing = $group_winners[$grp_id] ?? NULL;
+
+        $form['winners']['group_' . $grp_id] = [
+          '#type'  => 'fieldset',
+          '#title' => $group->tipper_grp_name,
+        ];
+        $form['winners']['group_' . $grp_id]['winner_1_' . $grp_id] = [
+          '#type'          => 'select',
+          '#title'         => $this->t('★ 1. Platz'),
+          '#options'       => $tipper_options,
+          '#default_value' => (int) ($existing?->winner_tipper_id ?? 0),
+        ];
+        $form['winners']['group_' . $grp_id]['winner_2_' . $grp_id] = [
+          '#type'          => 'select',
+          '#title'         => $this->t('2. Platz'),
+          '#options'       => $tipper_options,
+          '#default_value' => (int) ($existing?->second_tipper_id ?? 0),
+        ];
+        $form['winners']['group_' . $grp_id]['winner_3_' . $grp_id] = [
+          '#type'          => 'select',
+          '#title'         => $this->t('3. Platz'),
+          '#options'       => $tipper_options,
+          '#default_value' => (int) ($existing?->third_tipper_id ?? 0),
+        ];
+      }
+
+      $form_state->set('winner_group_ids', $winner_group_ids);
     }
 
     $form['submit'] = [
@@ -158,15 +174,12 @@ final class TournamentForm extends FormBase {
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $values = [
-      'tournament_desc'   => $form_state->getValue('tournament_desc'),
-      'tipper_grp_ids'    => array_keys(array_filter($form_state->getValue('tipper_grp_ids') ?? [])),
-      'start_date'        => $form_state->getValue('start_date'),
-      'end_date'          => $form_state->getValue('end_date'),
-      'group_count'       => (int) $form_state->getValue('group_count'),
-      'is_active'         => (int) $form_state->getValue('is_active'),
-      'winner_tipper_id'  => ($form_state->getValue('winner_tipper_id') ?: NULL),
-      'second_tipper_id'  => ($form_state->getValue('second_tipper_id') ?: NULL),
-      'third_tipper_id'   => ($form_state->getValue('third_tipper_id')  ?: NULL),
+      'tournament_desc' => $form_state->getValue('tournament_desc'),
+      'tipper_grp_ids'  => array_keys(array_filter($form_state->getValue('tipper_grp_ids') ?? [])),
+      'start_date'      => $form_state->getValue('start_date'),
+      'end_date'        => $form_state->getValue('end_date'),
+      'group_count'     => (int) $form_state->getValue('group_count'),
+      'is_active'       => (int) $form_state->getValue('is_active'),
     ];
 
     $tournament_id = $form_state->get('tournament_id');
@@ -177,6 +190,15 @@ final class TournamentForm extends FormBase {
     else {
       $tournament_id = $this->tournamentManager->create($values);
       $this->messenger()->addStatus($this->t('Turnier "@name" wurde erstellt.', ['@name' => $values['tournament_desc']]));
+    }
+
+    // Sieger pro Tippergruppe speichern
+    foreach ($form_state->get('winner_group_ids') ?? [] as $grp_id) {
+      $this->tournamentManager->saveGroupWinners($tournament_id, $grp_id, [
+        'winner_tipper_id' => ($form_state->getValue('winner_1_' . $grp_id) ?: NULL),
+        'second_tipper_id' => ($form_state->getValue('winner_2_' . $grp_id) ?: NULL),
+        'third_tipper_id'  => ($form_state->getValue('winner_3_' . $grp_id) ?: NULL),
+      ]);
     }
 
     // Wenn als aktiv markiert → Konfiguration updaten

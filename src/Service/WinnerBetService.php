@@ -129,12 +129,6 @@ final class WinnerBetService {
       ->condition('t.team_id', $team_ids, 'IN')
       ->execute()->fetchAllKeyed();
 
-    // Turniersieger-Team (falls bereits bekannt)
-    $tournament = $this->db->select('soccerbet_tournament', 't')
-      ->fields('t', ['winner_tipper_id'])
-      ->condition('t.tournament_id', $tournament_id)
-      ->execute()->fetchObject();
-
     // Gewinner-Team aus finalem Spielergebnis ermitteln
     $winner_team_id = $this->resolveWinnerTeamId($tournament_id);
 
