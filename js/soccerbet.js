@@ -61,6 +61,33 @@
   };
 
   /**
+   * KO-Runden: Aufsteiger-Dropdown nur bei Unentschieden anzeigen.
+   */
+  Drupal.behaviors.soccerbetKoWinner = {
+    attach(context) {
+      once('soccerbet-ko-winner', '.soccerbet-winner-select[data-game-id]', context).forEach((select) => {
+        const gameId  = select.dataset.gameId;
+        const fieldset = select.closest('.soccerbet-game');
+        if (!fieldset) return;
+        const tipp1   = fieldset.querySelector(`[name="tipp1_${gameId}"]`);
+        const tipp2   = fieldset.querySelector(`[name="tipp2_${gameId}"]`);
+        const wrapper = select.closest('.soccerbet-winner-wrap');
+        if (!tipp1 || !tipp2 || !wrapper) return;
+
+        function update() {
+          const v1 = tipp1.value.trim();
+          const v2 = tipp2.value.trim();
+          const isDraw = v1 !== '' && v2 !== '' && parseInt(v1, 10) === parseInt(v2, 10);
+          wrapper.style.display = isDraw ? '' : 'none';
+        }
+
+        tipp1.addEventListener('input', update);
+        tipp2.addEventListener('input', update);
+      });
+    },
+  };
+
+  /**
    * Unsaved-changes-Warnung beim Verlassen der Seite.
    */
   Drupal.behaviors.soccerbetUnsavedWarning = {

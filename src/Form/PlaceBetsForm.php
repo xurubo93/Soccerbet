@@ -357,19 +357,28 @@ final class PlaceBetsForm extends FormBase {
     // Matchup-Wrapper schließen
     $container[$game_key]['matchup_close'] = ['#markup' => '</div>'];
 
-    // KO-Runden: Aufsteiger-Tipp
+    // KO-Runden: Aufsteiger-Tipp (nur sichtbar wenn Unentschieden getippt)
     if ($ko_phase && !$played) {
+      $t1 = $saved?->team1_tipp;
+      $t2 = $saved?->team2_tipp;
+      $show_winner = ($t1 !== NULL && $t2 !== NULL && (int) $t1 === (int) $t2);
       $container[$game_key]['winner_' . $game_id] = [
-        '#type'          => 'select',
-        '#title'         => $this->t('Aufsteiger/Sieger'),
-        '#options'       => [
-          ''               => $this->t('— noch offen —'),
+        '#type'               => 'select',
+        '#title'              => $this->t('Aufsteiger/Sieger'),
+        '#options'            => [
           $game->team_id_1 => $game->team1_name,
           $game->team_id_2 => $game->team2_name,
         ],
-        '#default_value' => $saved?->winner_team_id ?? '',
-        '#disabled'      => $locked,
-        '#attributes'    => ['class' => ['soccerbet-winner-select']],
+        '#default_value'      => $saved?->winner_team_id ?? $game->team_id_1,
+        '#disabled'           => $locked,
+        '#attributes'         => [
+          'class'         => ['soccerbet-winner-select'],
+          'data-game-id'  => $game_id,
+        ],
+        '#wrapper_attributes' => [
+          'class' => ['soccerbet-winner-wrap'],
+          'style' => $show_winner ? '' : 'display: none',
+        ],
       ];
     }
 
@@ -415,7 +424,7 @@ final class PlaceBetsForm extends FormBase {
       $tipp1  = $values['tipp1_' . $game_id] ?? '';
       $tipp2  = $values['tipp2_' . $game_id] ?? '';
       $winner = $values['winner_' . $game_id] ?? '';
-      if ($tipp1 !== '' && $tipp2 !== '' && (int) $tipp1 === (int) $tipp2 && $winner === '') {
+      if ($tipp1 !== '' && $tipp2 !== '' && (int) $tipp1 === (int) $tipp2 && (int) $winner === 0) {
         $form_state->setErrorByName(
           'winner_' . $game_id,
           $this->t('Bei Unentschieden muss ein Aufsteiger gewählt werden.')
@@ -459,9 +468,12 @@ final class PlaceBetsForm extends FormBase {
         continue;
       }
 
-      $winner = isset($values['winner_' . $game_id]) && $values['winner_' . $game_id] !== ''
-        ? (int) $values['winner_' . $game_id]
-        : NULL;
+      // Winner nur bei Unentschieden berücksichtigen (Select ist sonst ausgeblendet)
+      $winner = NULL;
+      if ((int) $tipp1 === (int) $tipp2 && isset($values['winner_' . $game_id])) {
+        $w = (int) $values['winner_' . $game_id];
+        $winner = $w > 0 ? $w : NULL;
+      }
 
       $this->tipperManager->saveTipp(
         $tipper_id,
