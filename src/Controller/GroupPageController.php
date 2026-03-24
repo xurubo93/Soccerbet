@@ -56,8 +56,21 @@ final class GroupPageController extends ControllerBase {
     $tournament     = $tournaments[0] ?? NULL;
     $tournament_id  = $tournament ? (int) $tournament->tournament_id : 0;
 
-    // Rangliste (nur wenn Turnier vorhanden)
-    $ranking = $tournament_id ? $this->scoring->getRanking($tournament_id) : [];
+    // Rangliste: nur Tipper dieser Gruppe
+    $group_tipper_ids = array_map(fn($m) => (int) $m->tipper_id, $members);
+    $ranking = [];
+    if ($tournament_id && !empty($group_tipper_ids)) {
+      $full_ranking = $this->scoring->getRanking($tournament_id);
+      $ranking = array_values(array_filter(
+        $full_ranking,
+        fn($row) => in_array((int) $row['tipper_id'], $group_tipper_ids, TRUE)
+      ));
+      // Ränge neu vergeben (1-basiert innerhalb der Gruppe)
+      foreach ($ranking as $i => &$row) {
+        $row['rank'] = $i + 1;
+      }
+      unset($row);
+    }
 
     // Ist der aktuelle User bereits Mitglied?
     $is_member = FALSE;
