@@ -33,14 +33,14 @@ final class TablesController extends ControllerBase {
     }
 
     if ($tournament_id === 0) {
-      return ['#markup' => '<p>' . $this->t('Kein aktives Turnier konfiguriert.') . '</p>'];
+      return ['#markup' => '<p>' . $this->t('No active tournament configured.') . '</p>'];
     }
 
     try {
       $tournament = $this->tournamentManager->load($tournament_id);
     }
     catch (\Exception) {
-      return ['#markup' => '<p>' . $this->t('Turnier nicht gefunden.') . '</p>'];
+      return ['#markup' => '<p>' . $this->t('Tournament not found.') . '</p>'];
     }
     $teams      = $this->tipperManager->loadTeamsByTournament($tournament_id);
 

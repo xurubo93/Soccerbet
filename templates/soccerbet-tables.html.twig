@@ -12,14 +12,14 @@
 <div class="soccerbet-tables">
 
   <h2 class="soccerbet-tables__title">
-    {{ 'Tabellen'|t }}
+    {{ 'Tables'|t }}
     {% if tournament %}
       – {{ tournament.tournament_desc }}
     {% endif %}
   </h2>
 
   {% if groups is empty %}
-    <p class="soccerbet-tables__empty">{{ 'Keine Teams vorhanden.'|t }}</p>
+    <p class="soccerbet-tables__empty">{{ 'No teams available.'|t }}</p>
   {% else %}
     <div class="soccerbet-tables__grid">
       {% for group_key, teams in groups %}
@@ -27,7 +27,7 @@
 
           {% if group_key != '_' %}
             <h3 class="soccerbet-tables__group-title">
-              {{ 'Gruppe'|t }} {{ group_key }}
+              {{ 'Group'|t }} {{ group_key }}
             </h3>
           {% endif %}
 
@@ -35,14 +35,14 @@
             <thead>
               <tr>
                 <th class="col-pos">#</th>
-                <th class="col-team">{{ 'Mannschaft'|t }}</th>
-                <th class="col-num" title="{{ 'Spiele'|t }}">Sp</th>
-                <th class="col-num" title="{{ 'Siege'|t }}">S</th>
-                <th class="col-num" title="{{ 'Unentschieden'|t }}">U</th>
-                <th class="col-num" title="{{ 'Niederlagen'|t }}">N</th>
-                <th class="col-goals">{{ 'Tore'|t }}</th>
-                <th class="col-diff" title="{{ 'Tordifferenz'|t }}">+/-</th>
-                <th class="col-pts"><strong>{{ 'Pkt'|t }}</strong></th>
+                <th class="col-team">{{ 'Team'|t }}</th>
+                <th class="col-num" title="{{ 'Matches'|t }}">P</th>
+                <th class="col-num" title="{{ 'Wins'|t }}">W</th>
+                <th class="col-num" title="{{ 'Draws'|t }}">D</th>
+                <th class="col-num" title="{{ 'Losses'|t }}">L</th>
+                <th class="col-goals">{{ 'Goals'|t }}</th>
+                <th class="col-diff" title="{{ 'Goal difference'|t }}">+/-</th>
+                <th class="col-pts"><strong>{{ 'Pts'|t }}</strong></th>
               </tr>
             </thead>
             <tbody>

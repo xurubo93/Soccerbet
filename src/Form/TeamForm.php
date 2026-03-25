@@ -50,7 +50,7 @@ final class TeamForm extends FormBase {
 
     if ($tournament_id === 0) {
       return [
-        '#markup' => '<p>' . $this->t('Kein aktives Turnier konfiguriert. Bitte zuerst ein <a href=":url">Turnier anlegen und als aktiv markieren</a>.', [
+        '#markup' => '<p>' . $this->t('No active tournament configured. Please first <a href=":url">create a tournament and mark it as active</a>.', [
           ':url' => Url::fromRoute('soccerbet.admin.tournament.create')->toString(),
         ]) . '</p>',
       ];
@@ -65,14 +65,14 @@ final class TeamForm extends FormBase {
     $form['tournament_info'] = [
       '#type'   => 'item',
       '#markup' => '<div class="soccerbet-form-tournament-info">'
-        . $this->t('Turnier: <strong>@name</strong>', ['@name' => $tournament_name])
+        . $this->t('Tournament: <strong>@name</strong>', ['@name' => $tournament_name])
         . '</div>',
       '#weight' => -10,
     ];
 
     $form['team_name'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Teamname'),
+      '#title'         => $this->t('Team name'),
       '#maxlength'     => 64,
       '#required'      => TRUE,
       '#default_value' => $team?->team_name ?? '',
@@ -80,8 +80,8 @@ final class TeamForm extends FormBase {
 
     $form['team_group'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Gruppe'),
-      '#description'   => $this->t('Einzelner Buchstabe A–Z (leer lassen für KO-Phase)'),
+      '#title'         => $this->t('Group'),
+      '#description'   => $this->t('Single letter A–Z (leave empty for KO rounds)'),
       '#maxlength'     => 1,
       '#size'          => 3,
       '#default_value' => $team?->team_group ?? '',
@@ -89,10 +89,9 @@ final class TeamForm extends FormBase {
 
     $form['team_flag'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Flagge (ISO 3166-1 Alpha-2 Code)'),
+      '#title'         => $this->t('Flag (ISO 3166-1 Alpha-2 code)'),
       '#description'   => $this->t(
-        'Zweistelliger Ländercode, z.B. <code>AT</code> (Österreich), <code>DE</code> (Deutschland), <code>GB-ENG</code> (England). '
-        . 'Groß- oder Kleinschreibung wird automatisch angepasst.'
+        'Two-letter country code, e.g. <code>at</code> (Austria), <code>de</code> (Germany), <code>gb-eng</code> (England). Always stored as lowercase.'
       ),
       '#maxlength'     => 10,
       '#size'          => 12,
@@ -107,7 +106,7 @@ final class TeamForm extends FormBase {
       $svg_path   = '/modules/custom/soccerbet/images/flags/svg/' . $flag_lower . '.svg';
       $form['flag_preview'] = [
         '#markup' => '<div class="soccerbet-flag-preview">'
-          . '<span class="soccerbet-flag-preview__label">' . $this->t('Vorschau:') . '</span> '
+          . '<span class="soccerbet-flag-preview__label">' . $this->t('Preview:') . '</span> '
           . '<img src="' . $svg_path . '" alt="' . htmlspecialchars($flag_lower) . '" '
           . 'width="40" height="40" class="soccerbet-flag">'
           . '</div>',
@@ -118,9 +117,9 @@ final class TeamForm extends FormBase {
     if ($team_id > 0) {
       $form['stats'] = [
         '#type'        => 'details',
-        '#title'       => $this->t('Tabellenstand'),
+        '#title'       => $this->t('League table'),
         '#open'        => FALSE,
-        '#description' => $this->t('Diese Werte werden normalerweise automatisch berechnet.'),
+        '#description' => $this->t('These values are normally calculated automatically.'),
       ];
       foreach (['games_played', 'games_won', 'games_drawn', 'games_lost', 'goals_shot', 'goals_got', 'points'] as $field) {
         $form['stats'][$field] = [
@@ -135,7 +134,7 @@ final class TeamForm extends FormBase {
 
     $form['submit'] = [
       '#type'  => 'submit',
-      '#value' => $team_id ? $this->t('Team speichern') : $this->t('Team erstellen'),
+      '#value' => $team_id ? $this->t('Save team') : $this->t('Create team'),
     ];
 
     return $form;
@@ -144,7 +143,7 @@ final class TeamForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $group = $form_state->getValue('team_group');
     if ($group !== '' && !preg_match('/^[A-Z]$/i', $group)) {
-      $form_state->setErrorByName('team_group', $this->t('Die Gruppe muss ein einzelner Buchstabe (A–Z) sein.'));
+      $form_state->setErrorByName('team_group', $this->t('The group must be a single letter (A–Z).'));
     }
   }
 
@@ -165,11 +164,11 @@ final class TeamForm extends FormBase {
 
     if ($team_id) {
       $this->tipperManager->updateTeam($team_id, $values);
-      $this->messenger()->addStatus($this->t('Team "@name" wurde gespeichert.', ['@name' => $values['team_name']]));
+      $this->messenger()->addStatus($this->t('Team "@name" has been saved.', ['@name' => $values['team_name']]));
     }
     else {
       $this->tipperManager->createTeam($tournament_id, $values);
-      $this->messenger()->addStatus($this->t('Team "@name" wurde erstellt.', ['@name' => $values['team_name']]));
+      $this->messenger()->addStatus($this->t('Team "@name" has been created.', ['@name' => $values['team_name']]));
     }
 
     $form_state->setRedirectUrl(

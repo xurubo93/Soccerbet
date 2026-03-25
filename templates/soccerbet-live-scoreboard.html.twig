@@ -12,7 +12,7 @@
 {% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
 
 {% if live_games is empty %}
-  <p class="soccerbet-live__no-games">{{ 'Derzeit laufen keine Spiele.'|t }}</p>
+  <p class="soccerbet-live__no-games">{{ 'No matches currently in progress.'|t }}</p>
 {% else %}
   <div class="soccerbet-live__scoreboard">
     {% for game in live_games %}

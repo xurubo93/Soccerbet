@@ -34,9 +34,9 @@ final class GameController extends ControllerBase {
     }
 
     $tournament_options = $this->tournamentManager->getOptions();
-    $tournament_name = $tournament_options[$tournament_id] ?? $this->t('Unbekannt');
+    $tournament_name = $tournament_options[$tournament_id] ?? $this->t('Unknown');
     $select = [
-      '#markup' => '<p class="soccerbet-admin-hint">' . $this->t('Turnier: <strong>@name</strong>', ['@name' => $tournament_name]) . '</p>',
+      '#markup' => '<p class="soccerbet-admin-hint">' . $this->t('Tournament: <strong>@name</strong>', ['@name' => $tournament_name]) . '</p>',
     ];
 
     $games = $this->tipperManager->loadGamesByTournament($tournament_id);
@@ -61,9 +61,9 @@ final class GameController extends ControllerBase {
           'data' => [
             '#type'  => 'operations',
             '#links' => [
-              'score'  => ['title' => $this->t('Ergebnis'),    'url' => Url::fromRoute('soccerbet.admin.games.score',  ['game_id' => $g->game_id])],
-              'edit'   => ['title' => $this->t('Bearbeiten'),  'url' => Url::fromRoute('soccerbet.admin.games.edit',   ['game_id' => $g->game_id])],
-              'delete' => ['title' => $this->t('Löschen'),     'url' => Url::fromRoute('soccerbet.admin.games.delete', ['game_id' => $g->game_id])],
+              'score'  => ['title' => $this->t('Result'),   'url' => Url::fromRoute('soccerbet.admin.games.score',  ['game_id' => $g->game_id])],
+              'edit'   => ['title' => $this->t('Edit'),     'url' => Url::fromRoute('soccerbet.admin.games.edit',   ['game_id' => $g->game_id])],
+              'delete' => ['title' => $this->t('Delete'),   'url' => Url::fromRoute('soccerbet.admin.games.delete', ['game_id' => $g->game_id])],
             ],
           ],
         ],
@@ -74,15 +74,15 @@ final class GameController extends ControllerBase {
       'select'      => $select,
       'create_link' => [
         '#type'       => 'link',
-        '#title'      => $this->t('+ Neues Spiel'),
+        '#title'      => $this->t('+ New match'),
         '#url'        => Url::fromRoute('soccerbet.admin.games.create', ['tournament_id' => $tournament_id]),
         '#attributes' => ['class' => ['button', 'button--primary']],
       ],
       'table' => [
         '#theme'  => 'table',
-        '#header' => [$this->t('Datum'), $this->t('Paarung'), $this->t('Stadion'), $this->t('Phase'), $this->t('Ergebnis'), $this->t('Aktionen')],
+        '#header' => [$this->t('Date'), $this->t('Matchup'), $this->t('Stadium'), $this->t('Round'), $this->t('Result'), $this->t('Actions')],
         '#rows'   => $rows,
-        '#empty'  => $this->t('Keine Spiele in diesem Turnier.'),
+        '#empty'  => $this->t('No matches in this tournament.'),
       ],
     ];
   }

@@ -30,13 +30,13 @@ final class TipperGroupDeleteForm extends ConfirmFormBase {
   }
 
   public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('Tippergruppe „@name" wirklich löschen?', [
+    return $this->t('Really delete betting group "@name"?', [
       '@name' => $this->group?->tipper_grp_name ?? '',
     ]);
   }
 
   public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('Dabei werden alle Tipper, Tipps, Einladungen und Turnier-Zuordnungen dieser Gruppe unwiderruflich gelöscht.');
+    return $this->t('This will permanently delete all bettors, bets, invitations and tournament assignments of this group.');
   }
 
   public function getCancelUrl(): Url {
@@ -51,7 +51,7 @@ final class TipperGroupDeleteForm extends ConfirmFormBase {
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->tipperManager->deleteGroup($form_state->get('tipper_grp_id'));
-    $this->messenger()->addStatus($this->t('Tippergruppe wurde gelöscht.'));
+    $this->messenger()->addStatus($this->t('Betting group has been deleted.'));
     $form_state->setRedirectUrl(Url::fromRoute('soccerbet.admin.tippergroups.list'));
   }
 

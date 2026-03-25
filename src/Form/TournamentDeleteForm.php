@@ -30,13 +30,13 @@ final class TournamentDeleteForm extends ConfirmFormBase {
   }
 
   public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('Turnier "@name" wirklich löschen?', [
+    return $this->t('Really delete tournament "@name"?', [
       '@name' => $this->tournament?->tournament_desc ?? '',
     ]);
   }
 
   public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('Dabei werden alle zugehörigen Spiele, Tipps und Team-Daten unwiderruflich gelöscht.');
+    return $this->t('This will permanently delete all associated matches, bets and team data.');
   }
 
   public function getCancelUrl(): Url {
@@ -51,7 +51,7 @@ final class TournamentDeleteForm extends ConfirmFormBase {
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->tournamentManager->delete($form_state->get('tournament_id'));
-    $this->messenger()->addStatus($this->t('Turnier wurde gelöscht.'));
+    $this->messenger()->addStatus($this->t('Tournament has been deleted.'));
     $form_state->setRedirectUrl(Url::fromRoute('soccerbet.admin.tournament.list'));
   }
 }

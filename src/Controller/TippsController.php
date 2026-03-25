@@ -33,14 +33,14 @@ final class TippsController extends ControllerBase {
     }
 
     if ($tournament_id === 0) {
-      return ['#markup' => '<p>' . $this->t('Kein aktives Turnier konfiguriert.') . '</p>'];
+      return ['#markup' => '<p>' . $this->t('No active tournament configured.') . '</p>'];
     }
 
     try {
       $tournament = $this->tournamentManager->load($tournament_id);
     }
     catch (\Exception) {
-      return ['#markup' => '<p>' . $this->t('Turnier nicht gefunden.') . '</p>'];
+      return ['#markup' => '<p>' . $this->t('Tournament not found.') . '</p>'];
     }
     $tippers    = $this->tournamentManager->loadTippers($tournament_id);
     $games      = $this->tipperManager->loadGamesByTournament($tournament_id);
@@ -51,7 +51,7 @@ final class TippsController extends ControllerBase {
         ->loadTippsByTipper((int) $tipper->tipper_id, $tournament_id);
     }
 
-    $header = [$this->t('Tipper')];
+    $header = [$this->t('Bettor')];
     foreach ($games as $game) {
       $header[] = $game->team1_name . ' – ' . $game->team2_name;
     }
@@ -68,12 +68,12 @@ final class TippsController extends ControllerBase {
 
     return [
       '#type'   => 'container',
-      'heading' => ['#markup' => '<h2>' . $this->t('Tipps-Übersicht: @name', ['@name' => $tournament->tournament_desc]) . '</h2>'],
+      'heading' => ['#markup' => '<h2>' . $this->t('Bets overview: @name', ['@name' => $tournament->tournament_desc]) . '</h2>'],
       'table'   => [
         '#theme'      => 'table',
         '#header'     => $header,
         '#rows'       => $rows,
-        '#empty'      => $this->t('Keine Tipps vorhanden.'),
+        '#empty'      => $this->t('No bets available.'),
         '#sticky'     => TRUE,
         '#attributes' => ['class' => ['soccerbet-tipps-overview']],
       ],

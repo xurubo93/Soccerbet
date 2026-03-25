@@ -31,11 +31,11 @@ final class TeamDeleteForm extends ConfirmFormBase {
   }
 
   public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('Team "@name" wirklich löschen?', ['@name' => $this->team_name]);
+    return $this->t('Really delete team "@name"?', ['@name' => $this->team_name]);
   }
 
   public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('Das Team wird aus dem Turnier entfernt. Verknüpfte Spiele bleiben erhalten.');
+    return $this->t('The team will be removed from the tournament. Linked matches will be kept.');
   }
 
   public function getCancelUrl(): Url {
@@ -53,7 +53,7 @@ final class TeamDeleteForm extends ConfirmFormBase {
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->tipperManager->deleteTeam($form_state->get('team_id'));
-    $this->messenger()->addStatus($this->t('Team wurde gelöscht.'));
+    $this->messenger()->addStatus($this->t('Team has been deleted.'));
     $form_state->setRedirectUrl(
       Url::fromRoute('soccerbet.admin.teams.list', ['tournament_id' => $form_state->get('tournament_id')])
     );

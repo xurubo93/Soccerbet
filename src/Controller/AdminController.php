@@ -14,14 +14,14 @@ final class AdminController extends ControllerBase {
 
   public function overview(): array {
     $links = [
-      ['title' => $this->t('Turniere verwalten'),          'route' => 'soccerbet.admin.tournament.list'],
-      ['title' => $this->t('Teams verwalten'),             'route' => 'soccerbet.admin.teams.list'],
-      ['title' => $this->t('Spiele verwalten'),            'route' => 'soccerbet.admin.games.list'],
-      ['title' => $this->t('Tippergruppen'),               'route' => 'soccerbet.admin.tippergroups.list'],
-      ['title' => $this->t('Zahlungen verwalten'),         'route' => 'soccerbet.admin.payments'],
-      ['title' => $this->t('Tipps-Übersicht'),             'route' => 'soccerbet.admin.tipps.overview'],
-      ['title' => $this->t('Score-Update (OpenLigaDB)'),   'route' => 'soccerbet.admin.score_update'],
-      ['title' => $this->t('Einstellungen'),               'route' => 'soccerbet.settings'],
+      ['title' => $this->t('Manage tournaments'),           'route' => 'soccerbet.admin.tournament.list'],
+      ['title' => $this->t('Manage teams'),                'route' => 'soccerbet.admin.teams.list'],
+      ['title' => $this->t('Manage matches'),              'route' => 'soccerbet.admin.games.list'],
+      ['title' => $this->t('Betting groups'),              'route' => 'soccerbet.admin.tippergroups.list'],
+      ['title' => $this->t('Manage payments'),             'route' => 'soccerbet.admin.payments'],
+      ['title' => $this->t('Bets overview'),               'route' => 'soccerbet.admin.tipps.overview'],
+      ['title' => $this->t('Score update (OpenLigaDB)'),   'route' => 'soccerbet.admin.score_update'],
+      ['title' => $this->t('Settings'),                    'route' => 'soccerbet.settings'],
     ];
 
     $items = [];
@@ -36,7 +36,7 @@ final class AdminController extends ControllerBase {
     return [
       '#theme' => 'item_list',
       '#items' => $items,
-      '#title' => $this->t('Tippspiel-Administration'),
+      '#title' => $this->t('Betting game administration'),
     ];
   }
 }

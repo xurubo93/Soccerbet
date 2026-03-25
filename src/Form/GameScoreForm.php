@@ -43,7 +43,7 @@ final class GameScoreForm extends FormBase {
 
     $form['score'] = [
       '#type'       => 'fieldset',
-      '#title'      => $this->t('Endergebnis (nach 90 Min.)'),
+      '#title'      => $this->t('Final result (after 90 min.)'),
       '#attributes' => ['class' => ['soccerbet-score-fieldset']],
     ];
     $form['score']['team1_score'] = [
@@ -70,10 +70,10 @@ final class GameScoreForm extends FormBase {
     if (in_array($game->phase, $ko_phases, TRUE)) {
       $form['winner_team_id'] = [
         '#type'          => 'radios',
-        '#title'         => $this->t('Aufsteiger / Sieger (nach Verlängerung/Elfmeter)'),
-        '#description'   => $this->t('Nur ausfüllen wenn nicht durch Ergebnis nach 90 Min. eindeutig.'),
+        '#title'         => $this->t('Qualifier / Winner (after extra time/penalties)'),
+        '#description'   => $this->t('Only fill in if not determined by the 90 min. result.'),
         '#options'       => [
-          0                => $this->t('Aus Ergebnis (kein Elfmeterschießen)'),
+          0                => $this->t('From result (no penalty shootout)'),
           $game->team_id_1 => $team1->team_name,
           $game->team_id_2 => $team2->team_name,
         ],
@@ -83,7 +83,7 @@ final class GameScoreForm extends FormBase {
 
     $form['submit'] = [
       '#type'  => 'submit',
-      '#value' => $this->t('Ergebnis speichern'),
+      '#value' => $this->t('Save result'),
     ];
 
     return $form;
@@ -99,7 +99,7 @@ final class GameScoreForm extends FormBase {
     if ($s1 === $s2 && (int) ($form_state->getValue('winner_team_id') ?? 0) === 0) {
       $form_state->setErrorByName(
         'winner_team_id',
-        $this->t('Bei Unentschieden muss ein Aufsteiger gewählt werden.')
+        $this->t('In case of a draw, a qualifier must be selected.')
       );
     }
   }
@@ -116,7 +116,7 @@ final class GameScoreForm extends FormBase {
       $winner > 0 ? $winner : NULL,
     );
 
-    $this->messenger()->addStatus($this->t('Ergebnis wurde gespeichert. Die Rangliste wird aktualisiert.'));
+    $this->messenger()->addStatus($this->t('Result has been saved. The standings will be updated.'));
     $form_state->setRedirectUrl(
       Url::fromRoute('soccerbet.admin.games.list', ['tournament_id' => $tournament_id])
     );

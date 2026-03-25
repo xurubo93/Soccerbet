@@ -45,7 +45,7 @@ final class OpenLigaDbImportForm extends FormBase {
       $tournament = $this->tournamentManager->load($tournament_id);
     }
     catch (\Exception) {
-      return ['#markup' => $this->t('Turnier nicht gefunden.')];
+      return ['#markup' => $this->t('Tournament not found.')];
     }
 
     $form_state->set('tournament_id', $tournament_id);
@@ -58,7 +58,7 @@ final class OpenLigaDbImportForm extends FormBase {
     $form['tournament_info'] = [
       '#type'   => 'item',
       '#markup' => '<div class="soccerbet-form-tournament-info">'
-        . $this->t('Turnier: <strong>@name</strong>', ['@name' => $tournament->tournament_desc])
+        . $this->t('Tournament: <strong>@name</strong>', ['@name' => $tournament->tournament_desc])
         . '</div>',
       '#weight' => -10,
     ];
@@ -72,7 +72,7 @@ final class OpenLigaDbImportForm extends FormBase {
     $form['api_info'] = [
       '#type'   => 'item',
       '#markup' => '<p class="messages messages--status">'
-        . $this->t('Aktive API: <strong>@api</strong>. <a href=":url">API-Einstellungen ändern</a>.', [
+        . $this->t('Active API: <strong>@api</strong>. <a href=":url">Change API settings</a>.', [
           '@api' => $provider_label,
           ':url' => $settings_url,
         ])
@@ -86,7 +86,7 @@ final class OpenLigaDbImportForm extends FormBase {
         $form['api_key_warning'] = [
           '#type'   => 'item',
           '#markup' => '<p class="messages messages--warning">'
-            . $this->t('Kein API-Key für football-data.org konfiguriert. <a href=":url">Jetzt eintragen</a>.', [
+            . $this->t('No API key for football-data.org configured. <a href=":url">Enter now</a>.', [
               ':url' => $settings_url,
             ])
             . '</p>',
@@ -96,12 +96,12 @@ final class OpenLigaDbImportForm extends FormBase {
 
     $form['info'] = [
       '#type'   => 'item',
-      '#markup' => '<p>' . $this->t('Importiert alle Teams und Spiele. Bereits vorhandene werden übersprungen.') . '</p>',
+      '#markup' => '<p>' . $this->t('Imports all teams and matches. Existing ones will be skipped.') . '</p>',
     ];
 
     $form['league'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Liga / Competition-Code'),
+      '#title'         => $this->t('League / Competition code'),
       '#description'   => $this->importService->getLeagueHelp(),
       '#default_value' => $tournament->oldb_league ?? '',
       '#required'      => TRUE,
@@ -110,7 +110,7 @@ final class OpenLigaDbImportForm extends FormBase {
 
     $form['season'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Saison'),
+      '#title'         => $this->t('Season'),
       '#description'   => $this->importService->getSeasonHelp(),
       '#default_value' => $tournament->oldb_season ?? '',
       '#required'      => TRUE,
@@ -119,30 +119,30 @@ final class OpenLigaDbImportForm extends FormBase {
 
     $form['options'] = [
       '#type'  => 'fieldset',
-      '#title' => $this->t('Optionen'),
+      '#title' => $this->t('Options'),
     ];
     $form['options']['group_only'] = [
       '#type'          => 'checkbox',
-      '#title'         => $this->t('Nur Gruppenspiele importieren'),
-      '#description'   => $this->t('KO-Runden (Achtelfinale, Viertelfinale, …) werden übersprungen und können manuell angelegt werden.'),
+      '#title'         => $this->t('Import group stage matches only'),
+      '#description'   => $this->t('KO rounds (round of 16, quarter-finals, …) will be skipped and can be created manually.'),
       '#default_value' => TRUE,
     ];
     $form['options']['save_league'] = [
       '#type'          => 'checkbox',
-      '#title'         => $this->t('Liga/Saison am Turnier speichern'),
-      '#description'   => $this->t('Wird für automatische Score-Updates via Cron verwendet.'),
+      '#title'         => $this->t('Save league/season at tournament'),
+      '#description'   => $this->t('Used for automatic score updates via cron.'),
       '#default_value' => TRUE,
     ];
 
     $form['submit'] = [
       '#type'       => 'submit',
-      '#value'      => $this->t('Import starten (@api)', ['@api' => $api_name]),
+      '#value'      => $this->t('Start import (@api)', ['@api' => $api_name]),
       '#attributes' => ['class' => ['button', 'button--primary']],
     ];
 
     $form['cancel'] = [
       '#type'       => 'link',
-      '#title'      => $this->t('Abbrechen'),
+      '#title'      => $this->t('Cancel'),
       '#url'        => Url::fromRoute('soccerbet.admin.tournament.list'),
       '#attributes' => ['class' => ['button']],
     ];
@@ -173,13 +173,13 @@ final class OpenLigaDbImportForm extends FormBase {
 
     if (!empty($stats['teams_no_flag'])) {
       $this->messenger()->addWarning($this->t(
-        'Kein Flag-Code gefunden für: @teams – bitte manuell setzen.',
+        'No flag code found for: @teams – please set manually.',
         ['@teams' => implode(', ', $stats['teams_no_flag'])]
       ));
     }
 
     $this->messenger()->addStatus($this->t(
-      'Import abgeschlossen: @tc Teams (@ts übersprungen), @gc Spiele (@gs übersprungen)@ko.',
+      'Import complete: @tc teams (@ts skipped), @gc matches (@gs skipped)@ko.',
       [
         '@tc' => $stats['teams_created'],
         '@ts' => $stats['teams_skipped'],

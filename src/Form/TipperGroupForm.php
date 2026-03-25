@@ -45,7 +45,7 @@ final class TipperGroupForm extends FormBase {
     // ------------------------------------------------------------------ //
     $form['tipper_grp_name'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Name der Gruppe'),
+      '#title'         => $this->t('Group name'),
       '#maxlength'     => 64,
       '#required'      => TRUE,
       '#default_value' => $group?->tipper_grp_name ?? '',
@@ -54,8 +54,8 @@ final class TipperGroupForm extends FormBase {
     $form['tipper_admin_id'] = [
       '#type'               => 'entity_autocomplete',
       '#target_type'        => 'user',
-      '#title'              => $this->t('Gruppen-Administrator'),
-      '#description'        => $this->t('Dieser Benutzer kann die Gruppe verwalten.'),
+      '#title'              => $this->t('Group administrator'),
+      '#description'        => $this->t('This user can manage the group.'),
       '#required'           => TRUE,
       '#default_value'      => $group ? User::load((int) $group->tipper_admin_id) : NULL,
       '#selection_settings' => ['include_anonymous' => FALSE],
@@ -70,7 +70,7 @@ final class TipperGroupForm extends FormBase {
 
       $form['members'] = [
         '#type'  => 'fieldset',
-        '#title' => $this->t('Tipper (@count)', ['@count' => count($members)]),
+        '#title' => $this->t('Bettors (@count)', ['@count' => count($members)]),
         '#tree'  => TRUE,
       ];
 
@@ -78,9 +78,9 @@ final class TipperGroupForm extends FormBase {
       $form['members']['header'] = [
         '#markup' => '<div class="soccerbet-tipper-table-wrap"><table class="soccerbet-tipper-table">'
           . '<thead><tr>'
-          . '<th>' . $this->t('Tipp-Name') . '</th>'
-          . '<th>' . $this->t('Drupal-User') . '</th>'
-          . '<th>' . $this->t('Löschen') . '</th>'
+          . '<th>' . $this->t('Bet name') . '</th>'
+          . '<th>' . $this->t('Drupal user') . '</th>'
+          . '<th>' . $this->t('Delete') . '</th>'
           . '</tr></thead><tbody>',
       ];
 
@@ -109,7 +109,7 @@ final class TipperGroupForm extends FormBase {
           '#type'          => 'select',
           '#title'         => '',
           '#title_display' => 'invisible',
-          '#options'       => [0 => $this->t('— kein User —')] + $user_options,
+          '#options'       => [0 => $this->t('— no user —')] + $user_options,
           '#default_value' => (int) $member->uid,
           '#attributes'    => ['class' => ['soccerbet-tipper-uid-select']],
           '#prefix'        => '<td>',
@@ -134,27 +134,27 @@ final class TipperGroupForm extends FormBase {
       // ---------------------------------------------------------------- //
       $form['new_tipper'] = [
         '#type'  => 'fieldset',
-        '#title' => $this->t('Neuen Tipper hinzufügen'),
+        '#title' => $this->t('Add new bettor'),
         '#tree'  => FALSE,
       ];
 
       $form['new_tipper']['new_tipper_name'] = [
         '#type'      => 'textfield',
-        '#title'     => $this->t('Tipp-Name'),
+        '#title'     => $this->t('Bet name'),
         '#maxlength' => 64,
         '#size'      => 28,
       ];
 
       $form['new_tipper']['new_tipper_uid'] = [
         '#type'    => 'select',
-        '#title'   => $this->t('Drupal-User'),
-        '#options' => [0 => $this->t('— kein User —')] + $user_options,
+        '#title'   => $this->t('Drupal user'),
+        '#options' => [0 => $this->t('— no user —')] + $user_options,
       ];
     }
 
     $form['submit'] = [
       '#type'  => 'submit',
-      '#value' => $tipper_grp_id ? $this->t('Gruppe speichern') : $this->t('Gruppe erstellen'),
+      '#value' => $tipper_grp_id ? $this->t('Save group') : $this->t('Create group'),
     ];
 
     return $form;
@@ -190,14 +190,14 @@ final class TipperGroupForm extends FormBase {
       if ($new_name !== '') {
         $new_uid = (int) $form_state->getValue('new_tipper_uid');
         $this->tipperManager->createTipper($new_uid, $tipper_grp_id, $new_name);
-        $this->messenger()->addStatus($this->t('Tipper "@name" wurde hinzugefügt.', ['@name' => $new_name]));
+        $this->messenger()->addStatus($this->t('Bettor "@name" has been added.', ['@name' => $new_name]));
       }
 
-      $this->messenger()->addStatus($this->t('Gruppe "@name" wurde gespeichert.', ['@name' => $name]));
+      $this->messenger()->addStatus($this->t('Group "@name" has been saved.', ['@name' => $name]));
     }
     else {
       $this->tipperManager->createGroup($name, $admin_id);
-      $this->messenger()->addStatus($this->t('Gruppe "@name" wurde erstellt.', ['@name' => $name]));
+      $this->messenger()->addStatus($this->t('Group "@name" has been created.', ['@name' => $name]));
     }
 
     $form_state->setRedirectUrl(Url::fromRoute('soccerbet.admin.tippergroups.list'));

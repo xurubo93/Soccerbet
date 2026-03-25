@@ -45,16 +45,16 @@ final class TournamentController extends ControllerBase {
         $t->tournament_desc,
         $start_ts ? $formatter->format($start_ts, 'custom', 'd.m.Y') : '—',
         $end_ts   ? $formatter->format($end_ts,   'custom', 'd.m.Y') : '—',
-        $t->is_active ? $this->t('✓ Aktiv') : '—',
+        $t->is_active ? $this->t('✓ Active') : '—',
         [
           'data' => [
             '#type'  => 'operations',
             '#links' => [
-              'edit'    => ['title' => $this->t('Bearbeiten'), 'url' => Url::fromRoute('soccerbet.admin.tournament.edit',    ['tournament_id' => $t->tournament_id])],
-              'import'  => ['title' => $this->t('⬇ API-Import'), 'url' => Url::fromRoute('soccerbet.admin.tournament.import', ['tournament_id' => $t->tournament_id])],
-              'members' => ['title' => $this->t('Teilnehmer'), 'url' => Url::fromRoute('soccerbet.admin.tournament.members', ['tournament_id' => $t->tournament_id])],
-              'games'   => ['title' => $this->t('Spiele'),     'url' => Url::fromRoute('soccerbet.admin.games.list',         ['tournament_id' => $t->tournament_id])],
-              'delete'  => ['title' => $this->t('Löschen'),    'url' => Url::fromRoute('soccerbet.admin.tournament.delete',  ['tournament_id' => $t->tournament_id])],
+              'edit'    => ['title' => $this->t('Edit'),         'url' => Url::fromRoute('soccerbet.admin.tournament.edit',    ['tournament_id' => $t->tournament_id])],
+              'import'  => ['title' => $this->t('⬇ API import'), 'url' => Url::fromRoute('soccerbet.admin.tournament.import', ['tournament_id' => $t->tournament_id])],
+              'members' => ['title' => $this->t('Participants'), 'url' => Url::fromRoute('soccerbet.admin.tournament.members', ['tournament_id' => $t->tournament_id])],
+              'games'   => ['title' => $this->t('Matches'),      'url' => Url::fromRoute('soccerbet.admin.games.list',         ['tournament_id' => $t->tournament_id])],
+              'delete'  => ['title' => $this->t('Delete'),       'url' => Url::fromRoute('soccerbet.admin.tournament.delete',  ['tournament_id' => $t->tournament_id])],
             ],
           ],
         ],
@@ -64,7 +64,7 @@ final class TournamentController extends ControllerBase {
     return [
       'create_link' => [
         '#type'       => 'link',
-        '#title'      => $this->t('+ Neues Turnier'),
+        '#title'      => $this->t('+ New tournament'),
         '#url'        => Url::fromRoute('soccerbet.admin.tournament.create'),
         '#attributes' => ['class' => ['button', 'button--primary']],
       ],
@@ -73,12 +73,12 @@ final class TournamentController extends ControllerBase {
         '#header'     => [
           $this->t('Name'),
           ['data' => $this->t('Start'),   'class' => ['priority-medium']],
-          ['data' => $this->t('Ende'),    'class' => ['priority-medium']],
+          ['data' => $this->t('End'),     'class' => ['priority-medium']],
           ['data' => $this->t('Status'),  'class' => ['priority-low']],
-          $this->t('Aktionen'),
+          $this->t('Actions'),
         ],
         '#rows'       => $rows,
-        '#empty'      => $this->t('Noch keine Turniere angelegt.'),
+        '#empty'      => $this->t('No tournaments created yet.'),
         '#attributes' => ['class' => ['responsive-enabled']],
         '#attached'   => ['library' => ['core/drupal.tableresponsive']],
       ],

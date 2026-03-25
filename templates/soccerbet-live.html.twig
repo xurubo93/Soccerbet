@@ -12,10 +12,10 @@
   <div class="soccerbet-live__header">
     <h2 class="soccerbet-live__title">
       {% if is_live %}<span class="soccerbet-live__dot" aria-label="{{ 'Live'|t }}"></span>{% endif %}
-      {{ 'Live-Rangliste'|t }}{% if tournament %} – {{ tournament.tournament_desc }}{% endif %}
+      {{ 'Live standings'|t }}{% if tournament %} – {{ tournament.tournament_desc }}{% endif %}
     </h2>
     <button class="soccerbet-live__refresh button button--small" type="button">
-      ↻ {{ 'Aktualisieren'|t }}
+      ↻ {{ 'Refresh'|t }}
     </button>
   </div>
 

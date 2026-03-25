@@ -1,405 +1,876 @@
-# Soccerbet – Deutsche Übersetzung der Teamnamen
-# Quelle: football-data.org Teamnamen → Deutsche Anzeigenamen
-# Format: msgid = englischer Name (wie von API geliefert), msgstr = Deutscher Name
+# Soccerbet – Deutsche UI-Übersetzungen
+# English source strings → German translations for all UI text.
+# Generated from src/Controller/, src/Form/, and templates/ after i18n refactoring.
 msgid ""
 msgstr ""
 "Project-Id-Version: soccerbet\n"
-"POT-Creation-Date: 2026-03-22\n"
+"POT-Creation-Date: 2026-03-25\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-# ── Nationalmannschaften ─────────────────────────────────────────────
-msgid "Germany"
-msgstr "Deutschland"
+# ── Admin / Navigation ────────────────────────────────────────────────────────
 
-msgid "Austria"
-msgstr "Österreich"
+msgid "Betting game administration"
+msgstr "Tippspiel-Administration"
 
-msgid "Switzerland"
-msgstr "Schweiz"
+msgid "Manage tournaments"
+msgstr "Turniere verwalten"
 
-msgid "France"
-msgstr "Frankreich"
+msgid "Manage teams"
+msgstr "Teams verwalten"
 
-msgid "England"
-msgstr "England"
+msgid "Manage matches"
+msgstr "Spiele verwalten"
 
-msgid "Scotland"
-msgstr "Schottland"
+msgid "Betting groups"
+msgstr "Tippergruppen"
 
-msgid "Wales"
-msgstr "Wales"
+msgid "Manage payments"
+msgstr "Einsätze verwalten"
 
-msgid "Northern Ireland"
-msgstr "Nordirland"
+msgid "Bets overview"
+msgstr "Tipps-Übersicht"
 
-msgid "Republic of Ireland"
-msgstr "Irland"
+msgid "Score update (OpenLigaDB)"
+msgstr "Ergebnis-Update (OpenLigaDB)"
 
-msgid "Spain"
-msgstr "Spanien"
+msgid "Settings"
+msgstr "Einstellungen"
 
-msgid "Portugal"
-msgstr "Portugal"
+# ── General actions / labels ──────────────────────────────────────────────────
 
-msgid "Italy"
-msgstr "Italien"
+msgid "Edit"
+msgstr "Bearbeiten"
 
-msgid "Netherlands"
-msgstr "Niederlande"
+msgid "Delete"
+msgstr "Löschen"
 
-msgid "Belgium"
-msgstr "Belgien"
+msgid "Cancel"
+msgstr "Abbrechen"
 
-msgid "Denmark"
-msgstr "Dänemark"
+msgid "Actions"
+msgstr "Aktionen"
 
-msgid "Sweden"
-msgstr "Schweden"
+msgid "Name"
+msgstr "Name"
 
-msgid "Norway"
-msgstr "Norwegen"
+msgid "Status"
+msgstr "Status"
 
-msgid "Finland"
-msgstr "Finnland"
+msgid "Start"
+msgstr "Start"
 
-msgid "Poland"
-msgstr "Polen"
+msgid "End"
+msgstr "Ende"
 
-msgid "Czech Republic"
-msgstr "Tschechien"
+msgid "Result"
+msgstr "Ergebnis"
 
-msgid "Czechia"
-msgstr "Tschechien"
+msgid "Points"
+msgstr "Punkte"
 
-msgid "Slovakia"
-msgstr "Slowakei"
+msgid "Rank"
+msgstr "Rang"
 
-msgid "Hungary"
-msgstr "Ungarn"
+msgid "Group"
+msgstr "Gruppe"
 
-msgid "Romania"
-msgstr "Rumänien"
+msgid "Season"
+msgstr "Saison"
 
-msgid "Bulgaria"
-msgstr "Bulgarien"
+msgid "Matches"
+msgstr "Spiele"
 
-msgid "Croatia"
-msgstr "Kroatien"
+msgid "Tournament"
+msgstr "Turnier"
 
-msgid "Serbia"
-msgstr "Serbien"
+msgid "Bettor"
+msgstr "Tipper"
 
-msgid "Slovenia"
-msgstr "Slowenien"
+msgid "Note"
+msgstr "Notiz"
 
-msgid "Bosnia and Herzegovina"
-msgstr "Bosnien-Herzegowina"
+msgid "Unknown"
+msgstr "Unbekannt"
 
-msgid "North Macedonia"
-msgstr "Nordmazedonien"
+msgid "open"
+msgstr "offen"
 
-msgid "Kosovo"
-msgstr "Kosovo"
+msgid "yes"
+msgstr "ja"
 
-msgid "Albania"
-msgstr "Albanien"
+msgid "no"
+msgstr "nein"
 
-msgid "Montenegro"
-msgstr "Montenegro"
+# ── Tournament ────────────────────────────────────────────────────────────────
 
-msgid "Greece"
-msgstr "Griechenland"
+msgid "Tournament name"
+msgstr "Turnierbezeichnung"
 
-msgid "Turkey"
-msgstr "Türkei"
+msgid "Tournament: <strong>@name</strong>"
+msgstr "Turnier: <strong>@name</strong>"
 
-msgid "Russia"
-msgstr "Russland"
+msgid "Tournament not found."
+msgstr "Turnier nicht gefunden."
 
-msgid "Ukraine"
-msgstr "Ukraine"
+msgid "No active tournament configured."
+msgstr "Kein aktives Turnier konfiguriert."
 
-msgid "Belarus"
-msgstr "Weißrussland"
+msgid "No active tournament configured. Please first <a href=\":url\">create a tournament and mark it as active</a>."
+msgstr "Kein aktives Turnier konfiguriert. Bitte zuerst ein <a href=\":url\">Turnier anlegen und als aktiv markieren</a>."
 
-msgid "Georgia"
-msgstr "Georgien"
+msgid "Set as default tournament"
+msgstr "Als Standard-Turnier setzen"
 
-msgid "Armenia"
-msgstr "Armenien"
+msgid "This tournament will be pre-selected on the standings and betting page."
+msgstr "Dieses Turnier wird auf der Ranglisten- und Tippseite vorausgewählt."
 
-msgid "Azerbaijan"
-msgstr "Aserbaidschan"
+msgid "+ New tournament"
+msgstr "+ Neues Turnier"
 
-msgid "Kazakhstan"
-msgstr "Kasachstan"
+msgid "No tournaments created yet."
+msgstr "Noch keine Turniere angelegt."
 
-msgid "Israel"
-msgstr "Israel"
+msgid "No tournaments available."
+msgstr "Keine Turniere vorhanden."
 
-msgid "Iceland"
-msgstr "Island"
+msgid "✓ Active"
+msgstr "✓ Aktiv"
 
-msgid "Luxembourg"
-msgstr "Luxemburg"
+msgid "Really delete tournament \"@name\"?"
+msgstr "Turnier „@name" wirklich löschen?"
 
-msgid "Ivory Coast"
-msgstr "Elfenbeinküste"
+msgid "This will permanently delete all associated matches, bets and team data."
+msgstr "Dadurch werden alle zugehörigen Spiele, Tipps und Teamdaten dauerhaft gelöscht."
 
-msgid "Côte d'Ivoire"
-msgstr "Elfenbeinküste"
+msgid "Tournament has been deleted."
+msgstr "Turnier wurde gelöscht."
 
-# ── WM-Teams außereuropäisch ─────────────────────────────────────────
-msgid "Brazil"
-msgstr "Brasilien"
+msgid "Tournament \"@name\" has been created."
+msgstr "Turnier „@name" wurde angelegt."
 
-msgid "Argentina"
-msgstr "Argentinien"
+msgid "Tournament \"@name\" has been updated."
+msgstr "Turnier „@name" wurde aktualisiert."
 
-msgid "Uruguay"
-msgstr "Uruguay"
+msgid "Start date"
+msgstr "Startdatum"
 
-msgid "Colombia"
-msgstr "Kolumbien"
+msgid "End date"
+msgstr "Enddatum"
 
-msgid "Chile"
-msgstr "Chile"
+msgid "The end date must be after the start date."
+msgstr "Das Enddatum muss nach dem Startdatum liegen."
 
-msgid "Peru"
-msgstr "Peru"
+msgid "Number of groups in the group stage"
+msgstr "Anzahl Gruppen in der Gruppenphase"
 
-msgid "Ecuador"
-msgstr "Ecuador"
+msgid "Participants – @name"
+msgstr "Teilnehmer – @name"
 
-msgid "Venezuela"
-msgstr "Venezuela"
+msgid "Past tournaments"
+msgstr "Vergangene Turniere"
 
-msgid "Paraguay"
-msgstr "Paraguay"
+msgid "Top 3"
+msgstr "Top 3"
 
-msgid "Bolivia"
-msgstr "Bolivien"
+# ── Games / Matches ───────────────────────────────────────────────────────────
 
-msgid "Mexico"
-msgstr "Mexiko"
+msgid "Date"
+msgstr "Datum"
 
-msgid "United States"
-msgstr "USA"
+msgid "Matchup"
+msgstr "Paarung"
 
-msgid "USA"
-msgstr "USA"
+msgid "Venue"
+msgstr "Spielort"
 
-msgid "Canada"
-msgstr "Kanada"
+msgid "Round"
+msgstr "Phase"
 
-msgid "Costa Rica"
-msgstr "Costa Rica"
+msgid "Period"
+msgstr "Zeitraum"
 
-msgid "Honduras"
-msgstr "Honduras"
+msgid "Home team"
+msgstr "Heimteam"
 
-msgid "Panama"
-msgstr "Panama"
+msgid "Away team"
+msgstr "Auswärtsteam"
 
-msgid "Japan"
-msgstr "Japan"
+msgid "— select team —"
+msgstr "— Team wählen —"
 
-msgid "South Korea"
-msgstr "Südkorea"
+msgid "Kickoff"
+msgstr "Anpfiff"
 
-msgid "Korea Republic"
-msgstr "Südkorea"
+msgid "City"
+msgstr "Stadt"
 
-msgid "Australia"
-msgstr "Australien"
+msgid "Stadium"
+msgstr "Stadion"
 
-msgid "Iran"
-msgstr "Iran"
+msgid "Published (include in scoring)"
+msgstr "Veröffentlicht (in Wertung)"
 
-msgid "Saudi Arabia"
-msgstr "Saudi-Arabien"
+msgid "+ New match"
+msgstr "+ Neues Spiel"
 
-msgid "Qatar"
-msgstr "Katar"
+msgid "No matches in this tournament."
+msgstr "Keine Spiele in diesem Turnier."
 
-msgid "Morocco"
-msgstr "Marokko"
+msgid "Save match"
+msgstr "Spiel speichern"
 
-msgid "Nigeria"
-msgstr "Nigeria"
+msgid "Create match"
+msgstr "Spiel anlegen"
 
-msgid "Ghana"
-msgstr "Ghana"
+msgid "Really delete this match?"
+msgstr "Dieses Spiel wirklich löschen?"
 
-msgid "Senegal"
-msgstr "Senegal"
+msgid "All bets for this match will also be deleted."
+msgstr "Alle Tipps zu diesem Spiel werden ebenfalls gelöscht."
 
-msgid "Cameroon"
-msgstr "Kamerun"
+msgid "Match has been deleted."
+msgstr "Spiel wurde gelöscht."
 
-msgid "Egypt"
-msgstr "Ägypten"
+msgid "Match has been updated."
+msgstr "Spiel wurde aktualisiert."
 
-msgid "South Africa"
-msgstr "Südafrika"
+msgid "Match has been created."
+msgstr "Spiel wurde angelegt."
 
-# ── Bundesliga ───────────────────────────────────────────────────────
-msgid "Bayern Munich"
-msgstr "FC Bayern München"
+msgid "Please select a home team."
+msgstr "Bitte ein Heimteam auswählen."
 
-msgid "FC Bayern München"
-msgstr "FC Bayern München"
+msgid "Home and away team must be different."
+msgstr "Heim- und Auswärtsteam müssen verschieden sein."
 
-msgid "Borussia Dortmund"
-msgstr "Borussia Dortmund"
+msgid "In case of a draw, a qualifier must be selected."
+msgstr "Bei Unentschieden muss ein Weiterkommer ausgewählt werden."
 
-msgid "Bayer Leverkusen"
-msgstr "Bayer 04 Leverkusen"
+msgid "Qualifier / Winner (after extra time/penalties)"
+msgstr "Weiterkommer / Sieger (nach Verlängerung/Elfmeter)"
 
-msgid "RB Leipzig"
-msgstr "RB Leipzig"
+msgid "Qualifier/Winner"
+msgstr "Weiterkommer"
 
-msgid "Eintracht Frankfurt"
-msgstr "Eintracht Frankfurt"
+msgid "Only fill in if not determined by the 90 min. result."
+msgstr "Nur ausfüllen, wenn nicht durch das 90-Minuten-Ergebnis bestimmt."
 
-msgid "VfB Stuttgart"
-msgstr "VfB Stuttgart"
+msgid "From result (no penalty shootout)"
+msgstr "Aus Ergebnis (kein Elfmetersch.)"
 
-msgid "SC Freiburg"
-msgstr "SC Freiburg"
+msgid "Final result (after 90 min.)"
+msgstr "Endergebnis (nach 90 Min.)"
 
-msgid "1. FC Union Berlin"
-msgstr "Union Berlin"
+msgid "Save result"
+msgstr "Ergebnis speichern"
 
-msgid "Borussia Mönchengladbach"
-msgstr "Borussia Mönchengladbach"
+msgid "Result has been saved. The standings will be updated."
+msgstr "Ergebnis wurde gespeichert. Die Rangliste wird aktualisiert."
 
-msgid "TSG Hoffenheim"
-msgstr "TSG 1899 Hoffenheim"
+msgid "Please also enter the result for team 1."
+msgstr "Bitte auch das Ergebnis für Team 1 eingeben."
 
-msgid "FC Augsburg"
-msgstr "FC Augsburg"
+msgid "Please also enter the result for team 2."
+msgstr "Bitte auch das Ergebnis für Team 2 eingeben."
 
-msgid "Werder Bremen"
-msgstr "SV Werder Bremen"
+msgid "Group stage"
+msgstr "Gruppenphase"
 
-msgid "VfL Wolfsburg"
-msgstr "VfL Wolfsburg"
+msgid "Round of 32"
+msgstr "Runde der letzten 32"
 
-msgid "VfL Bochum"
-msgstr "VfL Bochum"
+msgid "Round of 16"
+msgstr "Achtelfinale"
 
-msgid "1. FC Köln"
-msgstr "1. FC Köln"
+msgid "Quarter-final"
+msgstr "Viertelfinale"
 
-msgid "Mainz 05"
-msgstr "1. FSV Mainz 05"
+msgid "Semi-final"
+msgstr "Halbfinale"
 
-msgid "Hertha BSC"
-msgstr "Hertha BSC"
+msgid "Third-place match"
+msgstr "Spiel um Platz 3"
 
-msgid "FC Schalke 04"
-msgstr "FC Schalke 04"
+msgid "Final"
+msgstr "Finale"
 
-msgid "Hamburger SV"
-msgstr "Hamburger SV"
+# ── Teams ─────────────────────────────────────────────────────────────────────
 
-msgid "Fortuna Düsseldorf"
-msgstr "Fortuna Düsseldorf"
+msgid "Team name"
+msgstr "Teamname"
 
-msgid "1. FC Heidenheim 1846"
-msgstr "1. FC Heidenheim"
+msgid "Team"
+msgstr "Team"
 
-msgid "SV Darmstadt 98"
-msgstr "SV Darmstadt 98"
+msgid "W/D/L"
+msgstr "S/U/N"
 
-msgid "Holstein Kiel"
-msgstr "Holstein Kiel"
+msgid "Goals"
+msgstr "Tore"
 
-msgid "FC St. Pauli"
-msgstr "FC St. Pauli"
+msgid "Goal difference"
+msgstr "Tordifferenz"
 
-# ── Champions League ─────────────────────────────────────────────────
-msgid "Manchester City FC"
-msgstr "Manchester City"
+msgid "Pts"
+msgstr "Pkt"
 
-msgid "Manchester United FC"
-msgstr "Manchester United"
+msgid "Flag (ISO 3166-1 Alpha-2 code)"
+msgstr "Flagge (ISO 3166-1 Alpha-2 Code)"
 
-msgid "Liverpool FC"
-msgstr "Liverpool"
+msgid "Preview:"
+msgstr "Vorschau:"
 
-msgid "Arsenal FC"
-msgstr "Arsenal"
+msgid "Single letter A–Z (leave empty for KO rounds)"
+msgstr "Einzelner Buchstabe A–Z (für KO-Runden leer lassen)"
 
-msgid "Chelsea FC"
-msgstr "Chelsea"
+msgid "The group must be a single letter (A–Z)."
+msgstr "Die Gruppe muss ein einzelner Buchstabe (A–Z) sein."
 
-msgid "Tottenham Hotspur FC"
-msgstr "Tottenham Hotspur"
+msgid "+ New team"
+msgstr "+ Neues Team"
 
-msgid "Newcastle United FC"
-msgstr "Newcastle United"
+msgid "No teams for this tournament."
+msgstr "Keine Teams für dieses Turnier."
 
-msgid "Real Madrid CF"
-msgstr "Real Madrid"
+msgid "No teams available."
+msgstr "Keine Teams vorhanden."
 
-msgid "FC Barcelona"
-msgstr "Barcelona"
+msgid "Save team"
+msgstr "Team speichern"
 
-msgid "Club Atlético de Madrid"
-msgstr "Atlético Madrid"
+msgid "Create team"
+msgstr "Team anlegen"
 
-msgid "Sevilla FC"
-msgstr "Sevilla"
+msgid "Really delete team \"@name\"?"
+msgstr "Team „@name" wirklich löschen?"
 
-msgid "Juventus FC"
-msgstr "Juventus"
+msgid "The team will be removed from the tournament. Linked matches will be kept."
+msgstr "Das Team wird aus dem Turnier entfernt. Verknüpfte Spiele bleiben erhalten."
 
-msgid "FC Internazionale Milano"
-msgstr "Inter Mailand"
+msgid "Team has been deleted."
+msgstr "Team wurde gelöscht."
 
-msgid "AC Milan"
-msgstr "AC Mailand"
+msgid "Team \"@name\" has been saved."
+msgstr "Team „@name" wurde gespeichert."
 
-msgid "SSC Napoli"
-msgstr "Neapel"
+msgid "Team \"@name\" has been created."
+msgstr "Team „@name" wurde angelegt."
 
-msgid "AS Roma"
-msgstr "AS Rom"
+msgid "These values are normally calculated automatically."
+msgstr "Diese Werte werden normalerweise automatisch berechnet."
 
-msgid "Paris Saint-Germain FC"
-msgstr "Paris Saint-Germain"
+msgid "League table"
+msgstr "Ligatabelle"
 
-msgid "Olympique de Marseille"
-msgstr "Marseille"
+# ── Betting groups ────────────────────────────────────────────────────────────
 
-msgid "Olympique Lyonnais"
-msgstr "Lyon"
+msgid "Group name"
+msgstr "Gruppenname"
 
-msgid "SL Benfica"
-msgstr "Benfica"
+msgid "Group administrator"
+msgstr "Gruppenadmin"
 
-msgid "FC Porto"
-msgstr "Porto"
+msgid "This user can manage the group."
+msgstr "Dieser User kann die Gruppe verwalten."
 
-msgid "Sporting CP"
-msgstr "Sporting Lissabon"
+msgid "Members"
+msgstr "Mitglieder"
 
-msgid "AFC Ajax"
-msgstr "Ajax Amsterdam"
+msgid "+ New betting group"
+msgstr "+ Neue Tippergruppe"
 
-msgid "PSV Eindhoven"
-msgstr "PSV Eindhoven"
+msgid "No betting groups created yet."
+msgstr "Noch keine Tippergruppen angelegt."
 
-msgid "Feyenoord"
-msgstr "Feyenoord"
+msgid "Save group"
+msgstr "Gruppe speichern"
 
-msgid "Celtic FC"
-msgstr "Celtic Glasgow"
+msgid "Create group"
+msgstr "Gruppe anlegen"
 
-msgid "Rangers FC"
-msgstr "Glasgow Rangers"
+msgid "Really delete betting group \"@name\"?"
+msgstr "Tippergruppe „@name" wirklich löschen?"
+
+msgid "This will permanently delete all bettors, bets, invitations and tournament assignments of this group."
+msgstr "Dadurch werden alle Tipper, Tipps, Einladungen und Turnierzuordnungen dieser Gruppe dauerhaft gelöscht."
+
+msgid "Betting group has been deleted."
+msgstr "Tippergruppe wurde gelöscht."
+
+msgid "Group \"@name\" has been saved."
+msgstr "Gruppe „@name" wurde gespeichert."
+
+msgid "Group \"@name\" has been created."
+msgstr "Gruppe „@name" wurde angelegt."
+
+msgid "Please select at least one betting group."
+msgstr "Bitte mindestens eine Tippergruppe auswählen."
+
+msgid "Please first <a href=\":url\">create a betting group</a>."
+msgstr "Bitte zuerst eine <a href=\":url\">Tippergruppe anlegen</a>."
+
+# ── Tournament members / Participants ─────────────────────────────────────────
+
+msgid "Participants"
+msgstr "Teilnehmer"
+
+msgid "In tournament"
+msgstr "Im Turnier"
+
+msgid "Bettors (@count)"
+msgstr "Tipper (@count)"
+
+msgid "No bettors available."
+msgstr "Keine Tipper vorhanden."
+
+msgid "No bettors in the associated group. Please first <a href=\":url\">create bettors</a>."
+msgstr "Keine Tipper in der zugehörigen Gruppe. Bitte zuerst <a href=\":url\">Tipper anlegen</a>."
+
+msgid "No participants in this tournament."
+msgstr "Keine Teilnehmer in diesem Turnier."
+
+msgid "No participants."
+msgstr "Keine Teilnehmer."
+
+msgid "Add new bettor"
+msgstr "Neuen Tipper hinzufügen"
+
+msgid "Bet name"
+msgstr "Tipp-Name"
+
+msgid "Drupal user"
+msgstr "Drupal-Benutzer"
+
+msgid "— no user —"
+msgstr "— kein User —"
+
+msgid "Save participants"
+msgstr "Teilnehmer speichern"
+
+msgid "Participants have been updated."
+msgstr "Teilnehmer wurden aktualisiert."
+
+msgid "Bettor \"@name\" has been added."
+msgstr "Tipper „@name" wurde hinzugefügt."
+
+msgid "— not yet set —"
+msgstr "— noch offen —"
+
+msgid "★ 1st place"
+msgstr "★ 1. Platz"
+
+msgid "2nd place"
+msgstr "2. Platz"
+
+msgid "3rd place"
+msgstr "3. Platz"
+
+msgid "Tournament winner ★"
+msgstr "Turniersieger ★"
+
+msgid "The winner receives a star (★) next to their name in all standings."
+msgstr "Der Sieger erhält ein Stern (★) neben seinem Namen in allen Ranglisten."
+
+msgid "Select one or more betting groups for this tournament."
+msgstr "Eine oder mehrere Tippergruppen für dieses Turnier auswählen."
+
+# ── Payment ───────────────────────────────────────────────────────────────────
+
+msgid "Payments – @name"
+msgstr "Einsätze – @name"
+
+msgid "Stake paid"
+msgstr "Einsatz bezahlt"
+
+msgid "Confirmed on"
+msgstr "Bestätigt am"
+
+msgid "e.g. bank transfer 15.06."
+msgstr "z.B. Überweisung 15.06."
+
+msgid "Save payment status"
+msgstr "Zahlungsstatus speichern"
+
+msgid "Payment status has been updated."
+msgstr "Zahlungsstatus wurde aktualisiert."
+
+msgid "Stake pending"
+msgstr "Einsatz ausstehend"
+
+# ── Place bets ────────────────────────────────────────────────────────────────
+
+msgid "Place bets"
+msgstr "Tipps abgeben"
+
+msgid "No bets available."
+msgstr "Keine Tipps vorhanden."
+
+msgid "Not authorized."
+msgstr "Nicht berechtigt."
+
+msgid "Bettor not found."
+msgstr "Tipper nicht gefunden."
+
+msgid "You are editing the bets of <strong>@name</strong> as administrator."
+msgstr "Sie bearbeiten die Tipps von <strong>@name</strong> als Administrator."
+
+msgid "@count played/locked matches"
+msgstr "@count gespielte/gesperrte Spiele"
+
+msgid "↓ To the next open match"
+msgstr "↓ Zum nächsten offenen Spiel"
+
+msgid "Tournament winner bet"
+msgstr "Turniersieger-Tipp"
+
+msgid "Which team will win the tournament?"
+msgstr "Welches Team gewinnt das Turnier?"
+
+msgid "Currently possible points for correct bet: <strong>@pts</strong>"
+msgstr "Aktuell mögliche Punkte für richtigen Tipp: <strong>@pts</strong>"
+
+msgid "Your current bet: <strong>@team</strong> (@pts points)"
+msgstr "Ihr aktueller Tipp: <strong>@team</strong> (@pts Punkte)"
+
+msgid "— please select —"
+msgstr "— bitte wählen —"
+
+msgid "Save bets"
+msgstr "Tipps speichern"
+
+msgid "@count bet(s) have been saved."
+msgstr "@count Tipp(s) wurden gespeichert."
+
+msgid "No bets were changed."
+msgstr "Keine Tipps wurden geändert."
+
+msgid "Match bets are locked – the tournament is running or has ended."
+msgstr "Spieltipps sind gesperrt – das Turnier läuft oder ist beendet."
+
+msgid "Bet closed (kickoff: @date)"
+msgstr "Tipp gesperrt (Anpfiff: @date)"
+
+msgid "Result: @s1:@s2"
+msgstr "Ergebnis: @s1:@s2"
+
+# ── Standings ─────────────────────────────────────────────────────────────────
+
+msgid "Standings"
+msgstr "Rangliste"
+
+msgid "No active tournament configured. Please first <a href=\":url\">create a tournament and set it as default</a>."
+msgstr "Kein aktives Turnier konfiguriert. Bitte zuerst ein <a href=\":url\">Turnier anlegen und als Standard setzen</a>."
+
+msgid "Select view"
+msgstr "Ansicht wählen"
+
+msgid "Bonus"
+msgstr "Bonus"
+
+msgid "No matches played yet or no bets placed."
+msgstr "Noch keine Spiele gespielt oder keine Tipps abgegeben."
+
+msgid "Select round"
+msgstr "Runde wählen"
+
+msgid "Previous round"
+msgstr "Vorherige Runde"
+
+msgid "Round @current of @max"
+msgstr "Runde @current von @max"
+
+msgid "Next round"
+msgstr "Nächste Runde"
+
+msgid "Browse rounds"
+msgstr "Runden durchsuchen"
+
+msgid "Correct results"
+msgstr "Richtige Ergebnisse"
+
+msgid "Correct tendencies"
+msgstr "Richtige Tendenzen"
+
+msgid " × Tournament winner"
+msgstr " × Turniersieger"
+
+msgid "Possible points"
+msgstr "Mögliche Punkte"
+
+msgid "No tournament winner bets placed yet."
+msgstr "Noch keine Turniersieger-Tipps abgegeben."
+
+# ── Tipper detail ─────────────────────────────────────────────────────────────
+
+msgid "Back to standings"
+msgstr "Zurück zur Rangliste"
+
+msgid "Total points"
+msgstr "Gesamtpunkte"
+
+msgid "correct results"
+msgstr "richtige Ergebnisse"
+
+msgid "correct tendencies"
+msgstr "richtige Tendenzen"
+
+msgid "Match"
+msgstr "Spiel"
+
+msgid "Your bet"
+msgstr "Dein Tipp"
+
+msgid "Base"
+msgstr "Basis"
+
+msgid "Base points: 3 = correct result, 1 = correct tendency"
+msgstr "Basispunkte: 3 = richtiges Ergebnis, 1 = richtige Tendenz"
+
+msgid "Bonus points: +1 per tendency bettor, +2 per wrong bettor (on correct result); +1 per wrong bettor (on correct tendency)"
+msgstr "Bonuspunkte: +1 pro Tendenz-Tipper, +2 pro Falsch-Tipper (bei richtigem Ergebnis); +1 pro Falsch-Tipper (bei richtiger Tendenz)"
+
+msgid "Special"
+msgstr "Spezial"
+
+msgid "Special points: correct qualifier in KO round = number of participants"
+msgstr "Spezialpunkte: richtiger Weiterkommer in KO-Runde = Anzahl Teilnehmer"
+
+msgid "Total"
+msgstr "Gesamt"
+
+msgid "no bet"
+msgstr "kein Tipp"
+
+msgid "No matches played yet."
+msgstr "Noch keine Spiele gespielt."
+
+# ── Bets overview ─────────────────────────────────────────────────────────────
+
+msgid "Bets overview: @name"
+msgstr "Tipps-Übersicht: @name"
+
+# ── Tables ────────────────────────────────────────────────────────────────────
+
+msgid "Tables"
+msgstr "Tabellen"
+
+msgid "Wins"
+msgstr "Siege"
+
+msgid "Draws"
+msgstr "Unentschieden"
+
+msgid "Losses"
+msgstr "Niederlagen"
+
+# ── Live ──────────────────────────────────────────────────────────────────────
+
+msgid "Live"
+msgstr "Live"
+
+msgid "Live standings"
+msgstr "Live-Rangliste"
+
+msgid "Refresh"
+msgstr "Aktualisieren"
+
+msgid "No matches currently in progress."
+msgstr "Derzeit keine Spiele im Gange."
+
+msgid "Correct result"
+msgstr "Richtiges Ergebnis"
+
+msgid "Correct tendency"
+msgstr "Richtige Tendenz"
+
+msgid "Wrong"
+msgstr "Falsch"
+
+# ── Shoutbox ──────────────────────────────────────────────────────────────────
+
+msgid "Shoutbox"
+msgstr "Shoutbox"
+
+msgid "Your message …"
+msgstr "Deine Nachricht …"
+
+msgid "Send"
+msgstr "Senden"
+
+msgid "No messages yet."
+msgstr "Noch keine Nachrichten."
+
+msgid "Message posted!"
+msgstr "Nachricht gepostet!"
+
+msgid "Message deleted."
+msgstr "Nachricht gelöscht."
+
+msgid "Message from @name"
+msgstr "Nachricht von @name"
+
+# ── Score update form ─────────────────────────────────────────────────────────
+
+msgid "Automatic score update"
+msgstr "Automatisches Ergebnis-Update"
+
+msgid "Enable automatic score update via cron"
+msgstr "Automatisches Ergebnis-Update per Cron aktivieren"
+
+msgid "When enabled, scores are automatically fetched from OpenLigaDB."
+msgstr "Wenn aktiviert, werden Ergebnisse automatisch von OpenLigaDB abgerufen."
+
+msgid "League assignment per tournament"
+msgstr "Liga-Zuweisung pro Turnier"
+
+msgid "League code"
+msgstr "Liga-Code"
+
+msgid "e.g. bl1, em2024, aut_bl, ucl"
+msgstr "z.B. bl1, em2024, aut_bl, ucl"
+
+msgid "e.g. 2024 (for season 2024/25)"
+msgstr "z.B. 2024 (für Saison 2024/25)"
+
+msgid "Last update: @date"
+msgstr "Letztes Update: @date"
+
+msgid "Update now"
+msgstr "Jetzt aktualisieren"
+
+msgid "Available leagues at OpenLigaDB"
+msgstr "Verfügbare Ligen bei OpenLigaDB"
+
+msgid "Load the list of available leagues from OpenLigaDB."
+msgstr "Die Liste der verfügbaren Ligen von OpenLigaDB laden."
+
+msgid "Load leagues from OpenLigaDB"
+msgstr "Ligen von OpenLigaDB laden"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Save settings"
+msgstr "Einstellungen speichern"
+
+msgid "Settings have been saved."
+msgstr "Einstellungen wurden gespeichert."
+
+msgid "No league code configured."
+msgstr "Kein Liga-Code konfiguriert."
+
+msgid "No leagues received from OpenLigaDB."
+msgstr "Keine Ligen von OpenLigaDB erhalten."
+
+msgid "@count leagues loaded."
+msgstr "@count Ligen geladen."
+
+msgid "Error: @msg"
+msgstr "Fehler: @msg"
+
+# ── Settings form ─────────────────────────────────────────────────────────────
+
+msgid "Scoring"
+msgstr "Wertung"
+
+msgid "Points for exact result"
+msgstr "Punkte für genaues Ergebnis"
+
+msgid "Points for correct tendency"
+msgstr "Punkte für richtige Tendenz"
+
+msgid "Game flow"
+msgstr "Spielablauf"
+
+msgid "Bet lock X minutes before kickoff"
+msgstr "Tipp-Sperre X Minuten vor Anpfiff"
+
+msgid "0 = bets possible until kickoff."
+msgstr "0 = Tipps bis Anpfiff möglich."
+
+msgid "Allow self-registration as bettor"
+msgstr "Selbstregistrierung als Tipper erlauben"
+
+msgid "Display"
+msgstr "Anzeige"
+
+msgid "Show payment status in standings"
+msgstr "Zahlungsstatus in Rangliste anzeigen"
+
+msgid "Bettors with unpaid stake will be marked."
+msgstr "Tipper mit unbezahltem Einsatz werden markiert."
+
+msgid "Default tournament"
+msgstr "Standard-Turnier"
+
+msgid "Pre-selected on the standings and betting page."
+msgstr "Wird auf der Ranglisten- und Tippseite vorausgewählt."
+
+msgid "Points depend on when the bet is placed. Phase 0 = before tournament start, Phase 1 = after group stage, etc."
+msgstr "Punkte hängen davon ab, wann der Tipp abgegeben wird. Phase 0 = vor Turnierstart, Phase 1 = nach Gruppenphase, usw."
+
+msgid "Points before tournament start"
+msgstr "Punkte vor Turnierstart"
+
+msgid "Points after phase @n"
+msgstr "Punkte nach Phase @n"
+
+msgid "API configuration"
+msgstr "API-Konfiguration"
+
+msgid "Data source"
+msgstr "Datenquelle"
+
+msgid "OpenLigaDB <em>(free, no key needed – focus Germany/Austria)</em>"
+msgstr "OpenLigaDB <em>(kostenlos, kein Key nötig – Fokus Deutschland/Österreich)</em>"
+
+msgid "football-data.org <em>(free with key – international leagues, more structured data)</em>"
+msgstr "football-data.org <em>(kostenlos mit Key – internationale Ligen, strukturiertere Daten)</em>"
+
+msgid "API-Key (football-data.org)"
+msgstr "API-Key (football-data.org)"
+
+msgid "Kostenlos registrieren auf <a href=\"https://www.football-data.org/client/register\" target=\"_blank\">football-data.org</a>. Nur benötigt wenn football-data.org als Quelle gewählt ist."
+msgstr "Kostenlos registrieren auf <a href=\"https://www.football-data.org/client/register\" target=\"_blank\">football-data.org</a>. Nur benötigt wenn football-data.org als Quelle gewählt ist."
+
+# ── OpenLigaDB import form ────────────────────────────────────────────────────
+
+msgid "Active API: <strong>@api</strong>. <a href=\":url\">Change API settings</a>."
+msgstr "Aktive API: <strong>@api</strong>. <a href=\":url\">API-Einstellungen ändern</a>."
+
+msgid "No API key for football-data.org configured. <a href=\":url\">Enter now</a>."
+msgstr "Kein API-Key für football-data.org konfiguriert. <a href=\":url\">Jetzt eingeben</a>."
+
+msgid "Imports all teams and matches. Existing ones will be skipped."
+msgstr "Importiert alle Teams und Spiele. Vorhandene werden übersprungen."
+
+msgid "League / Competition code"
+msgstr "Liga / Wettbewerbs-Code"
+
+msgid "Options"
+msgstr "Optionen"
+
+msgid "Import group stage matches only"
+msgstr "Nur Gruppenphase importieren"
+
+msgid "KO rounds (round of 16, quarter-finals, …) will be skipped and can be created manually."
+msgstr "KO-Runden (Achtelfinale, Viertelfinale, …) werden übersprungen und können manuell angelegt werden."
+
+msgid "Save league/season at tournament"
+msgstr "Liga/Saison am Turnier speichern"
+
+msgid "Used for automatic score updates via cron."
+msgstr "Wird für automatische Ergebnis-Updates per Cron verwendet."
+
+msgid "Start import (@api)"
+msgstr "Import starten (@api)"
+
+msgid "Import complete: @tc teams (@ts skipped), @gc matches (@gs skipped)@ko."
+msgstr "Import abgeschlossen: @tc Teams (@ts übersprungen), @gc Spiele (@gs übersprungen)@ko."
+
+msgid "No flag code found for: @teams – please set manually."
+msgstr "Kein Flaggen-Code gefunden für: @teams – bitte manuell setzen."

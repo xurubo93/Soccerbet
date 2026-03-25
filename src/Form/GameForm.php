@@ -17,13 +17,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class GameForm extends FormBase {
 
   private const PHASES = [
-    'group'       => 'Gruppenphase',
-    'round_of_32' => 'Sechzehntelfinale',
-    'round_of_16' => 'Achtelfinale',
-    'quarter'     => 'Viertelfinale',
-    'semi'        => 'Halbfinale',
-    'third_place' => 'Spiel um Platz 3',
-    'final'       => 'Finale',
+    'group'       => 'Group stage',
+    'round_of_32' => 'Round of 32',
+    'round_of_16' => 'Round of 16',
+    'quarter'     => 'Quarter-final',
+    'semi'        => 'Semi-final',
+    'third_place' => 'Third-place match',
+    'final'       => 'Final',
   ];
 
   public function __construct(
@@ -65,29 +65,29 @@ final class GameForm extends FormBase {
     $form['tournament_info'] = [
       '#type'   => 'item',
       '#markup' => '<div class="soccerbet-form-tournament-info">'
-        . $this->t('Turnier: <strong>@name</strong>', ['@name' => $tournament->tournament_desc])
+        . $this->t('Tournament: <strong>@name</strong>', ['@name' => $tournament->tournament_desc])
         . '</div>',
       '#weight' => -10,
     ];
 
     $team_options = $this->tipperManager->getTeamOptions($tournament_id);
     if (empty($team_options)) {
-      $this->messenger()->addWarning($this->t('Bitte zuerst <a href=":url">Teams anlegen</a>.', [
+      $this->messenger()->addWarning($this->t('Please first <a href=":url">create teams</a>.', [
         ':url' => Url::fromRoute('soccerbet.admin.teams.create', ['tournament_id' => $tournament_id])->toString(),
       ]));
     }
 
     $form['team_id_1'] = [
       '#type'          => 'select',
-      '#title'         => $this->t('Heimteam'),
-      '#options'       => [0 => $this->t('— Team wählen —')] + $team_options,
+      '#title'         => $this->t('Home team'),
+      '#options'       => [0 => $this->t('— select team —')] + $team_options,
       '#required'      => TRUE,
       '#default_value' => $game?->team_id_1 ?? 0,
     ];
     $form['team_id_2'] = [
       '#type'          => 'select',
-      '#title'         => $this->t('Auswärtsteam'),
-      '#options'       => [0 => $this->t('— Team wählen —')] + $team_options,
+      '#title'         => $this->t('Away team'),
+      '#options'       => [0 => $this->t('— select team —')] + $team_options,
       '#required'      => TRUE,
       '#default_value' => $game?->team_id_2 ?? 0,
     ];
@@ -107,7 +107,7 @@ final class GameForm extends FormBase {
 
     $form['game_date'] = [
       '#type'          => 'datetime',
-      '#title'         => $this->t('Anpfiff'),
+      '#title'         => $this->t('Kickoff'),
       '#required'      => TRUE,
       '#default_value' => $default_date,
       '#date_date_format' => 'd.m.Y',
@@ -116,36 +116,36 @@ final class GameForm extends FormBase {
 
     $form['location'] = [
       '#type'  => 'fieldset',
-      '#title' => $this->t('Spielort'),
+      '#title' => $this->t('Venue'),
     ];
     $form['location']['game_location'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Stadt'),
+      '#title'         => $this->t('City'),
       '#maxlength'     => 64,
       '#default_value' => $game?->game_location ?? '',
     ];
     $form['location']['game_stadium'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Stadion'),
+      '#title'         => $this->t('Stadium'),
       '#maxlength'     => 64,
       '#default_value' => $game?->game_stadium ?? '',
     ];
 
     $form['phase'] = [
       '#type'          => 'select',
-      '#title'         => $this->t('Phase'),
+      '#title'         => $this->t('Round'),
       '#options'       => self::PHASES,
       '#default_value' => $game?->phase ?? 'group',
     ];
     $form['published'] = [
       '#type'          => 'checkbox',
-      '#title'         => $this->t('Veröffentlicht (in Wertung einbeziehen)'),
+      '#title'         => $this->t('Published (include in scoring)'),
       '#default_value' => $game?->published ?? 1,
     ];
 
     $form['submit'] = [
       '#type'  => 'submit',
-      '#value' => $game_id ? $this->t('Spiel speichern') : $this->t('Spiel erstellen'),
+      '#value' => $game_id ? $this->t('Save match') : $this->t('Create match'),
     ];
 
     return $form;
@@ -153,10 +153,10 @@ final class GameForm extends FormBase {
 
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if ($form_state->getValue('team_id_1') == $form_state->getValue('team_id_2')) {
-      $form_state->setErrorByName('team_id_2', $this->t('Heim- und Auswärtsteam müssen verschieden sein.'));
+      $form_state->setErrorByName('team_id_2', $this->t('Home and away team must be different.'));
     }
     if ($form_state->getValue('team_id_1') == 0) {
-      $form_state->setErrorByName('team_id_1', $this->t('Bitte ein Heimteam auswählen.'));
+      $form_state->setErrorByName('team_id_1', $this->t('Please select a home team.'));
     }
   }
 
@@ -180,11 +180,11 @@ final class GameForm extends FormBase {
 
     if ($game_id) {
       $this->tipperManager->updateGame($game_id, $values);
-      $this->messenger()->addStatus($this->t('Spiel wurde aktualisiert.'));
+      $this->messenger()->addStatus($this->t('Match has been updated.'));
     }
     else {
       $this->tipperManager->createGame($tournament_id, $values);
-      $this->messenger()->addStatus($this->t('Spiel wurde erstellt.'));
+      $this->messenger()->addStatus($this->t('Match has been created.'));
     }
 
     $form_state->setRedirectUrl(

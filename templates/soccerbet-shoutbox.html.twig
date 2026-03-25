@@ -22,7 +22,7 @@
   {# Nachrichten #}
   <div class="soccerbet-shoutbox__messages">
     {% if messages is empty %}
-      <p class="soccerbet-shoutbox__empty">{{ 'Noch keine Nachrichten.'|t }}</p>
+      <p class="soccerbet-shoutbox__empty">{{ 'No messages yet.'|t }}</p>
     {% else %}
       {% for msg in messages %}
         <div class="soccerbet-shoutbox__message">
@@ -34,7 +34,7 @@
             {% if can_delete %}
               <a href="{{ path('soccerbet.shoutbox.delete', {shout_id: msg.shout_id}) }}"
                  class="soccerbet-shoutbox__delete"
-                 title="{{ 'Löschen'|t }}">✕</a>
+                 title="{{ 'Delete'|t }}">✕</a>
             {% endif %}
           </div>
           <div class="soccerbet-shoutbox__text">{{ msg.message }}</div>

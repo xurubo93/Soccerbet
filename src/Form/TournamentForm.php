@@ -42,7 +42,7 @@ final class TournamentForm extends FormBase {
 
     $form['tournament_desc'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Turnier-Name'),
+      '#title'         => $this->t('Tournament name'),
       '#maxlength'     => 128,
       '#required'      => TRUE,
       '#default_value' => $tournament?->tournament_desc ?? '',
@@ -50,7 +50,7 @@ final class TournamentForm extends FormBase {
 
     $group_options = $this->tipperManager->getGroupOptions();
     if (empty($group_options)) {
-      $this->messenger()->addWarning($this->t('Bitte zuerst eine <a href=":url">Tippergruppe anlegen</a>.', [
+      $this->messenger()->addWarning($this->t('Please first <a href=":url">create a betting group</a>.', [
         ':url' => Url::fromRoute('soccerbet.admin.tippergroups.create')->toString(),
       ]));
     }
@@ -62,8 +62,8 @@ final class TournamentForm extends FormBase {
 
     $form['tipper_grp_ids'] = [
       '#type'          => 'checkboxes',
-      '#title'         => $this->t('Tippergruppen'),
-      '#description'   => $this->t('Wähle eine oder mehrere Tippergruppen für dieses Turnier.'),
+      '#title'         => $this->t('Betting groups'),
+      '#description'   => $this->t('Select one or more betting groups for this tournament.'),
       '#options'       => $group_options,
       '#default_value' => $current_group_ids,
       '#required'      => TRUE,
@@ -71,24 +71,24 @@ final class TournamentForm extends FormBase {
 
     $form['dates'] = [
       '#type'  => 'fieldset',
-      '#title' => $this->t('Zeitraum'),
+      '#title' => $this->t('Period'),
     ];
     $form['dates']['start_date'] = [
       '#type'          => 'date',
-      '#title'         => $this->t('Startdatum'),
+      '#title'         => $this->t('Start date'),
       '#required'      => TRUE,
       '#default_value' => $tournament ? substr($tournament->start_date, 0, 10) : '',
     ];
     $form['dates']['end_date'] = [
       '#type'          => 'date',
-      '#title'         => $this->t('Enddatum'),
+      '#title'         => $this->t('End date'),
       '#required'      => TRUE,
       '#default_value' => $tournament ? substr($tournament->end_date, 0, 10) : '',
     ];
 
     $form['group_count'] = [
       '#type'          => 'number',
-      '#title'         => $this->t('Anzahl Gruppen in der Vorrunde'),
+      '#title'         => $this->t('Number of groups in the group stage'),
       '#min'           => 0,
       '#max'           => 16,
       '#default_value' => $tournament?->group_count ?? 4,
@@ -96,14 +96,14 @@ final class TournamentForm extends FormBase {
 
     $form['is_active'] = [
       '#type'          => 'checkbox',
-      '#title'         => $this->t('Als Standard-Turnier setzen'),
-      '#description'   => $this->t('Dieses Turnier wird auf der Rangliste und Tipp-Seite vorausgewählt.'),
+      '#title'         => $this->t('Set as default tournament'),
+      '#description'   => $this->t('This tournament will be pre-selected on the standings and betting page.'),
       '#default_value' => $tournament?->is_active ?? 0,
     ];
 
     $form['submit'] = [
       '#type'  => 'submit',
-      '#value' => $tournament_id ? $this->t('Turnier speichern') : $this->t('Turnier erstellen'),
+      '#value' => $tournament_id ? $this->t('Save tournament') : $this->t('Create tournament'),
     ];
 
     return $form;
@@ -112,12 +112,12 @@ final class TournamentForm extends FormBase {
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $selected = array_filter($form_state->getValue('tipper_grp_ids') ?? []);
     if (empty($selected)) {
-      $form_state->setErrorByName('tipper_grp_ids', $this->t('Bitte mindestens eine Tippergruppe auswählen.'));
+      $form_state->setErrorByName('tipper_grp_ids', $this->t('Please select at least one betting group.'));
     }
     $start = $form_state->getValue('start_date');
     $end   = $form_state->getValue('end_date');
     if ($start && $end && $start > $end) {
-      $form_state->setErrorByName('end_date', $this->t('Das Enddatum muss nach dem Startdatum liegen.'));
+      $form_state->setErrorByName('end_date', $this->t('The end date must be after the start date.'));
     }
   }
 
@@ -134,11 +134,11 @@ final class TournamentForm extends FormBase {
     $tournament_id = $form_state->get('tournament_id');
     if ($tournament_id) {
       $this->tournamentManager->update($tournament_id, $values);
-      $this->messenger()->addStatus($this->t('Turnier "@name" wurde aktualisiert.', ['@name' => $values['tournament_desc']]));
+      $this->messenger()->addStatus($this->t('Tournament "@name" has been updated.', ['@name' => $values['tournament_desc']]));
     }
     else {
       $tournament_id = $this->tournamentManager->create($values);
-      $this->messenger()->addStatus($this->t('Turnier "@name" wurde erstellt.', ['@name' => $values['tournament_desc']]));
+      $this->messenger()->addStatus($this->t('Tournament "@name" has been created.', ['@name' => $values['tournament_desc']]));
     }
 
     // Wenn als aktiv markiert → Konfiguration updaten

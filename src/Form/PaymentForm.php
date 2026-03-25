@@ -36,19 +36,19 @@ final class PaymentForm extends FormBase {
       $tournament_id = (int) \Drupal::config('soccerbet.settings')->get('default_tournament');
     }
     if ($tournament_id === 0) {
-      return ['#markup' => $this->t('Kein aktives Turnier konfiguriert.')];
+      return ['#markup' => $this->t('No active tournament configured.')];
     }
 
     $tournament = $this->tournamentManager->load($tournament_id);
     $tippers    = $this->tournamentManager->loadTippers($tournament_id);
     $form_state->set('tournament_id', $tournament_id);
 
-    $form['#title'] = $this->t('Zahlungen – @name', ['@name' => $tournament->tournament_desc]);
+    $form['#title'] = $this->t('Payments – @name', ['@name' => $tournament->tournament_desc]);
 
     // Turnier-Auswahl (Schnellwechsel)
     $form['tournament_id'] = [
       '#type'          => 'select',
-      '#title'         => $this->t('Turnier'),
+      '#title'         => $this->t('Tournament'),
       '#options'       => $this->tournamentManager->getOptions(),
       '#default_value' => $tournament_id,
       '#ajax'          => [
@@ -64,7 +64,7 @@ final class PaymentForm extends FormBase {
 
     if (empty($tippers)) {
       $form['table_wrapper']['empty'] = [
-        '#markup' => '<p>' . $this->t('Keine Teilnehmer in diesem Turnier.') . '</p>',
+        '#markup' => '<p>' . $this->t('No participants in this tournament.') . '</p>',
       ];
       return $form;
     }
@@ -74,11 +74,11 @@ final class PaymentForm extends FormBase {
       '#type'       => 'table',
       '#header'     => [
         $this->t('Name'),
-        $this->t('Einsatz bezahlt'),
-        $this->t('Notiz'),
-        $this->t('Bestätigt am'),
+        $this->t('Stake paid'),
+        $this->t('Note'),
+        $this->t('Confirmed on'),
       ],
-      '#empty'      => $this->t('Keine Teilnehmer.'),
+      '#empty'      => $this->t('No participants.'),
     ];
 
     foreach ($tippers as $tipper) {
@@ -96,7 +96,7 @@ final class PaymentForm extends FormBase {
         '#maxlength'     => 255,
         '#size'          => 30,
         '#default_value' => $tipper->payment_note ?? '',
-        '#placeholder'   => $this->t('z.B. Überweisung 15.06.'),
+        '#placeholder'   => $this->t('e.g. bank transfer 15.06.'),
       ];
       $form['table_wrapper']['payments'][$key]['confirmed'] = [
         '#markup' => $tipper->confirmed_date
@@ -107,7 +107,7 @@ final class PaymentForm extends FormBase {
 
     $form['submit'] = [
       '#type'  => 'submit',
-      '#value' => $this->t('Zahlungsstatus speichern'),
+      '#value' => $this->t('Save payment status'),
     ];
 
     return $form;
@@ -135,7 +135,7 @@ final class PaymentForm extends FormBase {
       );
     }
 
-    $this->messenger()->addStatus($this->t('Zahlungsstatus wurde aktualisiert.'));
+    $this->messenger()->addStatus($this->t('Payment status has been updated.'));
     $form_state->setRedirectUrl(
       Url::fromRoute('soccerbet.admin.payments', ['tournament_id' => $tournament_id])
     );

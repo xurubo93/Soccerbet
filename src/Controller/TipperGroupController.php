@@ -38,8 +38,8 @@ final class TipperGroupController extends ControllerBase {
           'data' => [
             '#type'  => 'operations',
             '#links' => [
-              'edit'   => ['title' => $this->t('Bearbeiten'), 'url' => Url::fromRoute('soccerbet.admin.tippergroups.edit', ['tipper_grp_id' => $g->tipper_grp_id])],
-              'delete' => ['title' => $this->t('Löschen'),    'url' => Url::fromRoute('soccerbet.admin.tippergroups.delete', ['tipper_grp_id' => $g->tipper_grp_id])],
+              'edit'   => ['title' => $this->t('Edit'),   'url' => Url::fromRoute('soccerbet.admin.tippergroups.edit', ['tipper_grp_id' => $g->tipper_grp_id])],
+              'delete' => ['title' => $this->t('Delete'), 'url' => Url::fromRoute('soccerbet.admin.tippergroups.delete', ['tipper_grp_id' => $g->tipper_grp_id])],
             ],
           ],
         ],
@@ -49,15 +49,15 @@ final class TipperGroupController extends ControllerBase {
     return [
       'create_link' => [
         '#type'       => 'link',
-        '#title'      => $this->t('+ Neue Tippergruppe'),
+        '#title'      => $this->t('+ New betting group'),
         '#url'        => Url::fromRoute('soccerbet.admin.tippergroups.create'),
         '#attributes' => ['class' => ['button', 'button--primary']],
       ],
       'table' => [
         '#theme'  => 'table',
-        '#header' => [$this->t('Name'), $this->t('Administrator'), $this->t('Mitglieder'), $this->t('Aktionen')],
+        '#header' => [$this->t('Name'), $this->t('Administrator'), $this->t('Members'), $this->t('Actions')],
         '#rows'   => $rows,
-        '#empty'  => $this->t('Keine Tippergruppen angelegt.'),
+        '#empty'  => $this->t('No betting groups created yet.'),
       ],
     ];
   }

@@ -59,8 +59,8 @@ final class TeamController extends ControllerBase {
           'data' => [
             '#type'  => 'operations',
             '#links' => [
-              'edit'   => ['title' => $this->t('Bearbeiten'), 'url' => Url::fromRoute('soccerbet.admin.teams.edit', ['team_id' => $team->team_id])],
-              'delete' => ['title' => $this->t('Löschen'),    'url' => Url::fromRoute('soccerbet.admin.teams.delete', ['team_id' => $team->team_id])],
+              'edit'   => ['title' => $this->t('Edit'),   'url' => Url::fromRoute('soccerbet.admin.teams.edit', ['team_id' => $team->team_id])],
+              'delete' => ['title' => $this->t('Delete'), 'url' => Url::fromRoute('soccerbet.admin.teams.delete', ['team_id' => $team->team_id])],
             ],
           ],
         ],
@@ -70,20 +70,20 @@ final class TeamController extends ControllerBase {
     return [
       'create_link' => [
         '#type'       => 'link',
-        '#title'      => $this->t('+ Neues Team'),
+        '#title'      => $this->t('+ New team'),
         '#url'        => Url::fromRoute('soccerbet.admin.teams.create', ['tournament_id' => $tournament_id]),
         '#attributes' => ['class' => ['button', 'button--primary']],
       ],
       'table' => [
         '#theme'  => 'table',
         '#header' => [
-          $this->t('Team'), $this->t('Gruppe'),
-          $this->t('Spiele'), $this->t('S/U/N'),
-          $this->t('Tore'), $this->t('Punkte'),
-          $this->t('Aktionen'),
+          $this->t('Team'), $this->t('Group'),
+          $this->t('Matches'), $this->t('W/D/L'),
+          $this->t('Goals'), $this->t('Points'),
+          $this->t('Actions'),
         ],
         '#rows'  => $rows,
-        '#empty' => $this->t('Keine Teams für dieses Turnier.'),
+        '#empty' => $this->t('No teams for this tournament.'),
       ],
     ];
   }

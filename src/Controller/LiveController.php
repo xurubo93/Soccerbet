@@ -43,14 +43,14 @@ final class LiveController extends ControllerBase {
   public function live(int $tournament_id = 0): array {
     $tournament_id = $this->resolveTournamentId($tournament_id);
     if ($tournament_id === 0) {
-      return ['#markup' => '<p>' . $this->t('Kein aktives Turnier konfiguriert.') . '</p>'];
+      return ['#markup' => '<p>' . $this->t('No active tournament configured.') . '</p>'];
     }
 
     try {
       $tournament = $this->tournamentManager->load($tournament_id);
     }
     catch (\Exception) {
-      return ['#markup' => '<p>' . $this->t('Turnier nicht gefunden.') . '</p>'];
+      return ['#markup' => '<p>' . $this->t('Tournament not found.') . '</p>'];
     }
 
     $live_games = $this->loadLiveGames($tournament_id);

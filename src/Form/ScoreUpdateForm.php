@@ -49,13 +49,13 @@ final class ScoreUpdateForm extends FormBase {
     // ----------------------------------------------------------------
     $form['global'] = [
       '#type'  => 'fieldset',
-      '#title' => $this->t('Automatisches Score-Update'),
+      '#title' => $this->t('Automatic score update'),
     ];
 
     $form['global']['score_update_enabled'] = [
       '#type'          => 'checkbox',
-      '#title'         => $this->t('Automatisches Score-Update via Cron aktivieren'),
-      '#description'   => $this->t('Wenn aktiv, werden Spielstände automatisch von OpenLigaDB abgerufen.'),
+      '#title'         => $this->t('Enable automatic score update via cron'),
+      '#description'   => $this->t('When enabled, scores are automatically fetched from OpenLigaDB.'),
       '#default_value' => (bool) $config->get('score_update_enabled'),
     ];
 
@@ -64,18 +64,18 @@ final class ScoreUpdateForm extends FormBase {
     // ----------------------------------------------------------------
     $form['tournaments'] = [
       '#type'        => 'details',
-      '#title'       => $this->t('Liga-Zuordnung pro Turnier'),
+      '#title'       => $this->t('League assignment per tournament'),
       '#open'        => TRUE,
       '#description' => $this->t(
-        'Trage für jedes Turnier das OpenLigaDB-Kürzel und die Saison ein.
-         Beispiele: <code>bl1</code> (1. Bundesliga), <code>em2024</code> (EM 2024),
-         <code>aut_bl</code> (Österreich Bundesliga).'
+        'Enter the OpenLigaDB code and season for each tournament.
+         Examples: <code>bl1</code> (Bundesliga), <code>em2024</code> (Euro 2024),
+         <code>aut_bl</code> (Austrian Bundesliga).'
       ),
     ];
 
     if (empty($tournaments)) {
       $form['tournaments']['empty'] = [
-        '#markup' => '<p>' . $this->t('Keine Turniere vorhanden.') . '</p>',
+        '#markup' => '<p>' . $this->t('No tournaments available.') . '</p>',
       ];
     }
     else {
@@ -90,8 +90,8 @@ final class ScoreUpdateForm extends FormBase {
 
         $form['tournaments']['tournament_' . $tid]['oldb_league_' . $tid] = [
           '#type'          => 'textfield',
-          '#title'         => $this->t('Liga-Kürzel'),
-          '#description'   => $this->t('z.B. bl1, em2024, aut_bl, ucl'),
+          '#title'         => $this->t('League code'),
+          '#description'   => $this->t('e.g. bl1, em2024, aut_bl, ucl'),
           '#default_value' => $t->oldb_league ?? '',
           '#size'          => 20,
           '#maxlength'     => 32,
@@ -100,8 +100,8 @@ final class ScoreUpdateForm extends FormBase {
 
         $form['tournaments']['tournament_' . $tid]['oldb_season_' . $tid] = [
           '#type'          => 'textfield',
-          '#title'         => $this->t('Saison'),
-          '#description'   => $this->t('z.B. 2024 (für Saison 2024/25)'),
+          '#title'         => $this->t('Season'),
+          '#description'   => $this->t('e.g. 2024 (for season 2024/25)'),
           '#default_value' => $t->oldb_season ?? '',
           '#size'          => 10,
           '#maxlength'     => 8,
@@ -113,7 +113,7 @@ final class ScoreUpdateForm extends FormBase {
         if ($last_run) {
           $form['tournaments']['tournament_' . $tid]['last_run'] = [
             '#markup' => '<div class="soccerbet-update-status">'
-              . $this->t('Letzter Update: @date', [
+              . $this->t('Last update: @date', [
                 '@date' => \Drupal::service('date.formatter')->format($last_run, 'short'),
               ])
               . '</div>',
@@ -124,7 +124,7 @@ final class ScoreUpdateForm extends FormBase {
         if (!empty($t->oldb_league) && !empty($t->oldb_season)) {
           $form['tournaments']['tournament_' . $tid]['update_' . $tid] = [
             '#type'   => 'submit',
-            '#value'  => $this->t('Jetzt aktualisieren'),
+            '#value'  => $this->t('Update now'),
             '#name'   => 'update_' . $tid,
             '#submit' => ['::manualUpdate'],
             '#attributes' => ['class' => ['button', 'button--secondary']],
@@ -141,13 +141,13 @@ final class ScoreUpdateForm extends FormBase {
     // ----------------------------------------------------------------
     $form['available_leagues'] = [
       '#type'        => 'details',
-      '#title'       => $this->t('Verfügbare Ligen bei OpenLigaDB'),
+      '#title'       => $this->t('Available leagues at OpenLigaDB'),
       '#open'        => FALSE,
-      '#description' => $this->t('Lade die Liste der verfügbaren Ligen von OpenLigaDB.'),
+      '#description' => $this->t('Load the list of available leagues from OpenLigaDB.'),
     ];
     $form['available_leagues']['load_leagues'] = [
       '#type'   => 'submit',
-      '#value'  => $this->t('Ligen von OpenLigaDB laden'),
+      '#value'  => $this->t('Load leagues from OpenLigaDB'),
       '#submit' => ['::loadLeagues'],
       '#limit_validation_errors' => [],
     ];
@@ -165,7 +165,7 @@ final class ScoreUpdateForm extends FormBase {
       }
       $form['available_leagues']['table'] = [
         '#theme'  => 'table',
-        '#header' => [$this->t('Kürzel'), $this->t('Saison'), $this->t('Name')],
+        '#header' => [$this->t('Code'), $this->t('Season'), $this->t('Name')],
         '#rows'   => $rows,
       ];
     }
@@ -175,7 +175,7 @@ final class ScoreUpdateForm extends FormBase {
     // ----------------------------------------------------------------
     $form['save'] = [
       '#type'  => 'submit',
-      '#value' => $this->t('Einstellungen speichern'),
+      '#value' => $this->t('Save settings'),
     ];
 
     return $form;
@@ -209,7 +209,7 @@ final class ScoreUpdateForm extends FormBase {
         ->execute();
     }
 
-    $this->messenger()->addStatus($this->t('Einstellungen wurden gespeichert.'));
+    $this->messenger()->addStatus($this->t('Settings have been saved.'));
   }
 
   /**
@@ -228,7 +228,7 @@ final class ScoreUpdateForm extends FormBase {
       $season     = $tournament->oldb_season ?? '';
 
       if (!$league || !$season) {
-        $this->messenger()->addWarning($this->t('Kein Liga-Kürzel konfiguriert.'));
+        $this->messenger()->addWarning($this->t('No league code configured.'));
         return;
       }
 
@@ -239,15 +239,15 @@ final class ScoreUpdateForm extends FormBase {
       \Drupal::state()->set('soccerbet.last_update.' . $tid, \Drupal::time()->getRequestTime());
 
       $this->messenger()->addStatus($this->t(
-        'Update abgeschlossen: @u Spielstände aktualisiert, Tabelle: @t.',
+        'Update complete: @u scores updated, table: @t.',
         [
           '@u' => $result['scores_updated'],
-          '@t' => $result['table_updated'] ? $this->t('ja') : $this->t('nein'),
+          '@t' => $result['table_updated'] ? $this->t('yes') : $this->t('no'),
         ]
       ));
     }
     catch (\Exception $e) {
-      $this->messenger()->addError($this->t('Fehler: @msg', ['@msg' => $e->getMessage()]));
+      $this->messenger()->addError($this->t('Error: @msg', ['@msg' => $e->getMessage()]));
     }
   }
 
@@ -257,11 +257,11 @@ final class ScoreUpdateForm extends FormBase {
   public function loadLeagues(array &$form, FormStateInterface $form_state): void {
     $leagues = $this->apiClient->getAvailableLeagues();
     if (empty($leagues)) {
-      $this->messenger()->addWarning($this->t('Keine Ligen von OpenLigaDB empfangen.'));
+      $this->messenger()->addWarning($this->t('No leagues received from OpenLigaDB.'));
     }
     else {
       $form_state->set('available_leagues', $leagues);
-      $this->messenger()->addStatus($this->t('@count Ligen geladen.', ['@count' => count($leagues)]));
+      $this->messenger()->addStatus($this->t('@count leagues loaded.', ['@count' => count($leagues)]));
     }
     $form_state->setRebuild(TRUE);
   }

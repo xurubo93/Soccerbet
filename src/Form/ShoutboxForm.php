@@ -63,16 +63,16 @@ final class ShoutboxForm extends FormBase {
 
     $form['message'] = [
       '#type'        => 'textarea',
-      '#title'       => $this->t('Nachricht von @name', ['@name' => $tipper_name]),
+      '#title'       => $this->t('Message from @name', ['@name' => $tipper_name]),
       '#rows'        => 2,
       '#maxlength'   => 500,
-      '#placeholder' => $this->t('Deine Nachricht …'),
+      '#placeholder' => $this->t('Your message …'),
       '#required'    => TRUE,
     ];
 
     $form['submit'] = [
       '#type'       => 'submit',
-      '#value'      => $this->t('Absenden'),
+      '#value'      => $this->t('Send'),
       '#attributes' => ['class' => ['button', 'button--primary', 'button--small']],
     ];
 
@@ -85,7 +85,7 @@ final class ShoutboxForm extends FormBase {
     $message       = (string) $form_state->getValue('message');
 
     $this->shoutbox->postMessage($tournament_id, $tipper_name, $message);
-    $this->messenger()->addStatus($this->t('Nachricht gepostet!'));
+    $this->messenger()->addStatus($this->t('Message posted!'));
 
     // Cache-Tag invalidieren damit Block sofort aktualisiert wird
     \Drupal::service('cache_tags.invalidator')

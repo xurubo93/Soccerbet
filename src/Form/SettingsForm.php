@@ -25,11 +25,11 @@ final class SettingsForm extends ConfigFormBase {
 
     $form['scoring'] = [
       '#type'  => 'fieldset',
-      '#title' => $this->t('Punktevergabe'),
+      '#title' => $this->t('Scoring'),
     ];
     $form['scoring']['points_exact'] = [
       '#type'          => 'number',
-      '#title'         => $this->t('Punkte für exaktes Ergebnis'),
+      '#title'         => $this->t('Points for exact result'),
       '#default_value' => $config->get('points_exact'),
       '#min'           => 1,
       '#max'           => 10,
@@ -37,7 +37,7 @@ final class SettingsForm extends ConfigFormBase {
     ];
     $form['scoring']['points_tendency'] = [
       '#type'          => 'number',
-      '#title'         => $this->t('Punkte für richtige Tendenz'),
+      '#title'         => $this->t('Points for correct tendency'),
       '#default_value' => $config->get('points_tendency'),
       '#min'           => 0,
       '#max'           => 5,
@@ -46,29 +46,29 @@ final class SettingsForm extends ConfigFormBase {
 
     $form['gameplay'] = [
       '#type'  => 'fieldset',
-      '#title' => $this->t('Spielablauf'),
+      '#title' => $this->t('Game flow'),
     ];
     $form['gameplay']['betting_closes_minutes_before'] = [
       '#type'          => 'number',
-      '#title'         => $this->t('Tipp-Sperre X Minuten vor Anpfiff'),
-      '#description'   => $this->t('0 = Tipps bis Anpfiff möglich.'),
+      '#title'         => $this->t('Bet lock X minutes before kickoff'),
+      '#description'   => $this->t('0 = bets possible until kickoff.'),
       '#default_value' => $config->get('betting_closes_minutes_before'),
       '#min'           => 0,
     ];
     $form['gameplay']['allow_tipper_self_register'] = [
       '#type'          => 'checkbox',
-      '#title'         => $this->t('Selbst-Registrierung als Tipper erlauben'),
+      '#title'         => $this->t('Allow self-registration as bettor'),
       '#default_value' => $config->get('allow_tipper_self_register'),
     ];
 
     $form['display'] = [
       '#type'  => 'fieldset',
-      '#title' => $this->t('Anzeige'),
+      '#title' => $this->t('Display'),
     ];
     $form['display']['show_payment_status_in_standings'] = [
       '#type'          => 'checkbox',
-      '#title'         => $this->t('Zahlungsstatus in Rangliste anzeigen'),
-      '#description'   => $this->t('Tipper ohne bezahlten Einsatz werden markiert.'),
+      '#title'         => $this->t('Show payment status in standings'),
+      '#description'   => $this->t('Bettors with unpaid stake will be marked.'),
       '#default_value' => $config->get('show_payment_status_in_standings'),
     ];
 
@@ -76,25 +76,25 @@ final class SettingsForm extends ConfigFormBase {
     $tournaments = $this->getTournamentOptions();
     $form['display']['default_tournament'] = [
       '#type'          => 'select',
-      '#title'         => $this->t('Standard-Turnier'),
-      '#description'   => $this->t('Wird auf der Rangliste und Tipp-Seite vorausgewählt.'),
-      '#options'       => [0 => $this->t('— bitte wählen —')] + $tournaments,
+      '#title'         => $this->t('Default tournament'),
+      '#description'   => $this->t('Pre-selected on the standings and betting page.'),
+      '#options'       => [0 => $this->t('— please select —')] + $tournaments,
       '#default_value' => $config->get('default_tournament'),
     ];
 
     // Turniersieger-Tipp
     $form['winner_bet'] = [
       '#type'        => 'fieldset',
-      '#title'       => $this->t('Turniersieger-Tipp'),
-      '#description' => $this->t('Punkte je nach Zeitpunkt der Tipp-Abgabe. Phase 0 = vor Turnierstart, Phase 1 = nach Gruppenphase, usw.'),
+      '#title'       => $this->t('Tournament winner bet'),
+      '#description' => $this->t('Points depend on when the bet is placed. Phase 0 = before tournament start, Phase 1 = after group stage, etc.'),
     ];
     $points = $config->get('winner_bet_points') ?? [10, 7, 5, 3, 1];
     foreach ($points as $i => $pts) {
       $form['winner_bet']['winner_bet_points_' . $i] = [
         '#type'          => 'number',
         '#title'         => $i === 0
-          ? $this->t('Punkte vor Turnierstart')
-          : $this->t('Punkte nach Phase @n', ['@n' => $i]),
+          ? $this->t('Points before tournament start')
+          : $this->t('Points after phase @n', ['@n' => $i]),
         '#default_value' => $pts,
         '#min'           => 0,
         '#max'           => 99,
@@ -105,14 +105,14 @@ final class SettingsForm extends ConfigFormBase {
     // API-Konfiguration
     $form['api'] = [
       '#type'  => 'fieldset',
-      '#title' => $this->t('API-Konfiguration'),
+      '#title' => $this->t('API configuration'),
     ];
     $form['api']['api_provider'] = [
       '#type'          => 'radios',
-      '#title'         => $this->t('Datenquelle'),
+      '#title'         => $this->t('Data source'),
       '#options'       => [
-        'openligadb'   => $this->t('OpenLigaDB <em>(kostenlos, kein Key nötig – Schwerpunkt Deutschland/Österreich)</em>'),
-        'footballdata' => $this->t('football-data.org <em>(kostenlos mit Key – internationale Ligen, strukturiertere Daten)</em>'),
+        'openligadb'   => $this->t('OpenLigaDB <em>(free, no key needed – focus Germany/Austria)</em>'),
+        'footballdata' => $this->t('football-data.org <em>(free with key – international leagues, more structured data)</em>'),
       ],
       '#default_value' => $config->get('api_provider') ?? 'openligadb',
     ];

@@ -47,11 +47,11 @@ final class TournamentMembersForm extends FormBase {
     $current_tippers = $this->tournamentManager->loadTippers($tournament_id);
     $current_ids     = array_map('intval', array_column($current_tippers, 'tipper_id'));
 
-    $form['#title'] = $this->t('Teilnehmer – @name', ['@name' => $tournament->tournament_desc]);
+    $form['#title'] = $this->t('Participants – @name', ['@name' => $tournament->tournament_desc]);
 
     if (empty($all_tippers)) {
       $form['empty'] = [
-        '#markup' => '<p>' . $this->t('Keine Tipper in der zugehörigen Gruppe. Bitte zuerst <a href=":url">Tipper anlegen</a>.', [
+        '#markup' => '<p>' . $this->t('No bettors in the associated group. Please first <a href=":url">create bettors</a>.', [
           ':url' => Url::fromRoute('soccerbet.admin.tippergroups.list')->toString(),
         ]) . '</p>',
       ];
@@ -62,11 +62,11 @@ final class TournamentMembersForm extends FormBase {
     $form['members'] = [
       '#type'   => 'table',
       '#header' => [
-        $this->t('Teilnehmer'),
-        $this->t('Im Turnier'),
-        $this->t('Aktionen'),
+        $this->t('Participants'),
+        $this->t('In tournament'),
+        $this->t('Actions'),
       ],
-      '#empty'  => $this->t('Keine Tipper verfügbar.'),
+      '#empty'  => $this->t('No bettors available.'),
     ];
 
     foreach ($all_tippers as $tipper) {
@@ -88,7 +88,7 @@ final class TournamentMembersForm extends FormBase {
       $links = [];
       if ($is_member) {
         $links['edit_tipps'] = [
-          'title' => $this->t('Tipps bearbeiten'),
+          'title' => $this->t('Edit bets'),
           'url'   => Url::fromRoute('soccerbet.admin.tipps.edit', [
             'tournament_id' => $tournament_id,
             'tipper_id'     => $tid,
@@ -108,15 +108,15 @@ final class TournamentMembersForm extends FormBase {
 
     $form['winners'] = [
       '#type'        => 'fieldset',
-      '#title'       => $this->t('Turniersieger ★'),
-      '#description' => $this->t('Der Sieger erhält einen Stern (★) neben seinem Namen in allen Ranglisten.'),
+      '#title'       => $this->t('Tournament winner ★'),
+      '#description' => $this->t('The winner receives a star (★) next to their name in all standings.'),
     ];
 
     foreach ($groups as $group) {
       $grp_id = (int) $group->tipper_grp_id;
       $winner_group_ids[] = $grp_id;
 
-      $tipper_options = [0 => $this->t('— noch offen —')];
+      $tipper_options = [0 => $this->t('— not yet set —')];
       foreach ($this->tipperManager->loadTippersByGroup($grp_id) as $t) {
         $tipper_options[(int) $t->tipper_id] = $t->tipper_name;
       }
@@ -130,19 +130,19 @@ final class TournamentMembersForm extends FormBase {
       ];
       $form['winners']['group_' . $grp_id]['winner_1_' . $grp_id] = [
         '#type'          => 'select',
-        '#title'         => $this->t('★ 1. Platz'),
+        '#title'         => $this->t('★ 1st place'),
         '#options'       => $tipper_options,
         '#default_value' => (int) ($existing?->winner_tipper_id ?? 0),
       ];
       $form['winners']['group_' . $grp_id]['winner_2_' . $grp_id] = [
         '#type'          => 'select',
-        '#title'         => $this->t('2. Platz'),
+        '#title'         => $this->t('2nd place'),
         '#options'       => $tipper_options,
         '#default_value' => (int) ($existing?->second_tipper_id ?? 0),
       ];
       $form['winners']['group_' . $grp_id]['winner_3_' . $grp_id] = [
         '#type'          => 'select',
-        '#title'         => $this->t('3. Platz'),
+        '#title'         => $this->t('3rd place'),
         '#options'       => $tipper_options,
         '#default_value' => (int) ($existing?->third_tipper_id ?? 0),
       ];
@@ -152,7 +152,7 @@ final class TournamentMembersForm extends FormBase {
 
     $form['submit'] = [
       '#type'  => 'submit',
-      '#value' => $this->t('Teilnehmer speichern'),
+      '#value' => $this->t('Save participants'),
     ];
 
     return $form;
@@ -187,7 +187,7 @@ final class TournamentMembersForm extends FormBase {
       ]);
     }
 
-    $this->messenger()->addStatus($this->t('Teilnehmer wurden aktualisiert.'));
+    $this->messenger()->addStatus($this->t('Participants have been updated.'));
     $form_state->setRedirectUrl(
       Url::fromRoute('soccerbet.admin.tournament.list')
     );

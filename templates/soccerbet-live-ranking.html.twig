@@ -14,12 +14,12 @@
  */
 #}
 {% if ranking is empty %}
-  <p class="soccerbet-live__empty">{{ 'Keine Teilnehmer.'|t }}</p>
+  <p class="soccerbet-live__empty">{{ 'No participants.'|t }}</p>
 {% else %}
   <div class="soccerbet-live__table-wrap"><table class="soccerbet-live__table">
     <thead>
       <tr>
-        <th class="col-rank">{{ 'Rang'|t }}</th>
+        <th class="col-rank">{{ 'Rank'|t }}</th>
         <th class="col-name">{{ 'Name'|t }}</th>
         {% for game in live_games %}
           <th class="col-tipp" title="{{ game.team1_name }} vs {{ game.team2_name }}">
@@ -27,9 +27,9 @@
           </th>
         {% endfor %}
         {% if final_started %}
-          <th class="col-winner-bet" title="{{ 'Turniersieger-Tipp'|t }}">🏆</th>
+          <th class="col-winner-bet" title="{{ 'Tournament winner bet'|t }}">🏆</th>
         {% endif %}
-        <th class="col-total">{{ 'Punkte'|t }}</th>
+        <th class="col-total">{{ 'Points'|t }}</th>
       </tr>
     </thead>
     <tbody>
@@ -55,7 +55,7 @@
               <span class="soccerbet-tipper-card__name">
                 <span class="soccerbet-tipper-card__label">{{ row.name }}</span>
                 {% if row.stars > 0 %}
-                  <span class="soccerbet-stars" title="{{ row.stars ~ ' × Turniersieger'|t }}">
+                  <span class="soccerbet-stars" title="{{ row.stars ~ ' × Tournament winner'|t }}">
                     {% for i in 1..row.stars %}★{% endfor %}
                   </span>
                 {% endif %}
@@ -96,8 +96,8 @@
   </table></div>
 
   <div class="soccerbet-live__legend">
-    <span class="soccerbet-live__tipp soccerbet-live__tipp--exact">2:1<br><small>(3)</small></span> {{ 'Richtiges Ergebnis'|t }}
-    <span class="soccerbet-live__tipp soccerbet-live__tipp--tendency">1:0<br><small>(1)</small></span> {{ 'Richtige Tendenz'|t }}
-    <span class="soccerbet-live__tipp soccerbet-live__tipp--wrong">0:2<br><small>(0)</small></span> {{ 'Falsch'|t }}
+    <span class="soccerbet-live__tipp soccerbet-live__tipp--exact">2:1<br><small>(3)</small></span> {{ 'Correct result'|t }}
+    <span class="soccerbet-live__tipp soccerbet-live__tipp--tendency">1:0<br><small>(1)</small></span> {{ 'Correct tendency'|t }}
+    <span class="soccerbet-live__tipp soccerbet-live__tipp--wrong">0:2<br><small>(0)</small></span> {{ 'Wrong'|t }}
   </div>
 {% endif %}

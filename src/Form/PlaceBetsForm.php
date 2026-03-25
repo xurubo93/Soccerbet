@@ -54,7 +54,7 @@ final class PlaceBetsForm extends FormBase {
       $tournament_id = (int) \Drupal::config('soccerbet.settings')->get('default_tournament');
     }
     if ($tournament_id === 0) {
-      return ['#markup' => $this->t('Kein aktives Turnier konfiguriert.')];
+      return ['#markup' => $this->t('No active tournament configured.')];
     }
 
     $tournament = $this->tournamentManager->load($tournament_id);
@@ -72,7 +72,7 @@ final class PlaceBetsForm extends FormBase {
       if (!$tipper) {
         return [
           '#markup' => $this->t(
-            'Du bist kein Teilnehmer in diesem Turnier. Bitte wende dich an den Administrator.'
+            'You are not a participant in this tournament. Please contact the administrator.'
           ),
         ];
       }
@@ -82,11 +82,11 @@ final class PlaceBetsForm extends FormBase {
       // Explizite tipper_id übergeben – nur Admin darf fremde Tipps bearbeiten
       $tipper = $this->tipperManager->loadTipper($tipper_id);
       if (!$tipper) {
-        return ['#markup' => $this->t('Tipper nicht gefunden.')];
+        return ['#markup' => $this->t('Bettor not found.')];
       }
       $tipper_owner_uid = (int) $tipper->uid;
       if (!$is_admin && $tipper_owner_uid !== $current_uid) {
-        return ['#markup' => $this->t('Keine Berechtigung.')];
+        return ['#markup' => $this->t('Not authorized.')];
       }
     }
 
@@ -109,13 +109,13 @@ final class PlaceBetsForm extends FormBase {
     $now = \Drupal::time()->getRequestTime();
 
     $phase_labels = [
-      'group'       => $this->t('Gruppenphase'),
-      'round_of_32' => $this->t('Sechzehntelfinale'),
-      'round_of_16' => $this->t('Achtelfinale'),
-      'quarter'     => $this->t('Viertelfinale'),
-      'semi'        => $this->t('Halbfinale'),
-      'third_place' => $this->t('Spiel um Platz 3'),
-      'final'       => $this->t('Finale'),
+      'group'       => $this->t('Group stage'),
+      'round_of_32' => $this->t('Round of 32'),
+      'round_of_16' => $this->t('Round of 16'),
+      'quarter'     => $this->t('Quarter-final'),
+      'semi'        => $this->t('Semi-final'),
+      'third_place' => $this->t('Third-place match'),
+      'final'       => $this->t('Final'),
     ];
 
     // Nach Phase gruppieren – Phasen-Reihenfolge aus $phase_labels übernehmen
@@ -137,7 +137,7 @@ final class PlaceBetsForm extends FormBase {
     if ($form_state->get('is_admin_edit')) {
       $form['admin_notice'] = [
         '#markup' => '<div class="messages messages--warning soccerbet-admin-edit-notice">'
-          . $this->t('Du bearbeitest die Tipps von <strong>@name</strong> als Administrator.', ['@name' => $tipper_name])
+          . $this->t('You are editing the bets of <strong>@name</strong> as administrator.', ['@name' => $tipper_name])
           . '</div>',
         '#weight' => -99,
       ];
@@ -172,7 +172,7 @@ final class PlaceBetsForm extends FormBase {
 
       $form[$phase] = [
         '#type'       => 'details',
-        '#title'      => $phase_label . ($open_games ? ' (' . count($open_games) . ' ' . $this->t('offen') . ')' : ''),
+        '#title'      => $phase_label . ($open_games ? ' (' . count($open_games) . ' ' . $this->t('open') . ')' : ''),
         '#open'       => !empty($open_games),
         '#attributes' => ['class' => ['soccerbet-phase-group']],
       ];
@@ -181,7 +181,7 @@ final class PlaceBetsForm extends FormBase {
       if (!empty($played_games)) {
         $form[$phase]['played_wrapper'] = [
           '#type'       => 'details',
-          '#title'      => $this->t('@count gespielte/gesperrte Spiele', ['@count' => count($played_games)]),
+          '#title'      => $this->t('@count played/locked matches', ['@count' => count($played_games)]),
           '#open'       => FALSE,
           '#attributes' => ['class' => ['soccerbet-played-games']],
         ];
@@ -204,7 +204,7 @@ final class PlaceBetsForm extends FormBase {
     // Turniersieger-Tipp – immer ganz oben, immer offen
     $teams = $this->tipperManager->loadTeamsByTournament($tournament_id);
     usort($teams, fn($a, $b) => strcmp($a->team_name, $b->team_name));
-    $team_options = [0 => $this->t('— bitte wählen —')];
+    $team_options = [0 => $this->t('— please select —')];
     foreach ($teams as $team) {
       $flag = $team->team_flag ? ($this->flagEmoji($team->team_flag) . ' ') : '';
       $team_options[(int) $team->team_id] = $flag . $team->team_name;
@@ -215,14 +215,14 @@ final class PlaceBetsForm extends FormBase {
 
     $form['winner_bet'] = [
       '#type'       => 'fieldset',
-      '#title'      => $this->t('Turniersieger-Tipp'),
+      '#title'      => $this->t('Tournament winner bet'),
       '#attributes' => ['class' => ['soccerbet-winner-bet']],
       '#weight'     => -200,
     ];
     $form['winner_bet']['info'] = [
       '#markup' => '<p class="soccerbet-winner-bet__info">'
-        . $this->t('Aktuell mögliche Punkte bei richtigem Tipp: <strong>@pts</strong>', ['@pts' => $next_points])
-        . ($existing_bet ? ' · ' . $this->t('Dein aktueller Tipp: <strong>@team</strong> (@pts Punkte)', [
+        . $this->t('Currently possible points for correct bet: <strong>@pts</strong>', ['@pts' => $next_points])
+        . ($existing_bet ? ' · ' . $this->t('Your current bet: <strong>@team</strong> (@pts points)', [
             '@team' => $team_options[(int) $existing_bet->team_id] ?? '?',
             '@pts'  => $this->winnerBet->getPointsForPhaseIndex((int) $existing_bet->phase_index),
           ]) : '')
@@ -230,7 +230,7 @@ final class PlaceBetsForm extends FormBase {
     ];
     $form['winner_bet']['winner_team_id'] = [
       '#type'          => 'select',
-      '#title'         => $this->t('Welche Mannschaft wird Turniersieger?'),
+      '#title'         => $this->t('Which team will win the tournament?'),
       '#options'       => $team_options,
       '#default_value' => $existing_bet ? (int) $existing_bet->team_id : 0,
     ];
@@ -240,7 +240,7 @@ final class PlaceBetsForm extends FormBase {
       $form['mobile_jump'] = [
         '#markup' => '<div class="soccerbet-mobile-jump">'
           . '<a href="#' . $first_open_anchor . '" class="soccerbet-mobile-jump__link button button--small">'
-          . $this->t('↓ Zum nächsten offenen Spiel')
+          . $this->t('↓ To the next open match')
           . '</a></div>',
         '#weight' => -100,
       ];
@@ -253,13 +253,13 @@ final class PlaceBetsForm extends FormBase {
     ];
     $form['submit_wrapper']['submit'] = [
       '#type'       => 'submit',
-      '#value'      => $this->t('Tipps speichern'),
+      '#value'      => $this->t('Save bets'),
       '#attributes' => ['class' => ['button', 'button--primary', 'soccerbet-submit']],
     ];
     if (!$has_open_games) {
       $form['no_games'] = [
         '#markup' => '<p class="soccerbet-bets__no-games">'
-          . $this->t('Spieltipps sind gesperrt – das Turnier läuft oder ist beendet.')
+          . $this->t('Match bets are locked – the tournament is running or has ended.')
           . '</p>',
       ];
     }
@@ -305,7 +305,7 @@ final class PlaceBetsForm extends FormBase {
       '#markup' => '<div class="soccerbet-game__meta">'
         . '<span class="soccerbet-game__date">' . $date_str . '</span>'
         . ($game->game_stadium ? ' · <span class="soccerbet-game__stadium">' . htmlspecialchars($game->game_stadium) . '</span>' : '')
-        . ($played ? ' · <span class="soccerbet-game__result">' . $this->t('Ergebnis: @s1:@s2', ['@s1' => $game->team1_score, '@s2' => $game->team2_score]) . '</span>' : '')
+        . ($played ? ' · <span class="soccerbet-game__result">' . $this->t('Result: @s1:@s2', ['@s1' => $game->team1_score, '@s2' => $game->team2_score]) . '</span>' : '')
         . '</div>',
     ];
 
@@ -365,7 +365,7 @@ final class PlaceBetsForm extends FormBase {
       $show_winner = ($t1 !== NULL && $t2 !== NULL && (int) $t1 === (int) $t2);
       $container[$game_key]['winner_' . $game_id] = [
         '#type'               => 'select',
-        '#title'              => $this->t('Aufsteiger/Sieger'),
+        '#title'              => $this->t('Qualifier/Winner'),
         '#options'            => [
           $game->team_id_1 => $game->team1_name,
           $game->team_id_2 => $game->team2_name,
@@ -387,7 +387,7 @@ final class PlaceBetsForm extends FormBase {
     if ($locked && !$played) {
       $container[$game_key]['locked_info'] = [
         '#markup' => '<div class="soccerbet-game__locked-info">'
-          . $this->t('Tipp-Abgabe geschlossen (Anpfiff: @date)', ['@date' => $date_str])
+          . $this->t('Bet closed (kickoff: @date)', ['@date' => $date_str])
           . '</div>',
       ];
     }
@@ -409,13 +409,13 @@ final class PlaceBetsForm extends FormBase {
       if ($tipp1 !== '' && $tipp2 === '') {
         $form_state->setErrorByName(
           'tipp2_' . $game_id,
-          $this->t('Bitte auch das Ergebnis für Team 2 eintragen.')
+          $this->t('Please also enter the result for team 2.')
         );
       }
       if ($tipp2 !== '' && $tipp1 === '') {
         $form_state->setErrorByName(
           'tipp1_' . $game_id,
-          $this->t('Bitte auch das Ergebnis für Team 1 eintragen.')
+          $this->t('Please also enter the result for team 1.')
         );
       }
     }
@@ -428,7 +428,7 @@ final class PlaceBetsForm extends FormBase {
       if ($tipp1 !== '' && $tipp2 !== '' && (int) $tipp1 === (int) $tipp2 && (int) $winner === 0) {
         $form_state->setErrorByName(
           'winner_' . $game_id,
-          $this->t('Bei Unentschieden muss ein Aufsteiger gewählt werden.')
+          $this->t('In case of a draw, a qualifier must be selected.')
         );
       }
     }
@@ -494,11 +494,11 @@ final class PlaceBetsForm extends FormBase {
 
     if ($saved_count > 0) {
       $this->messenger()->addStatus(
-        $this->t('@count Tipp(s) wurden gespeichert.', ['@count' => $saved_count])
+        $this->t('@count bet(s) have been saved.', ['@count' => $saved_count])
       );
     }
     elseif ($winner_team_id === 0) {
-      $this->messenger()->addWarning($this->t('Keine Tipps wurden geändert.'));
+      $this->messenger()->addWarning($this->t('No bets were changed.'));
     }
 
     // Admin zurück zur Teilnehmer-Liste, normaler User zur Rangliste

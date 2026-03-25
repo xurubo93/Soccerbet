@@ -25,7 +25,7 @@ final class ShoutboxController extends ControllerBase {
 
   public function delete(int $shout_id): RedirectResponse {
     $this->shoutbox->deleteMessage($shout_id);
-    $this->messenger()->addStatus($this->t('Nachricht gelöscht.'));
+    $this->messenger()->addStatus($this->t('Message deleted.'));
 
     // Cache invalidieren
     $tournament_id = (int) \Drupal::config('soccerbet.settings')->get('default_tournament');

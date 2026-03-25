@@ -30,11 +30,11 @@ final class GameDeleteForm extends ConfirmFormBase {
   }
 
   public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('Dieses Spiel wirklich löschen?');
+    return $this->t('Really delete this match?');
   }
 
   public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('Alle Tipps zu diesem Spiel werden ebenfalls gelöscht.');
+    return $this->t('All bets for this match will also be deleted.');
   }
 
   public function getCancelUrl(): Url {
@@ -51,7 +51,7 @@ final class GameDeleteForm extends ConfirmFormBase {
 
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->tipperManager->deleteGame($form_state->get('game_id'));
-    $this->messenger()->addStatus($this->t('Spiel wurde gelöscht.'));
+    $this->messenger()->addStatus($this->t('Match has been deleted.'));
     $form_state->setRedirectUrl(
       Url::fromRoute('soccerbet.admin.games.list', ['tournament_id' => $form_state->get('tournament_id')])
     );

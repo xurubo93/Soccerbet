@@ -251,7 +251,7 @@ final class StandingsController extends ControllerBase {
     return [
       '#markup' => '<div class="soccerbet-no-tournament">'
         . '<p>' . $this->t(
-            'Kein aktives Turnier konfiguriert. Bitte zuerst ein <a href=":url">Turnier anlegen und als Standard setzen</a>.',
+            'No active tournament configured. Please first <a href=":url">create a tournament and set it as default</a>.',
             [':url' => \Drupal\Core\Url::fromRoute('soccerbet.admin.tournament.create')->toString()]
           )
         . '</p></div>',
