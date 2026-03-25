@@ -874,3 +874,41 @@ msgstr "Import abgeschlossen: @tc Teams (@ts übersprungen), @gc Spiele (@gs üb
 
 msgid "No flag code found for: @teams – please set manually."
 msgstr "Kein Flaggen-Code gefunden für: @teams – bitte manuell setzen."
+
+# ── Menu links ────────────────────────────────────────────────────────────────
+
+msgid "Standings"
+msgstr "Rangliste"
+
+msgid "Place bets"
+msgstr "Tipps abgeben"
+
+msgid "Group tables"
+msgstr "Gruppentabellen"
+
+msgid "Betting game"
+msgstr "Tippspiel"
+
+msgid "Manage tournaments, matches, teams and participants."
+msgstr "Turniere, Spiele, Teams und Teilnehmer verwalten."
+
+msgid "Tournaments"
+msgstr "Turniere"
+
+msgid "Matches"
+msgstr "Spiele"
+
+msgid "Betting groups"
+msgstr "Tippergruppen"
+
+msgid "Payments"
+msgstr "Zahlungen"
+
+msgid "Bets overview"
+msgstr "Tipps-Übersicht"
+
+msgid "Settings"
+msgstr "Einstellungen"
+
+msgid "Score update (OpenLigaDB)"
+msgstr "Score-Update (OpenLigaDB)"
