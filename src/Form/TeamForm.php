@@ -97,22 +97,19 @@ final class TeamForm extends FormBase {
       '#maxlength'     => 10,
       '#size'          => 12,
       '#default_value' => $team?->team_flag ?? '',
-      '#attributes'    => ['placeholder' => 'AT', 'style' => 'text-transform: uppercase;'],
+      '#attributes'    => ['placeholder' => 'at'],
     ];
 
     // Flag-Vorschau (nur im Edit-Modus wenn bereits ein Code gesetzt ist)
     $current_flag = $team?->team_flag ?? '';
     if ($current_flag) {
-      $flag_upper = strtoupper($current_flag);
       $flag_lower = strtolower($current_flag);
       $svg_path   = '/modules/custom/soccerbet/images/flags/svg/' . $flag_lower . '.svg';
-      $png_path   = '/modules/custom/soccerbet/images/flags/PNG/2x/' . $flag_upper . '@2x.png';
       $form['flag_preview'] = [
         '#markup' => '<div class="soccerbet-flag-preview">'
           . '<span class="soccerbet-flag-preview__label">' . $this->t('Vorschau:') . '</span> '
-          . '<img src="' . $svg_path . '" onerror="this.src=\'' . $png_path . '\'" '
-          . 'alt="' . htmlspecialchars($current_flag) . '" '
-          . 'width="40" height="27" style="vertical-align:middle;border:1px solid #ddd;">'
+          . '<img src="' . $svg_path . '" alt="' . htmlspecialchars($flag_lower) . '" '
+          . 'width="40" height="40" class="soccerbet-flag">'
           . '</div>',
       ];
     }
@@ -155,7 +152,7 @@ final class TeamForm extends FormBase {
     $values = [
       'team_name'  => $form_state->getValue('team_name'),
       'team_group' => strtoupper((string) $form_state->getValue('team_group')),
-      'team_flag'  => strtoupper(trim((string) $form_state->getValue('team_flag'))),
+      'team_flag'  => strtolower(trim((string) $form_state->getValue('team_flag'))),
     ];
 
     // Statistiken (nur im Edit-Modus vorhanden)

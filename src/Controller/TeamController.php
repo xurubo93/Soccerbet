@@ -37,16 +37,15 @@ final class TeamController extends ControllerBase {
     $rows       = [];
 
     foreach ($teams as $team) {
-      $flag_code  = strtoupper(trim((string) ($team->team_flag ?? '')));
-      $flag_lower = strtolower($flag_code);
+      $flag_lower = strtolower(trim((string) ($team->team_flag ?? '')));
       $flag_html  = '';
-      if ($flag_code) {
+      if ($flag_lower) {
         $svg = '/modules/custom/soccerbet/images/flags/svg/' . $flag_lower . '.svg';
-        $png = '/modules/custom/soccerbet/images/flags/PNG/2x/' . $flag_code . '@2x.png';
         $flag_html = '<img src="' . $svg . '"'
-          . ' onerror="this.onerror=null;this.src=\'' . $png . '\'"'
-          . ' alt="' . htmlspecialchars($flag_code) . '"'
-          . ' width="28" height="19" style="vertical-align:middle;border:1px solid #eee;margin-right:6px;">';
+          . ' alt="' . htmlspecialchars($flag_lower) . '"'
+          . ' width="24" height="24"'
+          . ' class="soccerbet-flag"'
+          . '>';
       }
 
       $rows[] = [

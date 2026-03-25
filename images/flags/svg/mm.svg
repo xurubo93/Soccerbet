@@ -1,12 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 18 12">
-<rect width="18" height="6" fill="#FECB00"/>
-<rect width="18" height="6" y="6" fill="#EA2839"/>
-<rect width="18" height="4" y="4" fill="#34B233"/>
-<g transform="translate(9,6.422)scale(4.422)">
-<polygon id="pt" points="-0.3249196962329062,0 0,-1 0.3249196962329062,0" fill="#FFF"/>
-<use xlink:href="#pt" transform="rotate(-144)"/>
-<use xlink:href="#pt" transform="rotate(-72)"/>
-<use xlink:href="#pt" transform="rotate(72)"/>
-<use xlink:href="#pt" transform="rotate(144)"/>
-</g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" fill="none"><path fill="var(--flag-palette-green, #6da544)" d="M482.2 376c19-35.8 29.8-76.6 29.8-120s-10.8-84.2-29.8-120H29.8A255 255 0 0 0 0 256c0 43.4 10.8 84.2 29.8 120z"/><path fill="var(--flag-palette-bright-red, #d80027)" d="M496.5 344a256.1 256.1 0 0 1-481 0z"/><path fill="var(--flag-palette-yellow, #ffda44)" d="M496.5 168h-481a256.1 256.1 0 0 1 481 0"/><path fill="#EEE" fill-rule="evenodd" d="M298.4 215.7 256 85.3l-42.4 130.4h-137l110.9 80.6L145 426.7 256 346l111 80.6-42.5-130.4 111-80.6z" clip-rule="evenodd"/></svg>

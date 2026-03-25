@@ -1,37 +1,28 @@
 {#
 /**
  * @file
- * Hilfsmakro für die Flaggen-Darstellung.
+ * Hilfsmakro für die Flaggen-Darstellung (circle-flags, kapowaz/circle-flags).
  *
  * Verwendung in anderen Templates:
  *   {% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
  *   {{ flag_helper.flag('AT', 'Österreich') }}
  *   {{ flag_helper.flag('GB-ENG', 'England') }}
  *
- * Das Makro versucht zuerst SVG, fällt via onerror auf PNG@2x zurück.
- * Basis-Pfad: /modules/custom/soccerbet/images/flags/
- *   SVG:  svg/{code_lower}.svg
- *   PNG:  PNG/2x/{code_upper}@2x.png
- *   PNG1: PNG/1x/{code_upper}.png  (Fallback für Sondercodes wie GB-ENG)
+ * Alle Flags sind SVG-Kreise (512×512), Dateiname = lowercase ISO-Code.
+ * Basis-Pfad: /modules/custom/soccerbet/images/flags/svg/{code_lower}.svg
  */
 #}
 
 {% macro flag(code, alt, width, height) %}
   {% if code %}
-    {% set w = width|default(28) %}
-    {% set h = height|default(19) %}
-    {% set code_upper = code|upper %}
+    {% set size = width|default(24) %}
     {% set code_lower = code|lower %}
-    {% set base = '/modules/custom/soccerbet/images/flags' %}
-    {% set svg_src = base ~ '/svg/' ~ code_lower ~ '.svg' %}
-    {% set png2x   = base ~ '/PNG/2x/' ~ code_upper ~ '@2x.png' %}
-    {% set png1x   = base ~ '/PNG/1x/' ~ code_upper ~ '.png' %}
+    {% set src = '/modules/custom/soccerbet/images/flags/svg/' ~ code_lower ~ '.svg' %}
     <img
-      src="{{ svg_src }}"
-      onerror="this.onerror=null;this.src='{{ png2x }}';this.onerror=function(){this.src='{{ png1x }}'}"
-      alt="{{ alt|default(code_upper)|escape }}"
-      width="{{ w }}"
-      height="{{ h }}"
+      src="{{ src }}"
+      alt="{{ alt|default(code|upper)|escape }}"
+      width="{{ size }}"
+      height="{{ size }}"
       class="soccerbet-flag"
       loading="lazy"
     >
