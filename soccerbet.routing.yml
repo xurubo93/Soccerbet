@@ -6,7 +6,7 @@ soccerbet.standings:
   path: '/soccerbet/standings/{tournament_id}'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\StandingsController::standings'
-    _title: 'Rangliste'
+    _title: 'Standings'
     tournament_id: 0
   requirements:
     _permission: 'access soccerbet content'
@@ -16,7 +16,7 @@ soccerbet.standings_step:
   path: '/soccerbet/standings/{tournament_id}/step/{limit}'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\StandingsController::standingsStep'
-    _title: 'Rangliste nach Spielrunde'
+    _title: 'Standings by round'
   requirements:
     _permission: 'access soccerbet content'
     tournament_id: '\d+'
@@ -26,7 +26,7 @@ soccerbet.standings_tipper:
   path: '/soccerbet/standings/{tournament_id}/tipper/{tipper_id}'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\StandingsController::tipperDetail'
-    _title: 'Tipper-Detail'
+    _title: 'Bettor detail'
   requirements:
     _permission: 'access soccerbet content'
     tournament_id: '\d+'
@@ -36,7 +36,7 @@ soccerbet.tables:
   path: '/soccerbet/tables/{tournament_id}'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\TablesController::tables'
-    _title: 'Gruppentabellen'
+    _title: 'Group tables'
     tournament_id: 0
   requirements:
     _permission: 'access soccerbet content'
@@ -46,7 +46,7 @@ soccerbet.place_bets:
   path: '/soccerbet/tipps'
   defaults:
     _form: '\Drupal\soccerbet\Form\PlaceBetsForm'
-    _title: 'Tipps abgeben'
+    _title: 'Place bets'
   requirements:
     _permission: 'place soccerbet bets'
 
@@ -58,7 +58,7 @@ soccerbet.admin:
   path: '/soccerbet/admin'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\AdminController::overview'
-    _title: 'Tippspiel-Administration'
+    _title: 'Betting game administration'
   requirements:
     _permission: 'administer soccerbet'
 
@@ -70,7 +70,7 @@ soccerbet.admin.tournament.list:
   path: '/soccerbet/admin/tournament'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\TournamentController::list'
-    _title: 'Turniere'
+    _title: 'Tournaments'
   requirements:
     _permission: 'administer soccerbet'
 
@@ -78,7 +78,7 @@ soccerbet.admin.tournament.create:
   path: '/soccerbet/admin/tournament/create'
   defaults:
     _form: '\Drupal\soccerbet\Form\TournamentForm'
-    _title: 'Turnier erstellen'
+    _title: 'Create tournament'
   requirements:
     _permission: 'administer soccerbet'
 
@@ -86,7 +86,7 @@ soccerbet.admin.tournament.edit:
   path: '/soccerbet/admin/tournament/{tournament_id}/edit'
   defaults:
     _form: '\Drupal\soccerbet\Form\TournamentForm'
-    _title: 'Turnier bearbeiten'
+    _title: 'Edit tournament'
   requirements:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'
@@ -95,7 +95,7 @@ soccerbet.admin.tournament.delete:
   path: '/soccerbet/admin/tournament/{tournament_id}/delete'
   defaults:
     _form: '\Drupal\soccerbet\Form\TournamentDeleteForm'
-    _title: 'Turnier löschen'
+    _title: 'Delete tournament'
   requirements:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'
@@ -104,7 +104,7 @@ soccerbet.admin.tournament.members:
   path: '/soccerbet/admin/tournament/{tournament_id}/members'
   defaults:
     _form: '\Drupal\soccerbet\Form\TournamentMembersForm'
-    _title: 'Turnier-Teilnehmer verwalten'
+    _title: 'Manage tournament participants'
   requirements:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'
@@ -127,7 +127,7 @@ soccerbet.admin.teams.create:
   path: '/soccerbet/admin/teams/{tournament_id}/create'
   defaults:
     _form: '\Drupal\soccerbet\Form\TeamForm'
-    _title: 'Team erstellen'
+    _title: 'Create team'
   requirements:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'
@@ -136,7 +136,7 @@ soccerbet.admin.teams.edit:
   path: '/soccerbet/admin/teams/{team_id}/edit'
   defaults:
     _form: '\Drupal\soccerbet\Form\TeamForm'
-    _title: 'Team bearbeiten'
+    _title: 'Edit team'
   requirements:
     _permission: 'administer soccerbet'
     team_id: '\d+'
@@ -145,7 +145,7 @@ soccerbet.admin.teams.delete:
   path: '/soccerbet/admin/teams/{team_id}/delete'
   defaults:
     _form: '\Drupal\soccerbet\Form\TeamDeleteForm'
-    _title: 'Team löschen'
+    _title: 'Delete team'
   requirements:
     _permission: 'administer soccerbet'
     team_id: '\d+'
@@ -158,7 +158,7 @@ soccerbet.admin.games.list:
   path: '/soccerbet/admin/games/{tournament_id}'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\GameController::list'
-    _title: 'Spiele'
+    _title: 'Matches'
     tournament_id: 0
   requirements:
     _permission: 'administer soccerbet'
@@ -168,7 +168,7 @@ soccerbet.admin.games.create:
   path: '/soccerbet/admin/games/{tournament_id}/create'
   defaults:
     _form: '\Drupal\soccerbet\Form\GameForm'
-    _title: 'Spiel erstellen'
+    _title: 'Create match'
   requirements:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'
@@ -177,7 +177,7 @@ soccerbet.admin.games.edit:
   path: '/soccerbet/admin/games/{game_id}/edit'
   defaults:
     _form: '\Drupal\soccerbet\Form\GameForm'
-    _title: 'Spiel bearbeiten'
+    _title: 'Edit match'
   requirements:
     _permission: 'administer soccerbet'
     game_id: '\d+'
@@ -186,7 +186,7 @@ soccerbet.admin.games.score:
   path: '/soccerbet/admin/games/{game_id}/score'
   defaults:
     _form: '\Drupal\soccerbet\Form\GameScoreForm'
-    _title: 'Ergebnis eintragen'
+    _title: 'Enter result'
   requirements:
     _permission: 'edit soccerbet scores'
     game_id: '\d+'
@@ -195,7 +195,7 @@ soccerbet.admin.games.delete:
   path: '/soccerbet/admin/games/{game_id}/delete'
   defaults:
     _form: '\Drupal\soccerbet\Form\GameDeleteForm'
-    _title: 'Spiel löschen'
+    _title: 'Delete match'
   requirements:
     _permission: 'administer soccerbet'
     game_id: '\d+'
@@ -208,7 +208,7 @@ soccerbet.admin.tippergroups.list:
   path: '/soccerbet/admin/tippergroups'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\TipperGroupController::list'
-    _title: 'Tippergruppen'
+    _title: 'Betting groups'
   requirements:
     _permission: 'administer soccerbet'
 
@@ -216,7 +216,7 @@ soccerbet.admin.tippergroups.create:
   path: '/soccerbet/admin/tippergroups/create'
   defaults:
     _form: '\Drupal\soccerbet\Form\TipperGroupForm'
-    _title: 'Tippergruppe erstellen'
+    _title: 'Create betting group'
   requirements:
     _permission: 'administer soccerbet'
 
@@ -224,7 +224,7 @@ soccerbet.admin.tippergroups.edit:
   path: '/soccerbet/admin/tippergroups/{tipper_grp_id}/edit'
   defaults:
     _form: '\Drupal\soccerbet\Form\TipperGroupForm'
-    _title: 'Tippergruppe bearbeiten'
+    _title: 'Edit betting group'
   requirements:
     _permission: 'administer soccerbet'
     tipper_grp_id: '\d+'
@@ -233,7 +233,7 @@ soccerbet.admin.tippergroups.delete:
   path: '/soccerbet/admin/tippergroups/{tipper_grp_id}/delete'
   defaults:
     _form: '\Drupal\soccerbet\Form\TipperGroupDeleteForm'
-    _title: 'Tippergruppe löschen'
+    _title: 'Delete betting group'
   requirements:
     _permission: 'administer soccerbet'
     tipper_grp_id: '\d+'
@@ -246,7 +246,7 @@ soccerbet.admin.payments:
   path: '/soccerbet/admin/payments/{tournament_id}'
   defaults:
     _form: '\Drupal\soccerbet\Form\PaymentForm'
-    _title: 'Zahlungen verwalten'
+    _title: 'Manage payments'
     tournament_id: 0
   requirements:
     _permission: 'manage soccerbet payments'
@@ -260,7 +260,7 @@ soccerbet.admin.tipps.overview:
   path: '/soccerbet/admin/tipps/{tournament_id}'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\TippsController::adminOverview'
-    _title: 'Tipps-Übersicht'
+    _title: 'Bets overview'
     tournament_id: 0
   requirements:
     _permission: 'administer soccerbet'
@@ -270,7 +270,7 @@ soccerbet.admin.tipps.edit:
   path: '/admin/soccerbet/tournament/{tournament_id}/tipper/{tipper_id}/tipps'
   defaults:
     _form: '\Drupal\soccerbet\Form\PlaceBetsForm'
-    _title: 'Tipps bearbeiten'
+    _title: 'Edit bets'
   requirements:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'
@@ -284,7 +284,7 @@ soccerbet.settings:
   path: '/admin/config/soccerbet'
   defaults:
     _form: '\Drupal\soccerbet\Form\SettingsForm'
-    _title: 'Tippspiel-Einstellungen'
+    _title: 'Betting game settings'
   requirements:
     _permission: 'administer soccerbet'
 
@@ -293,7 +293,7 @@ soccerbet.admin.score_update:
   path: '/soccerbet/admin/score-update'
   defaults:
     _form: '\Drupal\soccerbet\Form\ScoreUpdateForm'
-    _title: 'Score-Update & OpenLigaDB'
+    _title: 'Score update & OpenLigaDB'
   requirements:
     _permission: 'administer soccerbet'
 
@@ -301,7 +301,7 @@ soccerbet.shoutbox.delete:
   path: '/soccerbet/shoutbox/delete/{shout_id}'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\ShoutboxController::delete'
-    _title: 'Nachricht löschen'
+    _title: 'Delete message'
   requirements:
     _permission: 'administer soccerbet'
     shout_id: '\d+'
@@ -310,7 +310,7 @@ soccerbet.admin.tournament.import:
   path: '/admin/soccerbet/tournament/{tournament_id}/import'
   defaults:
     _form: '\Drupal\soccerbet\Form\OpenLigaDbImportForm'
-    _title: 'OpenLigaDB Import'
+    _title: 'OpenLigaDB import'
   requirements:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'
@@ -319,7 +319,7 @@ soccerbet.live:
   path: '/soccerbet/live/{tournament_id}'
   defaults:
     _controller: '\Drupal\soccerbet\Controller\LiveController::live'
-    _title: 'Live-Rangliste'
+    _title: 'Live standings'
     tournament_id: 0
   requirements:
     _permission: 'access soccerbet content'

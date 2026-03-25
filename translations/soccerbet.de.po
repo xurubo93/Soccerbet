@@ -912,3 +912,71 @@ msgstr "Einstellungen"
 
 msgid "Score update (OpenLigaDB)"
 msgstr "Score-Update (OpenLigaDB)"
+
+# ── Route titles ──────────────────────────────────────────────────────────────
+
+msgid "Standings by round"
+msgstr "Rangliste nach Spielrunde"
+
+msgid "Bettor detail"
+msgstr "Tipper-Detail"
+
+msgid "Create tournament"
+msgstr "Turnier erstellen"
+
+msgid "Edit tournament"
+msgstr "Turnier bearbeiten"
+
+msgid "Delete tournament"
+msgstr "Turnier löschen"
+
+msgid "Manage tournament participants"
+msgstr "Turnier-Teilnehmer verwalten"
+
+msgid "Create team"
+msgstr "Team erstellen"
+
+msgid "Edit team"
+msgstr "Team bearbeiten"
+
+msgid "Delete team"
+msgstr "Team löschen"
+
+msgid "Create match"
+msgstr "Spiel erstellen"
+
+msgid "Edit match"
+msgstr "Spiel bearbeiten"
+
+msgid "Enter result"
+msgstr "Ergebnis eintragen"
+
+msgid "Delete match"
+msgstr "Spiel löschen"
+
+msgid "Create betting group"
+msgstr "Tippergruppe erstellen"
+
+msgid "Edit betting group"
+msgstr "Tippergruppe bearbeiten"
+
+msgid "Delete betting group"
+msgstr "Tippergruppe löschen"
+
+msgid "Manage payments"
+msgstr "Zahlungen verwalten"
+
+msgid "Betting game settings"
+msgstr "Tippspiel-Einstellungen"
+
+msgid "Score update & OpenLigaDB"
+msgstr "Score-Update & OpenLigaDB"
+
+msgid "Delete message"
+msgstr "Nachricht löschen"
+
+msgid "OpenLigaDB import"
+msgstr "OpenLigaDB Import"
+
+msgid "Live standings"
+msgstr "Live-Rangliste"
