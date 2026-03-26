@@ -990,8 +990,8 @@ msgstr "Turnierdaten zurücksetzen"
 msgid "Reset all data for tournament \"@name\"?"
 msgstr "Alle Daten des Turniers \"@name\" zurücksetzen?"
 
-msgid "This will permanently delete all teams, matches, bets, participant assignments and group assignments for this tournament. Only the tournament itself will be kept."
-msgstr "Dabei werden alle Teams, Spiele, Tipps, Teilnehmer-Zuordnungen und Gruppen-Zuordnungen dieses Turniers unwiderruflich gelöscht. Nur das Turnier selbst bleibt erhalten."
+msgid "This will permanently delete all teams, matches, bets, winner bets, participant assignments and group assignments for this tournament. Only the tournament itself will be kept."
+msgstr "Dabei werden alle Teams, Spiele, Tipps, Turniersieger-Tipps, Teilnehmer-Zuordnungen und Gruppen-Zuordnungen dieses Turniers unwiderruflich gelöscht. Nur das Turnier selbst bleibt erhalten."
 
 msgid "Reset data"
 msgstr "Daten zurücksetzen"

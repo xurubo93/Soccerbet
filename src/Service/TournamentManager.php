@@ -276,6 +276,8 @@ final class TournamentManager {
       ->condition('tournament_id', $tournament_id)->execute();
     $this->db->delete('soccerbet_tournament_groups')
       ->condition('tournament_id', $tournament_id)->execute();
+    $this->db->delete('soccerbet_winner_tipp')
+      ->condition('tournament_id', $tournament_id)->execute();
 
     \Drupal::service('cache_tags.invalidator')
       ->invalidateTags(['soccerbet_standings:' . $tournament_id]);
