@@ -87,30 +87,46 @@ final class TeamForm extends FormBase {
       '#default_value' => $team?->team_group ?? '',
     ];
 
+    // Build datalist from available SVG files.
+    $flag_base_path = '/modules/custom/soccerbet/images/flags/svg/';
+    $svg_dir = \Drupal::root() . '/modules/custom/soccerbet/images/flags/svg/';
+    $codes = [];
+    if (is_dir($svg_dir)) {
+      foreach (glob($svg_dir . '*.svg') as $file) {
+        $codes[] = strtoupper(basename($file, '.svg'));
+      }
+      sort($codes);
+    }
+    $datalist_options = '';
+    foreach ($codes as $code) {
+      $datalist_options .= '<option value="' . $code . '">';
+    }
+
+    $current_flag = $team?->team_flag ?? '';
+    $preview_style = $current_flag ? '' : ' style="display:none"';
+
     $form['team_flag'] = [
       '#type'          => 'textfield',
       '#title'         => $this->t('Flag (ISO 3166-1 Alpha-3 code)'),
       '#description'   => $this->t(
-        'Three-letter ISO country code (uppercase), e.g. <code>AUT</code> (Austria), <code>DEU</code> (Germany), <code>ENG</code> (England).'
+        'Three-letter ISO country code (uppercase), e.g. <code>AUT</code> (Austria), <code>DEU</code> (Germany), <code>ENG</code> (England). Start typing to search.'
       ),
       '#maxlength'     => 10,
       '#size'          => 12,
-      '#default_value' => $team?->team_flag ?? '',
-      '#attributes'    => ['placeholder' => 'AUT'],
+      '#default_value' => $current_flag,
+      '#attributes'    => [
+        'placeholder' => 'AUT',
+        'list'        => 'soccerbet-flag-codes',
+      ],
+      '#suffix'        => '<datalist id="soccerbet-flag-codes">' . $datalist_options . '</datalist>'
+        . '<div id="soccerbet-flag-live-preview" class="soccerbet-flag-preview"' . $preview_style . '>'
+        . '<img src="' . $flag_base_path . $current_flag . '.svg" alt="' . htmlspecialchars($current_flag) . '" width="40" height="40" class="soccerbet-flag">'
+        . '</div>',
+      '#attached'      => [
+        'library'       => ['soccerbet/team-flag-picker'],
+        'drupalSettings' => ['soccerbet' => ['flagBasePath' => $flag_base_path]],
+      ],
     ];
-
-    // Flag-Vorschau (nur im Edit-Modus wenn bereits ein Code gesetzt ist)
-    $current_flag = $team?->team_flag ?? '';
-    if ($current_flag) {
-      $svg_path = '/modules/custom/soccerbet/images/flags/svg/' . $current_flag . '.svg';
-      $form['flag_preview'] = [
-        '#markup' => '<div class="soccerbet-flag-preview">'
-          . '<span class="soccerbet-flag-preview__label">' . $this->t('Preview:') . '</span> '
-          . '<img src="' . $svg_path . '" alt="' . htmlspecialchars($current_flag) . '" '
-          . 'width="40" height="40" class="soccerbet-flag">'
-          . '</div>',
-      ];
-    }
 
     // Im Edit-Modus: Statistiken bearbeitbar
     if ($team_id > 0) {

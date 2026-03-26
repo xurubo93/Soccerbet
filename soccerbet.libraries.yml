@@ -23,6 +23,15 @@ admin:
     - core/once
     - core/drupal.ajax
 
+team-flag-picker:
+  version: 2.0.0
+  js:
+    js/soccerbet-team-flag.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupalSettings
+
 live:
   version: VERSION
   js:
