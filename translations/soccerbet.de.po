@@ -321,8 +321,8 @@ msgstr "Pkt"
 msgid "Flag (ISO 3166-1 Alpha-3 code)"
 msgstr "Flagge (ISO 3166-1 Alpha-3 Code)"
 
-msgid "Three-letter ISO country code (uppercase), e.g. <code>AUT</code> (Austria), <code>DEU</code> (Germany), <code>ENG</code> (England)."
-msgstr "Dreistelliger ISO-Ländercode (Großbuchstaben), z.B. <code>AUT</code> (Österreich), <code>DEU</code> (Deutschland), <code>ENG</code> (England)."
+msgid "Three-letter ISO country code (uppercase), e.g. <code>AUT</code> (Austria), <code>DEU</code> (Germany), <code>ENG</code> (England). Start typing to search."
+msgstr "Dreistelliger ISO-Ländercode (Großbuchstaben), z.B. <code>AUT</code> (Österreich), <code>DEU</code> (Deutschland), <code>ENG</code> (England). Zum Suchen tippen."
 
 msgid "Preview:"
 msgstr "Vorschau:"
@@ -998,6 +998,3 @@ msgstr "Daten zurücksetzen"
 
 msgid "Tournament data has been reset."
 msgstr "Turnierdaten wurden zurückgesetzt."
-
-msgid "Reset data"
-msgstr "Daten zurücksetzen"
