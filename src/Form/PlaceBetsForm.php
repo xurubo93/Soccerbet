@@ -544,6 +544,7 @@ final class PlaceBetsForm extends FormBase {
    */
   private function flagEmoji(string $code): string {
     $map = [
+      // Europa
       'AUT' => 'AT', 'DEU' => 'DE', 'CHE' => 'CH', 'FRA' => 'FR',
       'ESP' => 'ES', 'ITA' => 'IT', 'PRT' => 'PT', 'NLD' => 'NL',
       'BEL' => 'BE', 'DNK' => 'DK', 'SWE' => 'SE', 'NOR' => 'NO',
@@ -551,16 +552,38 @@ final class PlaceBetsForm extends FormBase {
       'HUN' => 'HU', 'ROU' => 'RO', 'BGR' => 'BG', 'HRV' => 'HR',
       'SRB' => 'RS', 'SVN' => 'SI', 'BIH' => 'BA', 'MKD' => 'MK',
       'ALB' => 'AL', 'MNE' => 'ME', 'GRC' => 'GR', 'TUR' => 'TR',
-      'RUS' => 'RU', 'UKR' => 'UA', 'ISL' => 'IS', 'IRL' => 'IE',
-      'GBR' => 'GB', 'CYP' => 'CY', 'MLT' => 'MT', 'LUX' => 'LU',
+      'RUS' => 'RU', 'UKR' => 'UA', 'BLR' => 'BY', 'MDA' => 'MD',
+      'GEO' => 'GE', 'ARM' => 'AM', 'AZE' => 'AZ', 'KAZ' => 'KZ',
+      'ISL' => 'IS', 'IRL' => 'IE', 'GBR' => 'GB', 'CYP' => 'CY',
+      'MLT' => 'MT', 'LUX' => 'LU', 'ISR' => 'IL', 'FRO' => 'FO',
+      'AND' => 'AD', 'LIE' => 'LI', 'GIB' => 'GI', 'SMR' => 'SM',
+      // Amerika
       'BRA' => 'BR', 'ARG' => 'AR', 'URY' => 'UY', 'COL' => 'CO',
-      'CHL' => 'CL', 'PRY' => 'PY', 'ECU' => 'EC', 'MEX' => 'MX',
-      'USA' => 'US', 'CAN' => 'CA', 'JPN' => 'JP', 'KOR' => 'KR',
-      'AUS' => 'AU', 'MAR' => 'MA', 'SEN' => 'SN', 'NGA' => 'NG',
-      'GHA' => 'GH', 'CMR' => 'CM', 'EGY' => 'EG', 'SAU' => 'SA',
-      'QAT' => 'QA', 'IRN' => 'IR', 'JOR' => 'JO', 'CIV' => 'CI',
-      'TUN' => 'TN', 'DZA' => 'DZ', 'ZAF' => 'ZA', 'NZL' => 'NZ',
-      'PAN' => 'PA', 'CUW' => 'CW', 'ISL' => 'IS',
+      'CHL' => 'CL', 'PRY' => 'PY', 'ECU' => 'EC', 'VEN' => 'VE',
+      'PER' => 'PE', 'BOL' => 'BO', 'MEX' => 'MX', 'USA' => 'US',
+      'CAN' => 'CA', 'CRI' => 'CR', 'HND' => 'HN', 'PAN' => 'PA',
+      'SLV' => 'SV', 'GTM' => 'GT', 'JAM' => 'JM', 'HTI' => 'HT',
+      'CUB' => 'CU', 'TTO' => 'TT', 'CUW' => 'CW', 'KNA' => 'KN',
+      'VCT' => 'VC', 'LCA' => 'LC',
+      // Asien
+      'JPN' => 'JP', 'KOR' => 'KR', 'CHN' => 'CN', 'AUS' => 'AU',
+      'NZL' => 'NZ', 'IRN' => 'IR', 'SAU' => 'SA', 'QAT' => 'QA',
+      'ARE' => 'AE', 'IRQ' => 'IQ', 'SYR' => 'SY', 'JOR' => 'JO',
+      'OMN' => 'OM', 'BHR' => 'BH', 'KWT' => 'KW', 'UZB' => 'UZ',
+      'PHL' => 'PH', 'IDN' => 'ID', 'IND' => 'IN', 'MYS' => 'MY',
+      'VNM' => 'VN', 'THA' => 'TH', 'TWN' => 'TW', 'FJI' => 'FJ',
+      'PNG' => 'PG', 'PYF' => 'PF', 'NCL' => 'NC',
+      // Afrika
+      'NGA' => 'NG', 'GHA' => 'GH', 'CMR' => 'CM', 'SEN' => 'SN',
+      'MAR' => 'MA', 'EGY' => 'EG', 'TUN' => 'TN', 'DZA' => 'DZ',
+      'MLI' => 'ML', 'BFA' => 'BF', 'ZAF' => 'ZA', 'CIV' => 'CI',
+      'ZMB' => 'ZM', 'ZWE' => 'ZW', 'TZA' => 'TZ', 'GMB' => 'GM',
+      'GIN' => 'GN', 'GNB' => 'GW', 'GNQ' => 'GQ', 'COG' => 'CG',
+      'COD' => 'CD', 'LSO' => 'LS', 'MDG' => 'MG', 'MOZ' => 'MZ',
+      'AGO' => 'AO', 'RWA' => 'RW', 'UGA' => 'UG', 'KEN' => 'KE',
+      'ETH' => 'ET', 'LBR' => 'LR', 'SLE' => 'SL', 'BEN' => 'BJ',
+      'NER' => 'NE', 'CPV' => 'CV', 'COM' => 'KM', 'MRT' => 'MR',
+      'SDN' => 'SD', 'SSD' => 'SS', 'LBY' => 'LY',
     ];
     $alpha2 = $map[strtoupper(trim($code))] ?? '';
     if (strlen($alpha2) !== 2) {
