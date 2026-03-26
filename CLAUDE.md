@@ -7,26 +7,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 **Soccer Bet** is a Drupal 11 custom module implementing a football betting game (Tippspiel) in German. It manages tournaments, teams, games, predictions (Tipps), and live leaderboards with API-driven score updates. It was migrated from a Drupal 6 original.
 
 - PHP 8.2+ with `declare(strict_types=1)` in every class
-- All UI strings are in German
+- All UI strings in code are **English**; German translations live in `translations/soccerbet.de.po`
 - Drupal root: `/Users/peterwindholz/Sites/Soccerbet`
-- Drush: `vendor/bin/drush` (run from Drupal root)
+- Local dev runs via **Lando** — use `lando drush` instead of `vendor/bin/drush`
 
 ## Common Commands
 
-All commands run from the Drupal root (`/Users/peterwindholz/Sites/Soccerbet`):
+All commands run from the Drupal root (`/Users/peterwindholz/Sites/Soccerbet`) via Lando:
 
 ```bash
 # Clear Drupal caches (most common after code changes)
-vendor/bin/drush cr
+lando drush cr
 
 # Enable the module
-vendor/bin/drush en soccerbet -y
+lando drush en soccerbet -y
 
 # Run database updates (after schema changes in soccerbet.install)
-vendor/bin/drush updb -y
+lando drush updb -y
 
 # Check current configuration
-vendor/bin/drush cget soccerbet.settings
+lando drush cget soccerbet.settings
+
+# Import German translations (PO file is the leading source — never edit via Drupal UI)
+lando drush locale:import de /app/web/modules/custom/soccerbet/translations/soccerbet.de.po --type=customized --override=all
 
 # Import/export config
 vendor/bin/drush cim -y
