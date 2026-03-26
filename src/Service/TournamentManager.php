@@ -252,6 +252,33 @@ final class TournamentManager {
   /**
    * Löscht ein Turnier und alle zugehörigen Daten (Cascade).
    */
+  /**
+   * Löscht alle Turnierdaten (Teams, Spiele, Tipps, Teilnehmer),
+   * behält aber das Turnier und seine Gruppen-Zuordnungen.
+   */
+  public function resetData(int $tournament_id): void {
+    $game_ids = $this->db->select('soccerbet_games', 'g')
+      ->fields('g', ['game_id'])
+      ->condition('g.tournament_id', $tournament_id)
+      ->execute()->fetchCol();
+
+    if (!empty($game_ids)) {
+      $this->db->delete('soccerbet_tipps')
+        ->condition('game_id', $game_ids, 'IN')
+        ->execute();
+    }
+
+    $this->db->delete('soccerbet_games')
+      ->condition('tournament_id', $tournament_id)->execute();
+    $this->db->delete('soccerbet_teams')
+      ->condition('tournament_id', $tournament_id)->execute();
+    $this->db->delete('soccerbet_tournament_tippers')
+      ->condition('tournament_id', $tournament_id)->execute();
+
+    \Drupal::service('cache_tags.invalidator')
+      ->invalidateTags(['soccerbet_standings:' . $tournament_id]);
+  }
+
   public function delete(int $tournament_id): void {
     // Tipps der zugehörigen Spiele löschen
     $game_ids = $this->db->select('soccerbet_games', 'g')

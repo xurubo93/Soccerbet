@@ -587,13 +587,13 @@ msgid "Next round"
 msgstr "Nächste Runde"
 
 msgid "Browse rounds"
-msgstr "Runden durchsuchen"
+msgstr "Runden durchblättern"
 
 msgid "Correct results"
-msgstr "Richtige Ergebnisse"
+msgstr "Ergebnisse"
 
 msgid "Correct tendencies"
-msgstr "Richtige Tendenzen"
+msgstr "Tendenzen"
 
 msgid " × Tournament winner"
 msgstr " × Turniersieger"
@@ -980,3 +980,21 @@ msgstr "OpenLigaDB Import"
 
 msgid "Live standings"
 msgstr "Live-Rangliste"
+
+msgid "Reset tournament data"
+msgstr "Turnierdaten zurücksetzen"
+
+msgid "Reset all data for tournament \"@name\"?"
+msgstr "Alle Daten des Turniers \"@name\" zurücksetzen?"
+
+msgid "This will permanently delete all teams, matches, bets and participant assignments for this tournament. The tournament itself and its group assignments will be kept."
+msgstr "Dabei werden alle Teams, Spiele, Tipps und Teilnehmer-Zuordnungen dieses Turniers unwiderruflich gelöscht. Das Turnier selbst und seine Gruppen-Zuordnungen bleiben erhalten."
+
+msgid "Reset data"
+msgstr "Daten zurücksetzen"
+
+msgid "Tournament data has been reset."
+msgstr "Turnierdaten wurden zurückgesetzt."
+
+msgid "Reset data"
+msgstr "Daten zurücksetzen"

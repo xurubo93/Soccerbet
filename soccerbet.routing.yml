@@ -100,6 +100,15 @@ soccerbet.admin.tournament.delete:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'
 
+soccerbet.admin.tournament.reset:
+  path: '/soccerbet/admin/tournament/{tournament_id}/reset'
+  defaults:
+    _form: '\Drupal\soccerbet\Form\TournamentResetForm'
+    _title: 'Reset tournament data'
+  requirements:
+    _permission: 'administer soccerbet'
+    tournament_id: '\d+'
+
 soccerbet.admin.tournament.members:
   path: '/soccerbet/admin/tournament/{tournament_id}/members'
   defaults:

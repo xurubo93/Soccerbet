@@ -54,6 +54,7 @@ final class TournamentController extends ControllerBase {
               'import'  => ['title' => $this->t('⬇ API import'), 'url' => Url::fromRoute('soccerbet.admin.tournament.import', ['tournament_id' => $t->tournament_id])],
               'members' => ['title' => $this->t('Participants'), 'url' => Url::fromRoute('soccerbet.admin.tournament.members', ['tournament_id' => $t->tournament_id])],
               'games'   => ['title' => $this->t('Matches'),      'url' => Url::fromRoute('soccerbet.admin.games.list',         ['tournament_id' => $t->tournament_id])],
+              'reset'   => ['title' => $this->t('Reset data'),    'url' => Url::fromRoute('soccerbet.admin.tournament.reset',   ['tournament_id' => $t->tournament_id])],
               'delete'  => ['title' => $this->t('Delete'),       'url' => Url::fromRoute('soccerbet.admin.tournament.delete',  ['tournament_id' => $t->tournament_id])],
             ],
           ],
