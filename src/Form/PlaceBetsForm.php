@@ -530,30 +530,43 @@ final class PlaceBetsForm extends FormBase {
     if ($code === '') {
       return '';
     }
-    $upper = strtoupper($code);
-    $lower = strtolower($code);
-    $base  = '/modules/custom/soccerbet/images/flags';
-    $svg   = $base . '/svg/' . $lower . '.svg';
-    $png2x = $base . '/PNG/2x/' . $upper . '@2x.png';
-    $png1x = $base . '/PNG/1x/' . $upper . '.png';
-    $alt_e = htmlspecialchars($alt ?: $upper, ENT_QUOTES);
+    $svg   = '/modules/custom/soccerbet/images/flags/svg/' . $code . '.svg';
+    $alt_e = htmlspecialchars($alt ?: $code, ENT_QUOTES);
     return '<img src="' . $svg . '"'
-      . ' onerror="this.onerror=null;this.src=\'' . $png2x . '\';this.onerror=function(){this.src=\'' . $png1x . '\'}"'
       . ' alt="' . $alt_e . '"'
-      . ' width="28" height="19"'
+      . ' width="28" height="28"'
       . ' class="soccerbet-flag"'
       . ' loading="lazy">';
   }
 
   /**
-   * Konvertiert einen ISO-3166-1-Alpha-2-Code in ein Emoji-Flag (z. B. "de" → 🇩🇪).
+   * Konvertiert einen Alpha-3-Code in ein Emoji-Flag über Alpha-2-Mapping.
    */
   private function flagEmoji(string $code): string {
-    $code = strtoupper(trim($code));
-    if (strlen($code) !== 2) {
+    $map = [
+      'AUT' => 'AT', 'DEU' => 'DE', 'CHE' => 'CH', 'FRA' => 'FR',
+      'ESP' => 'ES', 'ITA' => 'IT', 'PRT' => 'PT', 'NLD' => 'NL',
+      'BEL' => 'BE', 'DNK' => 'DK', 'SWE' => 'SE', 'NOR' => 'NO',
+      'FIN' => 'FI', 'POL' => 'PL', 'CZE' => 'CZ', 'SVK' => 'SK',
+      'HUN' => 'HU', 'ROU' => 'RO', 'BGR' => 'BG', 'HRV' => 'HR',
+      'SRB' => 'RS', 'SVN' => 'SI', 'BIH' => 'BA', 'MKD' => 'MK',
+      'ALB' => 'AL', 'MNE' => 'ME', 'GRC' => 'GR', 'TUR' => 'TR',
+      'RUS' => 'RU', 'UKR' => 'UA', 'ISL' => 'IS', 'IRL' => 'IE',
+      'GBR' => 'GB', 'CYP' => 'CY', 'MLT' => 'MT', 'LUX' => 'LU',
+      'BRA' => 'BR', 'ARG' => 'AR', 'URY' => 'UY', 'COL' => 'CO',
+      'CHL' => 'CL', 'PRY' => 'PY', 'ECU' => 'EC', 'MEX' => 'MX',
+      'USA' => 'US', 'CAN' => 'CA', 'JPN' => 'JP', 'KOR' => 'KR',
+      'AUS' => 'AU', 'MAR' => 'MA', 'SEN' => 'SN', 'NGA' => 'NG',
+      'GHA' => 'GH', 'CMR' => 'CM', 'EGY' => 'EG', 'SAU' => 'SA',
+      'QAT' => 'QA', 'IRN' => 'IR', 'JOR' => 'JO', 'CIV' => 'CI',
+      'TUN' => 'TN', 'DZA' => 'DZ', 'ZAF' => 'ZA', 'NZL' => 'NZ',
+      'PAN' => 'PA', 'CUW' => 'CW', 'ISL' => 'IS',
+    ];
+    $alpha2 = $map[strtoupper(trim($code))] ?? '';
+    if (strlen($alpha2) !== 2) {
       return '';
     }
-    return mb_chr(0x1F1E6 + ord($code[0]) - ord('A'))
-         . mb_chr(0x1F1E6 + ord($code[1]) - ord('A'));
+    return mb_chr(0x1F1E6 + ord($alpha2[0]) - ord('A'))
+         . mb_chr(0x1F1E6 + ord($alpha2[1]) - ord('A'));
   }
 }

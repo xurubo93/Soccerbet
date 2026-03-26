@@ -91,10 +91,10 @@ final class FootballDataClient implements ApiClientInterface {
         catch (\Exception) {}
       }
 
-      // Flag-Code: football-data.org liefert area.code als FIFA 3-Buchstaben-Code
-      // Wir nutzen team.area.code und konvertieren zu ISO 3166-1 Alpha-2
-      $team1_flag = $this->fifaToIso($m['homeTeam']['area']['code'] ?? '');
-      $team2_flag = $this->fifaToIso($m['awayTeam']['area']['code'] ?? '');
+      // Flag code: football-data.org provides area.code as FIFA 3-letter code.
+      // Map to ISO 3166-1 Alpha-3 (stored directly, matches SVG filename).
+      $team1_flag = $this->fifaToAlpha3($m['homeTeam']['area']['code'] ?? '');
+      $team2_flag = $this->fifaToAlpha3($m['awayTeam']['area']['code'] ?? '');
 
       // Matchday / Stage / Gruppe
       // football-data.org liefert:
@@ -186,32 +186,34 @@ final class FootballDataClient implements ApiClientInterface {
   }
 
   /**
-   * Konvertiert FIFA-3-Buchstaben-Code zu ISO 3166-1 Alpha-2.
-   * Nur häufige europäische Codes – unbekannte werden leer gelassen.
+   * Maps football-data.org FIFA codes to ISO 3166-1 Alpha-3.
+   * Most FIFA codes already equal Alpha-3; only exceptions need mapping.
    */
-  private function fifaToIso(string $fifa): string {
+  private function fifaToAlpha3(string $fifa): string {
     if (empty($fifa)) {
       return '';
     }
-    $map = [
-      'GER' => 'DE', 'AUT' => 'AT', 'SUI' => 'CH', 'FRA' => 'FR',
-      'ENG' => 'GB-ENG', 'SCO' => 'GB-SCO', 'WAL' => 'GB-WAL', 'NIR' => 'GB-NIR',
-      'IRL' => 'IE', 'ESP' => 'ES', 'POR' => 'PT', 'ITA' => 'IT',
-      'NED' => 'NL', 'BEL' => 'BE', 'DEN' => 'DK', 'SWE' => 'SE',
-      'NOR' => 'NO', 'FIN' => 'FI', 'POL' => 'PL', 'CZE' => 'CZ',
-      'SVK' => 'SK', 'HUN' => 'HU', 'ROU' => 'RO', 'BUL' => 'BG',
-      'CRO' => 'HR', 'SRB' => 'RS', 'SVN' => 'SI', 'BIH' => 'BA',
-      'MKD' => 'MK', 'ALB' => 'AL', 'MNE' => 'ME', 'GRE' => 'GR',
-      'TUR' => 'TR', 'RUS' => 'RU', 'UKR' => 'UA', 'ISR' => 'IL',
-      'CYP' => 'CY', 'MLT' => 'MT', 'LUX' => 'LU', 'ISL' => 'IS',
-      'BRA' => 'BR', 'ARG' => 'AR', 'URU' => 'UY', 'COL' => 'CO',
-      'CHL' => 'CL', 'PER' => 'PE', 'ECU' => 'EC', 'MEX' => 'MX',
-      'USA' => 'US', 'CAN' => 'CA', 'JPN' => 'JP', 'KOR' => 'KR',
-      'AUS' => 'AU', 'MAR' => 'MA', 'SEN' => 'SN', 'NGA' => 'NG',
-      'GHA' => 'GH', 'CMR' => 'CM', 'EGY' => 'EG', 'SAU' => 'SA',
-      'QAT' => 'QA', 'IRN' => 'IR',
+    $exceptions = [
+      'GER' => 'DEU',  // Germany
+      'SUI' => 'CHE',  // Switzerland
+      'POR' => 'PRT',  // Portugal
+      'NED' => 'NLD',  // Netherlands
+      'DEN' => 'DNK',  // Denmark
+      'CRO' => 'HRV',  // Croatia
+      'BUL' => 'BGR',  // Bulgaria
+      'GRE' => 'GRC',  // Greece
+      'URU' => 'URY',  // Uruguay
+      'CHI' => 'CHL',  // Chile
+      'PAR' => 'PRY',  // Paraguay
+      'MEX' => 'MEX',  // Mexico (same)
+      // UK sub-national (no ISO-3, use football codes)
+      'ENG' => 'ENG',
+      'SCO' => 'SCO',
+      'WAL' => 'WAL',
+      'NIR' => 'NIR',
     ];
-    return $map[strtoupper($fifa)] ?? '';
+    $upper = strtoupper($fifa);
+    return $exceptions[$upper] ?? $upper;
   }
 
   /**

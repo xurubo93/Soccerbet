@@ -172,11 +172,8 @@ final class ApiImportService implements ApiImportInterface {
         continue;
       }
 
-      // Flag: zuerst direkt aus API, dann TeamFlagResolver als Fallback
+      // Flag: use code from API directly (already alpha-3 uppercase).
       $flag = $api_team['flag'] ?? '';
-      if ($flag === '') {
-        $flag = $this->flagResolver->resolve($name);
-      }
 
       $team_id = (int) $this->db->insert('soccerbet_teams')
         ->fields([

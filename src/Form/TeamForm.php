@@ -89,25 +89,24 @@ final class TeamForm extends FormBase {
 
     $form['team_flag'] = [
       '#type'          => 'textfield',
-      '#title'         => $this->t('Flag (ISO 3166-1 Alpha-2 code)'),
+      '#title'         => $this->t('Flag (ISO 3166-1 Alpha-3 code)'),
       '#description'   => $this->t(
-        'Two-letter country code, e.g. <code>at</code> (Austria), <code>de</code> (Germany), <code>gb-eng</code> (England). Always stored as lowercase.'
+        'Three-letter ISO country code (uppercase), e.g. <code>AUT</code> (Austria), <code>DEU</code> (Germany), <code>ENG</code> (England).'
       ),
       '#maxlength'     => 10,
       '#size'          => 12,
       '#default_value' => $team?->team_flag ?? '',
-      '#attributes'    => ['placeholder' => 'at'],
+      '#attributes'    => ['placeholder' => 'AUT'],
     ];
 
     // Flag-Vorschau (nur im Edit-Modus wenn bereits ein Code gesetzt ist)
     $current_flag = $team?->team_flag ?? '';
     if ($current_flag) {
-      $flag_lower = strtolower($current_flag);
-      $svg_path   = '/modules/custom/soccerbet/images/flags/svg/' . $flag_lower . '.svg';
+      $svg_path = '/modules/custom/soccerbet/images/flags/svg/' . $current_flag . '.svg';
       $form['flag_preview'] = [
         '#markup' => '<div class="soccerbet-flag-preview">'
           . '<span class="soccerbet-flag-preview__label">' . $this->t('Preview:') . '</span> '
-          . '<img src="' . $svg_path . '" alt="' . htmlspecialchars($flag_lower) . '" '
+          . '<img src="' . $svg_path . '" alt="' . htmlspecialchars($current_flag) . '" '
           . 'width="40" height="40" class="soccerbet-flag">'
           . '</div>',
       ];
@@ -151,7 +150,7 @@ final class TeamForm extends FormBase {
     $values = [
       'team_name'  => $form_state->getValue('team_name'),
       'team_group' => strtoupper((string) $form_state->getValue('team_group')),
-      'team_flag'  => strtolower(trim((string) $form_state->getValue('team_flag'))),
+      'team_flag'  => strtoupper(trim((string) $form_state->getValue('team_flag'))),
     ];
 
     // Statistiken (nur im Edit-Modus vorhanden)

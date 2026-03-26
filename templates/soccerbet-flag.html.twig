@@ -5,22 +5,21 @@
  *
  * Verwendung in anderen Templates:
  *   {% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
- *   {{ flag_helper.flag('AT', 'Österreich') }}
- *   {{ flag_helper.flag('GB-ENG', 'England') }}
+ *   {{ flag_helper.flag('AUT', 'Österreich') }}
+ *   {{ flag_helper.flag('ENG', 'England') }}
  *
- * Alle Flags sind SVG-Kreise (512×512), Dateiname = lowercase ISO-Code.
- * Basis-Pfad: /modules/custom/soccerbet/images/flags/svg/{code_lower}.svg
+ * Alle Flags sind SVG-Kreise (512×512), Dateiname = alpha-3 uppercase.
+ * Basis-Pfad: /modules/custom/soccerbet/images/flags/svg/{code}.svg
  */
 #}
 
-{% macro flag(code, alt, width, height) %}
+{% macro flag(code, alt, width) %}
   {% if code %}
     {% set size = width|default(24) %}
-    {% set code_lower = code|lower %}
-    {% set src = '/modules/custom/soccerbet/images/flags/svg/' ~ code_lower ~ '.svg' %}
+    {% set src = '/modules/custom/soccerbet/images/flags/svg/' ~ code ~ '.svg' %}
     <img
       src="{{ src }}"
-      alt="{{ alt|default(code|upper)|escape }}"
+      alt="{{ alt|default(code)|escape }}"
       width="{{ size }}"
       height="{{ size }}"
       class="soccerbet-flag"

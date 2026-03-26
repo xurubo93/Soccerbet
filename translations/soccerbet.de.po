@@ -318,8 +318,11 @@ msgstr "Tordifferenz"
 msgid "Pts"
 msgstr "Pkt"
 
-msgid "Flag (ISO 3166-1 Alpha-2 code)"
-msgstr "Flagge (ISO 3166-1 Alpha-2 Code)"
+msgid "Flag (ISO 3166-1 Alpha-3 code)"
+msgstr "Flagge (ISO 3166-1 Alpha-3 Code)"
+
+msgid "Three-letter ISO country code (uppercase), e.g. <code>AUT</code> (Austria), <code>DEU</code> (Germany), <code>ENG</code> (England)."
+msgstr "Dreistelliger ISO-Ländercode (Großbuchstaben), z.B. <code>AUT</code> (Österreich), <code>DEU</code> (Deutschland), <code>ENG</code> (England)."
 
 msgid "Preview:"
 msgstr "Vorschau:"
