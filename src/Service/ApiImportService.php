@@ -149,9 +149,9 @@ final class ApiImportService implements ApiImportInterface {
       }
     }
 
-    // Bestehende Teams des Turniers laden (name → id)
+    // Bestehende Teams des Turniers laden (name → id + flag)
     $existing = $this->db->select('soccerbet_teams', 't')
-      ->fields('t', ['team_id', 'team_name'])
+      ->fields('t', ['team_id', 'team_name', 'team_flag'])
       ->condition('t.tournament_id', $tournament_id)
       ->execute()->fetchAllAssoc('team_name');
 
@@ -166,18 +166,26 @@ final class ApiImportService implements ApiImportInterface {
       // Teamnamen übersetzen (z.B. "Germany" → "Deutschland")
       $name = $this->nameTranslator->translate($name);
 
-      if (isset($existing[$name])) {
-        $team_map[$ext_id] = (int) $existing[$name]->team_id;
-        $stats['teams_skipped']++;
-        continue;
-      }
-
       // Flag: use code from API if it has a matching SVG (guards against club
       // abbreviations like "FCB" from OpenLigaDB shortcodes).
       // Fall back to name-based resolver when no valid SVG exists.
       $flag = $api_team['flag'] ?? '';
       if (!$this->flagResolver->codeIsValid($flag)) {
         $flag = $this->flagResolver->resolve($name);
+      }
+
+      if (isset($existing[$name])) {
+        $team_id = (int) $existing[$name]->team_id;
+        $team_map[$ext_id] = $team_id;
+        $stats['teams_skipped']++;
+        // Update flag if it was previously empty and we now have one.
+        if ($flag !== '' && ($existing[$name]->team_flag ?? '') === '') {
+          $this->db->update('soccerbet_teams')
+            ->fields(['team_flag' => $flag])
+            ->condition('team_id', $team_id)
+            ->execute();
+        }
+        continue;
       }
 
       $team_id = (int) $this->db->insert('soccerbet_teams')
