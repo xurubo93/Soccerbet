@@ -194,6 +194,7 @@ final class FootballDataClient implements ApiClientInterface {
       return '';
     }
     $exceptions = [
+      // Europe
       'GER' => 'DEU',  // Germany
       'SUI' => 'CHE',  // Switzerland
       'POR' => 'PRT',  // Portugal
@@ -202,10 +203,31 @@ final class FootballDataClient implements ApiClientInterface {
       'CRO' => 'HRV',  // Croatia
       'BUL' => 'BGR',  // Bulgaria
       'GRE' => 'GRC',  // Greece
+      // Americas
       'URU' => 'URY',  // Uruguay
       'CHI' => 'CHL',  // Chile
       'PAR' => 'PRY',  // Paraguay
-      'MEX' => 'MEX',  // Mexico (same)
+      'HON' => 'HND',  // Honduras
+      'TRI' => 'TTO',  // Trinidad and Tobago
+      'HAI' => 'HTI',  // Haiti
+      'SKN' => 'KNA',  // Saint Kitts and Nevis
+      'VIN' => 'VCT',  // Saint Vincent and the Grenadines
+      'LCA' => 'LCA',  // Saint Lucia (same)
+      // Asia/Oceania
+      'PHI' => 'PHL',  // Philippines
+      'TAH' => 'PYF',  // Tahiti (French Polynesia)
+      // Africa
+      'RSA' => 'ZAF',  // South Africa
+      'ZAM' => 'ZMB',  // Zambia
+      'ZIM' => 'ZWE',  // Zimbabwe
+      'TAN' => 'TZA',  // Tanzania
+      'GAM' => 'GMB',  // Gambia
+      'GUI' => 'GIN',  // Guinea
+      'EQG' => 'GNQ',  // Equatorial Guinea
+      'CGO' => 'COG',  // Congo
+      'LES' => 'LSO',  // Lesotho
+      'MAD' => 'MDG',  // Madagascar
+      'SWZ' => 'SWZ',  // Eswatini (same)
       // UK sub-national (no ISO-3, use football codes)
       'ENG' => 'ENG',
       'SCO' => 'SCO',

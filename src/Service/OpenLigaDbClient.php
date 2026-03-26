@@ -255,6 +255,7 @@ final class OpenLigaDbClient implements ApiClientInterface {
    */
   private function fifaToAlpha3(string $fifa): string {
     $exceptions = [
+      // Europe
       'GER' => 'DEU',
       'SUI' => 'CHE',
       'POR' => 'PRT',
@@ -263,9 +264,29 @@ final class OpenLigaDbClient implements ApiClientInterface {
       'CRO' => 'HRV',
       'BUL' => 'BGR',
       'GRE' => 'GRC',
+      // Americas
       'URU' => 'URY',
       'CHI' => 'CHL',
       'PAR' => 'PRY',
+      'HON' => 'HND',
+      'TRI' => 'TTO',
+      'HAI' => 'HTI',
+      'SKN' => 'KNA',
+      'VIN' => 'VCT',
+      // Asia/Oceania
+      'PHI' => 'PHL',
+      'TAH' => 'PYF',
+      // Africa
+      'RSA' => 'ZAF',
+      'ZAM' => 'ZMB',
+      'ZIM' => 'ZWE',
+      'TAN' => 'TZA',
+      'GAM' => 'GMB',
+      'GUI' => 'GIN',
+      'EQG' => 'GNQ',
+      'CGO' => 'COG',
+      'LES' => 'LSO',
+      'MAD' => 'MDG',
       // UK sub-national (no ISO-3, use football codes)
       'ENG' => 'ENG',
       'SCO' => 'SCO',
