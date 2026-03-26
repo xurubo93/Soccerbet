@@ -54,6 +54,10 @@ final class OpenLigaDbClient implements ApiClientInterface {
    */
   public function getMatches(string $competition, string $season, string $stage = ''): array {
     $raw = $this->getMatchData($competition, $season);
+
+    // Shortcodes via /getavailableteams laden (teamId → alpha-3 code)
+    $flag_map = $this->buildFlagMap($competition, $season);
+
     $result = [];
     foreach ($raw as $m) {
       $score1 = NULL;
@@ -86,10 +90,10 @@ final class OpenLigaDbClient implements ApiClientInterface {
         'group_order' => (int) ($m['group']['groupOrderID'] ?? 0),
         'team1_id'    => (int) ($m['team1']['teamId'] ?? 0),
         'team1_name'  => (string) ($m['team1']['teamName'] ?? ''),
-        'team1_flag'  => '',
+        'team1_flag'  => $flag_map[(int) ($m['team1']['teamId'] ?? 0)] ?? '',
         'team2_id'    => (int) ($m['team2']['teamId'] ?? 0),
         'team2_name'  => (string) ($m['team2']['teamName'] ?? ''),
-        'team2_flag'  => '',
+        'team2_flag'  => $flag_map[(int) ($m['team2']['teamId'] ?? 0)] ?? '',
         'score1'      => $score1,
         'score2'      => $score2,
         'is_finished' => (bool) ($m['matchIsFinished'] ?? FALSE),
@@ -216,6 +220,59 @@ final class OpenLigaDbClient implements ApiClientInterface {
    */
   public function getAvailableLeagues(): array {
     return $this->get('/getavailableleagues') ?? [];
+  }
+
+  /**
+   * Gibt Teams einer Liga-Saison zurück inkl. Shortcode.
+   *
+   * @return array<int, array{teamId: int, teamName: string, shortName: string, shortCode: string}>
+   */
+  public function getAvailableTeams(string $league, string $season): array {
+    return $this->get("/getavailableteams/{$league}/{$season}") ?? [];
+  }
+
+  /**
+   * Baut eine teamId → alpha-3 Flag-Code Map aus /getavailableteams.
+   *
+   * @return array<int, string>
+   */
+  private function buildFlagMap(string $league, string $season): array {
+    $teams = $this->getAvailableTeams($league, $season);
+    $map = [];
+    foreach ($teams as $team) {
+      $id   = (int) ($team['teamId'] ?? 0);
+      $code = strtoupper(trim($team['shortCode'] ?? ''));
+      if ($id > 0 && $code !== '') {
+        $map[$id] = $this->fifaToAlpha3($code);
+      }
+    }
+    return $map;
+  }
+
+  /**
+   * Konvertiert FIFA-3-Buchstaben-Codes zu ISO 3166-1 Alpha-3.
+   * Die meisten Codes sind identisch; nur Ausnahmen brauchen eine Abbildung.
+   */
+  private function fifaToAlpha3(string $fifa): string {
+    $exceptions = [
+      'GER' => 'DEU',
+      'SUI' => 'CHE',
+      'POR' => 'PRT',
+      'NED' => 'NLD',
+      'DEN' => 'DNK',
+      'CRO' => 'HRV',
+      'BUL' => 'BGR',
+      'GRE' => 'GRC',
+      'URU' => 'URY',
+      'CHI' => 'CHL',
+      'PAR' => 'PRY',
+      // UK sub-national (no ISO-3, use football codes)
+      'ENG' => 'ENG',
+      'SCO' => 'SCO',
+      'WAL' => 'WAL',
+      'NIR' => 'NIR',
+    ];
+    return $exceptions[$fifa] ?? $fifa;
   }
 
   /**

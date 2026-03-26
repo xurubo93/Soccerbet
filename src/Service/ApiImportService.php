@@ -172,10 +172,11 @@ final class ApiImportService implements ApiImportInterface {
         continue;
       }
 
-      // Flag: use code from API if available (already alpha-3 uppercase),
-      // otherwise fall back to name-based resolver (OpenLigaDB has no area codes).
+      // Flag: use code from API if it has a matching SVG (guards against club
+      // abbreviations like "FCB" from OpenLigaDB shortcodes).
+      // Fall back to name-based resolver when no valid SVG exists.
       $flag = $api_team['flag'] ?? '';
-      if ($flag === '') {
+      if (!$this->flagResolver->codeIsValid($flag)) {
         $flag = $this->flagResolver->resolve($name);
       }
 

@@ -86,6 +86,18 @@ final class TeamFlagResolver {
   }
 
   /**
+   * Prüft ob ein alpha-3 Code eine gültige SVG-Flagge hat.
+   * Verhindert dass Vereinskürzel (z.B. "FCB") als Flaggencode gespeichert werden.
+   */
+  public function codeIsValid(string $code): bool {
+    if ($code === '') {
+      return FALSE;
+    }
+    $module_path = $this->moduleHandler->getModule('soccerbet')->getPath();
+    return file_exists($module_path . '/images/flags/svg/' . $code . '.svg');
+  }
+
+  /**
    * Löscht den internen Cache (z.B. nach manuellem Update der YAML-Datei).
    */
   public function clearCache(): void {
