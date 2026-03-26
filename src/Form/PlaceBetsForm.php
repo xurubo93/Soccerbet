@@ -585,7 +585,20 @@ final class PlaceBetsForm extends FormBase {
       'NER' => 'NE', 'CPV' => 'CV', 'COM' => 'KM', 'MRT' => 'MR',
       'SDN' => 'SD', 'SSD' => 'SS', 'LBY' => 'LY',
     ];
-    $alpha2 = $map[strtoupper(trim($code))] ?? '';
+    $upper = strtoupper(trim($code));
+
+    // UK sub-national flags use Unicode tag sequences, not regional indicators.
+    $tag_flags = [
+      'ENG' => "\u{1F3F4}\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}",
+      'SCO' => "\u{1F3F4}\u{E0067}\u{E0062}\u{E0073}\u{E0063}\u{E0074}\u{E007F}",
+      'WAL' => "\u{1F3F4}\u{E0067}\u{E0062}\u{E0077}\u{E006C}\u{E0073}\u{E007F}",
+      'NIR' => "\u{1F1EC}\u{1F1E7}",  // No standard emoji → GB flag
+    ];
+    if (isset($tag_flags[$upper])) {
+      return $tag_flags[$upper];
+    }
+
+    $alpha2 = $map[$upper] ?? '';
     if (strlen($alpha2) !== 2) {
       return '';
     }
