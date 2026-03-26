@@ -8,7 +8,7 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Löst Teamnamen auf ISO 3166-1 Alpha-2 Flaggen-Codes auf.
+ * Löst Teamnamen auf ISO 3166-1 Alpha-3 Flaggen-Codes auf.
  *
  * Reihenfolge:
  *  1. Exakter Treffer in data/team-flags.yml

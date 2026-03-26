@@ -172,8 +172,12 @@ final class ApiImportService implements ApiImportInterface {
         continue;
       }
 
-      // Flag: use code from API directly (already alpha-3 uppercase).
+      // Flag: use code from API if available (already alpha-3 uppercase),
+      // otherwise fall back to name-based resolver (OpenLigaDB has no area codes).
       $flag = $api_team['flag'] ?? '';
+      if ($flag === '') {
+        $flag = $this->flagResolver->resolve($name);
+      }
 
       $team_id = (int) $this->db->insert('soccerbet_teams')
         ->fields([
