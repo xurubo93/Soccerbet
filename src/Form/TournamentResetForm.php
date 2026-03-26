@@ -36,7 +36,7 @@ final class TournamentResetForm extends ConfirmFormBase {
   }
 
   public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
-    return $this->t('This will permanently delete all teams, matches, bets and participant assignments for this tournament. The tournament itself and its group assignments will be kept.');
+    return $this->t('This will permanently delete all teams, matches, bets, participant assignments and group assignments for this tournament. Only the tournament itself will be kept.');
   }
 
   public function getConfirmText(): \Drupal\Core\StringTranslation\TranslatableMarkup {
