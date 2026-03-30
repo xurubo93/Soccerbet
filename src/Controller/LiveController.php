@@ -7,6 +7,7 @@ namespace Drupal\soccerbet\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\soccerbet\Service\ScoreUpdateService;
 use Drupal\soccerbet\Service\ScoringService;
 use Drupal\soccerbet\Service\TournamentManager;
 use Drupal\soccerbet\Service\WinnerBetService;
@@ -25,6 +26,7 @@ final class LiveController extends ControllerBase {
     private readonly ScoringService $scoring,
     private readonly WinnerBetService $winnerBet,
     private readonly RendererInterface $renderer,
+    private readonly ScoreUpdateService $scoreUpdate,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -34,6 +36,7 @@ final class LiveController extends ControllerBase {
       $container->get('soccerbet.scoring'),
       $container->get('soccerbet.winner_bet'),
       $container->get('renderer'),
+      $container->get('soccerbet.score_update'),
     );
   }
 
@@ -75,6 +78,11 @@ final class LiveController extends ControllerBase {
     $tournament_id = $this->resolveTournamentId($tournament_id);
     if ($tournament_id === 0) {
       return new JsonResponse(['error' => 'no tournament'], 404);
+    }
+
+    $config = $this->config('soccerbet.settings');
+    if ($config->get('livescores_enabled') && $config->get('api_provider') === 'footballdata') {
+      $this->scoreUpdate->updateAll();
     }
 
     $live_games = $this->loadLiveGames($tournament_id);

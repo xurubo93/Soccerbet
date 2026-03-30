@@ -128,6 +128,17 @@ final class SettingsForm extends ConfigFormBase {
         ],
       ],
     ];
+    $form['api']['livescores_enabled'] = [
+      '#type'          => 'checkbox',
+      '#title'         => $this->t('Enable live scores'),
+      '#description'   => $this->t('For live scores a Free+ plan or higher is required, see <a href="https://www.football-data.org/pricing" target="_blank">football-data.org/pricing</a>.'),
+      '#default_value' => $config->get('livescores_enabled') ?? FALSE,
+      '#states'        => [
+        'visible' => [
+          ':input[name="api_provider"]' => ['value' => 'footballdata'],
+        ],
+      ],
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -142,6 +153,7 @@ final class SettingsForm extends ConfigFormBase {
       ->set('default_tournament',                (int)  $form_state->getValue('default_tournament'))
       ->set('api_provider',                      (string) $form_state->getValue('api_provider'))
       ->set('footballdata_api_key',              trim($form_state->getValue('footballdata_api_key') ?? ''))
+      ->set('livescores_enabled',               (bool) $form_state->getValue('livescores_enabled'))
       ->set('winner_bet_points', array_values(array_map(
         fn($i) => (int) $form_state->getValue('winner_bet_points_' . $i),
         range(0, 4)

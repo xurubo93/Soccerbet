@@ -840,6 +840,12 @@ msgstr "API-Key (football-data.org)"
 msgid "Kostenlos registrieren auf <a href=\"https://www.football-data.org/client/register\" target=\"_blank\">football-data.org</a>. Nur benötigt wenn football-data.org als Quelle gewählt ist."
 msgstr "Kostenlos registrieren auf <a href=\"https://www.football-data.org/client/register\" target=\"_blank\">football-data.org</a>. Nur benötigt wenn football-data.org als Quelle gewählt ist."
 
+msgid "Enable live scores"
+msgstr "Livescores aktivieren"
+
+msgid "For live scores a Free+ plan or higher is required, see <a href=\"https://www.football-data.org/pricing\" target=\"_blank\">football-data.org/pricing</a>."
+msgstr "Für Livescores ist zumindest ein Free+ Plan erforderlich, siehe <a href=\"https://www.football-data.org/pricing\" target=\"_blank\">football-data.org/pricing</a>."
+
 # ── OpenLigaDB import form ────────────────────────────────────────────────────
 
 msgid "Active API: <strong>@api</strong>. <a href=\":url\">Change API settings</a>."
