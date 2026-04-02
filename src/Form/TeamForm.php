@@ -88,8 +88,9 @@ final class TeamForm extends FormBase {
     ];
 
     // Build datalist from available SVG files.
-    $flag_base_path = '/modules/custom/soccerbet/images/flags/svg/';
-    $svg_dir = \Drupal::root() . '/modules/custom/soccerbet/images/flags/svg/';
+    $module_path = \Drupal::service('extension.list.module')->getPath('soccerbet');
+    $flag_base_path = '/' . $module_path . '/images/flags/svg/';
+    $svg_dir = \Drupal::root() . '/' . $module_path . '/images/flags/svg/';
     $codes = [];
     if (is_dir($svg_dir)) {
       foreach (glob($svg_dir . '*.svg') as $file) {

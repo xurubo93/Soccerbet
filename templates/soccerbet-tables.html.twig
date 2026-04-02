@@ -8,7 +8,7 @@
  * - tournament: Turnier-Objekt
  */
 #}
-{% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
+{% import '@soccerbet/soccerbet-flag.html.twig' as flag_helper %}
 <div class="soccerbet-tables">
 
   <h2 class="soccerbet-tables__title">
@@ -52,7 +52,7 @@
                   <td class="col-pos">{{ pos + 1 }}</td>
                   <td class="col-team">
                     {% if team.team_flag %}
-                      {{ flag_helper.flag(team.team_flag, team.team_name, 24) }}
+                      {{ flag_helper.flag(team.team_flag, team.team_name, 24, soccerbet_module_path) }}
                     {% endif %}
                     {{ team.team_name }}
                   </td>

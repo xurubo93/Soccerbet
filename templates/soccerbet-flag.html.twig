@@ -4,19 +4,19 @@
  * Hilfsmakro für die Flaggen-Darstellung (circle-flags, kapowaz/circle-flags).
  *
  * Verwendung in anderen Templates:
- *   {% import 'modules/custom/soccerbet/templates/soccerbet-flag.html.twig' as flag_helper %}
- *   {{ flag_helper.flag('AUT', 'Österreich') }}
- *   {{ flag_helper.flag('ENG', 'England') }}
+ *   {% import '@soccerbet/soccerbet-flag.html.twig' as flag_helper %}
+ *   {{ flag_helper.flag('AUT', 'Österreich', 24, soccerbet_module_path) }}
+ *   {{ flag_helper.flag('ENG', 'England', 24, soccerbet_module_path) }}
  *
  * Alle Flags sind SVG-Kreise (512×512), Dateiname = alpha-3 uppercase.
- * Basis-Pfad: /modules/custom/soccerbet/images/flags/svg/{code}.svg
+ * Basis-Pfad: /{module_path}/images/flags/svg/{code}.svg
  */
 #}
 
-{% macro flag(code, alt, width) %}
+{% macro flag(code, alt, width, module_path) %}
   {% if code %}
     {% set size = width|default(24) %}
-    {% set src = '/modules/custom/soccerbet/images/flags/svg/' ~ code ~ '.svg' %}
+    {% set src = '/' ~ module_path ~ '/images/flags/svg/' ~ code ~ '.svg' %}
     <img
       src="{{ src }}"
       alt="{{ alt|default(code)|escape }}"

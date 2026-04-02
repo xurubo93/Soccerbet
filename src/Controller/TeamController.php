@@ -40,7 +40,8 @@ final class TeamController extends ControllerBase {
       $flag_code = trim((string) ($team->team_flag ?? ''));
       $flag_html  = '';
       if ($flag_code) {
-        $svg = '/modules/custom/soccerbet/images/flags/svg/' . $flag_code . '.svg';
+        $module_path = \Drupal::service('extension.list.module')->getPath('soccerbet');
+        $svg = '/' . $module_path . '/images/flags/svg/' . $flag_code . '.svg';
         $flag_html = '<img src="' . $svg . '"'
           . ' alt="' . htmlspecialchars($flag_code) . '"'
           . ' width="24" height="24"'

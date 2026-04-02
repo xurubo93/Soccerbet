@@ -530,7 +530,8 @@ final class PlaceBetsForm extends FormBase {
     if ($code === '') {
       return '';
     }
-    $svg   = '/modules/custom/soccerbet/images/flags/svg/' . $code . '.svg';
+    $module_path = \Drupal::service('extension.list.module')->getPath('soccerbet');
+    $svg   = '/' . $module_path . '/images/flags/svg/' . $code . '.svg';
     $alt_e = htmlspecialchars($alt ?: $code, ENT_QUOTES);
     return '<img src="' . $svg . '"'
       . ' alt="' . $alt_e . '"'
