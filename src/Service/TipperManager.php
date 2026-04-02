@@ -294,23 +294,28 @@ final class TipperManager {
         'game_stadium'   => (string) ($values['game_stadium']  ?? ''),
         'phase'          => (string) ($values['phase'] ?? 'group'),
         'published'      => (int)  ($values['published'] ?? 1),
+        'api_id'         => isset($values['api_id']) ? (int) $values['api_id'] : NULL,
         'uid'            => $this->currentUser->id(),
         'created'        => $now, 'changed' => $now,
       ])->execute();
   }
 
   public function updateGame(int $game_id, array $values): void {
+    $fields = [
+      'team_id_1'     => (int) $values['team_id_1'],
+      'team_id_2'     => (int) $values['team_id_2'],
+      'game_date'     => (string) $values['game_date'],
+      'game_location' => (string) ($values['game_location'] ?? ''),
+      'game_stadium'  => (string) ($values['game_stadium']  ?? ''),
+      'phase'         => (string) ($values['phase'] ?? 'group'),
+      'published'     => (int)   ($values['published'] ?? 1),
+      'changed'       => \Drupal::time()->getRequestTime(),
+    ];
+    if (array_key_exists('api_id', $values)) {
+      $fields['api_id'] = $values['api_id'] !== NULL ? (int) $values['api_id'] : NULL;
+    }
     $this->db->update('soccerbet_games')
-      ->fields([
-        'team_id_1'     => (int) $values['team_id_1'],
-        'team_id_2'     => (int) $values['team_id_2'],
-        'game_date'     => (string) $values['game_date'],
-        'game_location' => (string) ($values['game_location'] ?? ''),
-        'game_stadium'  => (string) ($values['game_stadium']  ?? ''),
-        'phase'         => (string) ($values['phase'] ?? 'group'),
-        'published'     => (int)   ($values['published'] ?? 1),
-        'changed'       => \Drupal::time()->getRequestTime(),
-      ])
+      ->fields($fields)
       ->condition('game_id', $game_id)->execute();
   }
 

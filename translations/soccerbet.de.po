@@ -214,6 +214,12 @@ msgstr "Stadion"
 msgid "Published (include in scoring)"
 msgstr "Veröffentlicht (in Wertung)"
 
+msgid "API match ID"
+msgstr "API-Spiel-ID"
+
+msgid "External match ID from the API provider (e.g. football-data.org). Used for live score updates."
+msgstr "Externe Spiel-ID des API-Anbieters (z.B. football-data.org). Wird für Live-Ergebnis-Updates verwendet."
+
 msgid "+ New match"
 msgstr "+ Neues Spiel"
 

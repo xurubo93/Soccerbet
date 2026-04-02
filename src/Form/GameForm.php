@@ -143,6 +143,14 @@ final class GameForm extends FormBase {
       '#default_value' => $game?->published ?? 1,
     ];
 
+    $form['api_id'] = [
+      '#type'          => 'number',
+      '#title'         => $this->t('API match ID'),
+      '#description'   => $this->t('External match ID from the API provider (e.g. football-data.org). Used for live score updates.'),
+      '#min'           => 1,
+      '#default_value' => $game?->api_id ?? '',
+    ];
+
     $form['submit'] = [
       '#type'  => 'submit',
       '#value' => $game_id ? $this->t('Save match') : $this->t('Create match'),
@@ -173,6 +181,7 @@ final class GameForm extends FormBase {
       'game_stadium'  => $form_state->getValue('game_stadium'),
       'phase'         => $form_state->getValue('phase'),
       'published'     => (int) $form_state->getValue('published'),
+      'api_id'        => $form_state->getValue('api_id') !== '' ? (int) $form_state->getValue('api_id') : NULL,
     ];
 
     $tournament_id = $form_state->get('tournament_id');
