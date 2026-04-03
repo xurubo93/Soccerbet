@@ -1084,7 +1084,10 @@ msgid "Slovenia"
 msgstr "Slowenien"
 
 msgid "Bosnia and Herzegovina"
-msgstr "Bosnien-Herzegowina"
+msgstr "Bosnien und Herzegowina"
+
+msgid "Bosnia-Herzegovina"
+msgstr "Bosnien und Herzegowina"
 
 msgid "North Macedonia"
 msgstr "Nordmazedonien"
@@ -1202,6 +1205,12 @@ msgstr "Elfenbeinküste"
 
 msgid "Côte d'Ivoire"
 msgstr "Elfenbeinküste"
+
+msgid "Cap Verde Islands"
+msgstr "Kap Verde"
+
+msgid "Congo DR"
+msgstr "DR Kongo"
 
 # Fehlende Nationalmannschaften
 msgid "Algeria"
