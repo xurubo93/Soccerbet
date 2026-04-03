@@ -1010,3 +1010,321 @@ msgstr "Daten zurücksetzen"
 
 msgid "Tournament data has been reset."
 msgstr "Turnierdaten wurden zurückgesetzt."
+
+# ── Teamnamen (API-Übersetzungen) ─────────────────────────────────────────────
+
+# Nationalmannschaften (EN → DE)
+msgid "Germany"
+msgstr "Deutschland"
+
+msgid "Austria"
+msgstr "Österreich"
+
+msgid "Switzerland"
+msgstr "Schweiz"
+
+msgid "France"
+msgstr "Frankreich"
+
+msgid "Spain"
+msgstr "Spanien"
+
+msgid "Portugal"
+msgstr "Portugal"
+
+msgid "Italy"
+msgstr "Italien"
+
+msgid "Netherlands"
+msgstr "Niederlande"
+
+msgid "Belgium"
+msgstr "Belgien"
+
+msgid "Denmark"
+msgstr "Dänemark"
+
+msgid "Sweden"
+msgstr "Schweden"
+
+msgid "Norway"
+msgstr "Norwegen"
+
+msgid "Finland"
+msgstr "Finnland"
+
+msgid "Poland"
+msgstr "Polen"
+
+msgid "Czech Republic"
+msgstr "Tschechien"
+
+msgid "Czechia"
+msgstr "Tschechien"
+
+msgid "Slovakia"
+msgstr "Slowakei"
+
+msgid "Hungary"
+msgstr "Ungarn"
+
+msgid "Romania"
+msgstr "Rumänien"
+
+msgid "Bulgaria"
+msgstr "Bulgarien"
+
+msgid "Croatia"
+msgstr "Kroatien"
+
+msgid "Serbia"
+msgstr "Serbien"
+
+msgid "Slovenia"
+msgstr "Slowenien"
+
+msgid "Bosnia and Herzegovina"
+msgstr "Bosnien-Herzegowina"
+
+msgid "North Macedonia"
+msgstr "Nordmazedonien"
+
+msgid "Albania"
+msgstr "Albanien"
+
+msgid "Montenegro"
+msgstr "Montenegro"
+
+msgid "Greece"
+msgstr "Griechenland"
+
+msgid "Turkey"
+msgstr "Türkei"
+
+msgid "Russia"
+msgstr "Russland"
+
+msgid "Ukraine"
+msgstr "Ukraine"
+
+msgid "Scotland"
+msgstr "Schottland"
+
+msgid "Wales"
+msgstr "Wales"
+
+msgid "Northern Ireland"
+msgstr "Nordirland"
+
+msgid "Republic of Ireland"
+msgstr "Irland"
+
+msgid "Iceland"
+msgstr "Island"
+
+msgid "Israel"
+msgstr "Israel"
+
+msgid "Georgia"
+msgstr "Georgien"
+
+msgid "Brazil"
+msgstr "Brasilien"
+
+msgid "Argentina"
+msgstr "Argentinien"
+
+msgid "Uruguay"
+msgstr "Uruguay"
+
+msgid "Colombia"
+msgstr "Kolumbien"
+
+msgid "Chile"
+msgstr "Chile"
+
+msgid "Peru"
+msgstr "Peru"
+
+msgid "Ecuador"
+msgstr "Ecuador"
+
+msgid "Mexico"
+msgstr "Mexiko"
+
+msgid "United States"
+msgstr "USA"
+
+msgid "Canada"
+msgstr "Kanada"
+
+msgid "Japan"
+msgstr "Japan"
+
+msgid "South Korea"
+msgstr "Südkorea"
+
+msgid "Korea Republic"
+msgstr "Südkorea"
+
+msgid "Australia"
+msgstr "Australien"
+
+msgid "Morocco"
+msgstr "Marokko"
+
+msgid "Senegal"
+msgstr "Senegal"
+
+msgid "Nigeria"
+msgstr "Nigeria"
+
+msgid "Ghana"
+msgstr "Ghana"
+
+msgid "Cameroon"
+msgstr "Kamerun"
+
+msgid "Egypt"
+msgstr "Ägypten"
+
+msgid "Saudi Arabia"
+msgstr "Saudi-Arabien"
+
+msgid "Qatar"
+msgstr "Katar"
+
+msgid "Iran"
+msgstr "Iran"
+
+msgid "Ivory Coast"
+msgstr "Elfenbeinküste"
+
+msgid "Côte d'Ivoire"
+msgstr "Elfenbeinküste"
+
+# Fehlende Nationalmannschaften
+msgid "Algeria"
+msgstr "Algerien"
+
+msgid "Latvia"
+msgstr "Lettland"
+
+msgid "New Zealand"
+msgstr "Neuseeland"
+
+msgid "North Korea"
+msgstr "Nordkorea"
+
+msgid "Tunisia"
+msgstr "Tunesien"
+
+msgid "South Africa"
+msgstr "Südafrika"
+
+msgid "Bosnia and Herzegovina"
+msgstr "Bosnien-Herzegowina"
+
+msgid "Trinidad and Tobago"
+msgstr "Trinidad und Tobago"
+
+msgid "Uzbekistan"
+msgstr "Usbekistan"
+
+msgid "Curaçao"
+msgstr "Curaçao"
+
+msgid "Iraq"
+msgstr "Irak"
+
+msgid "Jordan"
+msgstr "Jordanien"
+
+msgid "China"
+msgstr "China"
+
+msgid "Angola"
+msgstr "Angola"
+
+msgid "Togo"
+msgstr "Togo"
+
+msgid "Panama"
+msgstr "Panama"
+
+msgid "Paraguay"
+msgstr "Paraguay"
+
+msgid "Haiti"
+msgstr "Haiti"
+
+msgid "Honduras"
+msgstr "Honduras"
+
+msgid "Costa Rica"
+msgstr "Costa Rica"
+
+msgid "England"
+msgstr "England"
+
+# Großschreibung (bestimmte API-Anbieter liefern Caps)
+msgid "ALBANIA"
+msgstr "Albanien"
+
+msgid "CANADA"
+msgstr "Kanada"
+
+msgid "FINLAND"
+msgstr "Finnland"
+
+msgid "ICELAND"
+msgstr "Island"
+
+msgid "NORTHERN IRELAND"
+msgstr "Nordirland"
+
+msgid "QATAR"
+msgstr "Katar"
+
+msgid "WALES"
+msgstr "Wales"
+
+# Bundesliga-Clubs (englische Schreibweise → Deutsch)
+msgid "Bayer Leverkusen"
+msgstr "Bayer 04 Leverkusen"
+
+msgid "Borussia M'gladbach"
+msgstr "Borussia Mönchengladbach"
+
+msgid "TSG Hoffenheim"
+msgstr "TSG 1899 Hoffenheim"
+
+msgid "Mainz 05"
+msgstr "1. FSV Mainz 05"
+
+msgid "FC Union Berlin"
+msgstr "1. FC Union Berlin"
+
+msgid "1. FC Köln"
+msgstr "1. FC Köln"
+
+msgid "Eintracht Frankfurt"
+msgstr "Eintracht Frankfurt"
+
+msgid "SC Freiburg"
+msgstr "SC Freiburg"
+
+msgid "VfL Bochum 1848"
+msgstr "VfL Bochum"
+
+msgid "SV Darmstadt 98"
+msgstr "Darmstadt 98"
+
+msgid "1. FC Heidenheim 1846"
+msgstr "1. FC Heidenheim"
+
+msgid "Holstein Kiel"
+msgstr "Holstein Kiel"
+
+msgid "FC St. Pauli 1910"
+msgstr "FC St. Pauli"

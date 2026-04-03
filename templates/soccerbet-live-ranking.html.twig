@@ -22,8 +22,8 @@
         <th class="col-rank">{{ 'Rank'|t }}</th>
         <th class="col-name">{{ 'Name'|t }}</th>
         {% for game in live_games %}
-          <th class="col-tipp" title="{{ game.team1_name }} vs {{ game.team2_name }}">
-            {{ game.team1_name|slice(0,3)|upper }} : {{ game.team2_name|slice(0,3)|upper }}
+          <th class="col-tipp" title="{{ game.team1_name|t }} vs {{ game.team2_name|t }}">
+            {{ game.team1_name|t|slice(0,3)|upper }} : {{ game.team2_name|t|slice(0,3)|upper }}
           </th>
         {% endfor %}
         {% if final_started %}
@@ -80,7 +80,7 @@
             <td class="col-winner-bet">
               {% if row.winner_bet %}
                 <span class="soccerbet-live__winner-bet soccerbet-live__winner-bet--{% if row.winner_bet.is_pending %}pending{% elseif row.winner_bet.is_correct %}correct{% else %}wrong{% endif %}">
-                  {{ row.winner_bet.team_name|slice(0,3)|upper }}
+                  {{ row.winner_bet.team_name|t|slice(0,3)|upper }}
                   <span class="soccerbet-live__tipp-pts">({{ row.winner_bet.pts }})</span>
                 </span>
               {% else %}

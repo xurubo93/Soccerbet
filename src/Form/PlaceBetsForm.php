@@ -207,7 +207,7 @@ final class PlaceBetsForm extends FormBase {
     $team_options = [0 => $this->t('— please select —')];
     foreach ($teams as $team) {
       $flag = $team->team_flag ? ($this->flagEmoji($team->team_flag) . ' ') : '';
-      $team_options[(int) $team->team_id] = $flag . $team->team_name;
+      $team_options[(int) $team->team_id] = $flag . (string) $this->t($team->team_name);
     }
     $existing_bet = $this->winnerBet->loadBet($tournament_id, $tipper_id);
     $phase_index  = $this->winnerBet->getCurrentPhaseIndex($tournament_id);
@@ -318,7 +318,7 @@ final class PlaceBetsForm extends FormBase {
     $container[$game_key]['team1_card_open'] = [
       '#markup' => '<div class="soccerbet-game__team-card soccerbet-game__team-card--home">'
         . '<div class="soccerbet-game__flag">' . $this->flagHtml($game->team1_flag ?? '', $game->team1_name) . '</div>'
-        . '<div class="soccerbet-game__team-name">' . htmlspecialchars($game->team1_name) . '</div>',
+        . '<div class="soccerbet-game__team-name">' . htmlspecialchars((string) $this->t($game->team1_name)) . '</div>',
     ];
     $container[$game_key]['tipp1_' . $game_id] = [
       '#type'          => 'number',
@@ -327,7 +327,7 @@ final class PlaceBetsForm extends FormBase {
       '#default_value' => $saved?->team1_tipp ?? '',
       '#disabled'      => $locked,
       '#attributes'    => ['class' => ['soccerbet-tipp-input'], 'placeholder' => '—'],
-      '#title'         => $game->team1_name,
+      '#title'         => $this->t($game->team1_name),
       '#title_display' => 'invisible',
     ];
     $container[$game_key]['team1_card_close'] = ['#markup' => '</div>'];
@@ -341,7 +341,7 @@ final class PlaceBetsForm extends FormBase {
     $container[$game_key]['team2_card_open'] = [
       '#markup' => '<div class="soccerbet-game__team-card soccerbet-game__team-card--away">'
         . '<div class="soccerbet-game__flag">' . $this->flagHtml($game->team2_flag ?? '', $game->team2_name) . '</div>'
-        . '<div class="soccerbet-game__team-name">' . htmlspecialchars($game->team2_name) . '</div>',
+        . '<div class="soccerbet-game__team-name">' . htmlspecialchars((string) $this->t($game->team2_name)) . '</div>',
     ];
     $container[$game_key]['tipp2_' . $game_id] = [
       '#type'          => 'number',
@@ -350,7 +350,7 @@ final class PlaceBetsForm extends FormBase {
       '#default_value' => $saved?->team2_tipp ?? '',
       '#disabled'      => $locked,
       '#attributes'    => ['class' => ['soccerbet-tipp-input'], 'placeholder' => '—'],
-      '#title'         => $game->team2_name,
+      '#title'         => $this->t($game->team2_name),
       '#title_display' => 'invisible',
     ];
     $container[$game_key]['team2_card_close'] = ['#markup' => '</div>'];
@@ -367,8 +367,8 @@ final class PlaceBetsForm extends FormBase {
         '#type'               => 'select',
         '#title'              => $this->t('Qualifier/Winner'),
         '#options'            => [
-          $game->team_id_1 => $game->team1_name,
-          $game->team_id_2 => $game->team2_name,
+          $game->team_id_1 => $this->t($game->team1_name),
+          $game->team_id_2 => $this->t($game->team2_name),
         ],
         '#default_value'      => $saved?->winner_team_id ?? $game->team_id_1,
         '#disabled'           => $locked,

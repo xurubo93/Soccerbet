@@ -163,8 +163,7 @@ final class ApiImportService implements ApiImportInterface {
         continue;
       }
 
-      // Teamnamen übersetzen (z.B. "Germany" → "Deutschland")
-      $name = $this->nameTranslator->translate($name);
+      // Teamnamen werden in der DB in Originalsprache gespeichert; Übersetzung erfolgt bei der Anzeige.
 
       // Flag: use code from API if it has a matching SVG (guards against club
       // abbreviations like "FCB" from OpenLigaDB shortcodes).

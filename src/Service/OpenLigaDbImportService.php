@@ -22,6 +22,7 @@ final class OpenLigaDbImportService implements ApiImportInterface {
     private readonly Connection $db,
     private readonly OpenLigaDbClient $apiClient,
     private readonly TeamFlagResolver $flagResolver,
+    private readonly TeamNameTranslator $nameTranslator,
     private readonly AccountProxyInterface $currentUser,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}

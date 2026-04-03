@@ -38,7 +38,7 @@ final class GameScoreForm extends FormBase {
     $team2 = $this->tipperManager->loadTeam((int) $game->team_id_2);
 
     $form['game_info'] = [
-      '#markup' => '<h3>' . htmlspecialchars($team1->team_name) . ' vs. ' . htmlspecialchars($team2->team_name) . '</h3>',
+      '#markup' => '<h3>' . htmlspecialchars((string) $this->t($team1->team_name)) . ' vs. ' . htmlspecialchars((string) $this->t($team2->team_name)) . '</h3>',
     ];
 
     $form['score'] = [
@@ -48,7 +48,7 @@ final class GameScoreForm extends FormBase {
     ];
     $form['score']['team1_score'] = [
       '#type'          => 'number',
-      '#title'         => $team1->team_name,
+      '#title'         => $this->t($team1->team_name),
       '#min'           => 0,
       '#max'           => 99,
       '#required'      => TRUE,
@@ -57,7 +57,7 @@ final class GameScoreForm extends FormBase {
     ];
     $form['score']['team2_score'] = [
       '#type'          => 'number',
-      '#title'         => $team2->team_name,
+      '#title'         => $this->t($team2->team_name),
       '#min'           => 0,
       '#max'           => 99,
       '#required'      => TRUE,
@@ -74,8 +74,8 @@ final class GameScoreForm extends FormBase {
         '#description'   => $this->t('Only fill in if not determined by the 90 min. result.'),
         '#options'       => [
           0                => $this->t('From result (no penalty shootout)'),
-          $game->team_id_1 => $team1->team_name,
-          $game->team_id_2 => $team2->team_name,
+          $game->team_id_1 => $this->t($team1->team_name),
+          $game->team_id_2 => $this->t($team2->team_name),
         ],
         '#default_value' => $game->winner_team_id ?? 0,
       ];

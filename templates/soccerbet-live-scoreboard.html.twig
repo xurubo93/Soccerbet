@@ -18,8 +18,8 @@
     {% for game in live_games %}
       <div class="soccerbet-live__match" data-game-id="{{ game.game_id }}">
         <div class="soccerbet-live__match-team soccerbet-live__match-team--home">
-          {{ flag_helper.flag(game.team1_flag, game.team1_name, 36, soccerbet_module_path) }}
-          <span>{{ game.team1_name }}</span>
+          {{ flag_helper.flag(game.team1_flag, game.team1_name|t, 36, soccerbet_module_path) }}
+          <span>{{ game.team1_name|t }}</span>
         </div>
         <div class="soccerbet-live__match-score">
           {% if game.score1 is not null %}
@@ -29,8 +29,8 @@
           {% endif %}
         </div>
         <div class="soccerbet-live__match-team soccerbet-live__match-team--away">
-          <span>{{ game.team2_name }}</span>
-          {{ flag_helper.flag(game.team2_flag, game.team2_name, 36, soccerbet_module_path) }}
+          <span>{{ game.team2_name|t }}</span>
+          {{ flag_helper.flag(game.team2_flag, game.team2_name|t, 36, soccerbet_module_path) }}
         </div>
       </div>
     {% endfor %}

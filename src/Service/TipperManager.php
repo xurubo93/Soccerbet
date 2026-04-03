@@ -6,12 +6,15 @@ namespace Drupal\soccerbet\Service;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\soccerbet\Exception\SoccerbetNotFoundException;
 
 /**
  * Verwaltet Tipper, Tippergruppen, Teams und Spiele.
  */
 final class TipperManager {
+
+  use StringTranslationTrait;
 
   public function __construct(
     private readonly Connection $db,
@@ -203,7 +206,8 @@ final class TipperManager {
     $rows = $this->loadTeamsByTournament($tournament_id);
     $options = [];
     foreach ($rows as $row) {
-      $label = $row->team_group ? "[{$row->team_group}] {$row->team_name}" : $row->team_name;
+      $translated = (string) $this->t($row->team_name);
+      $label = $row->team_group ? "[{$row->team_group}] {$translated}" : $translated;
       $options[$row->team_id] = $label;
     }
     return $options;

@@ -86,9 +86,9 @@
             {% else %}row--wrong{% endif %}">
             <td class="col-game">
               <span class="soccerbet-game-matchup">
-                {%- if flags.team1_flag is defined -%}{{ flag_helper.flag(flags.team1_flag, flags.team1_name, 24, soccerbet_module_path) }}{%- endif -%}
-                <span>{{ game_desc }}</span>
-                {%- if flags.team2_flag is defined -%}{{ flag_helper.flag(flags.team2_flag, flags.team2_name, 24, soccerbet_module_path) }}{%- endif -%}
+                {%- if flags.team1_flag is defined -%}{{ flag_helper.flag(flags.team1_flag, flags.team1_name|t, 24, soccerbet_module_path) }}{%- endif -%}
+                <span>{{ flags.team1_name|t }} : {{ flags.team2_name|t }}</span>
+                {%- if flags.team2_flag is defined -%}{{ flag_helper.flag(flags.team2_flag, flags.team2_name|t, 24, soccerbet_module_path) }}{%- endif -%}
               </span>
             </td>
             <td class="col-result">{{ score }}</td>

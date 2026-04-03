@@ -716,6 +716,165 @@ function soccerbet_update_8009(): void {
   }
 }
 
+/**
+ * Update 8012: Teamnamen in soccerbet_teams von Deutsch zurück auf Englisch (API-Namen).
+ *
+ * Bisher wurden Teamnamen beim API-Import sofort übersetzt (z.B. "Germany" → "Deutschland")
+ * und in Deutsch in der DB gespeichert. Ab jetzt werden die Originalnamen gespeichert und
+ * die Übersetzung erfolgt erst bei der Anzeige über Drupals t()-System.
+ *
+ * Dieses Update baut ein Reverse-Mapping (Deutsch → Englisch) aus der PO-Datei und
+ * schreibt für alle Teams, deren Name im Mapping vorkommt, den englischen Originalnamen zurück.
+ */
+function soccerbet_update_8012(): void {
+  /** @var \Drupal\soccerbet\Service\TeamNameTranslator $translator */
+  $translator = \Drupal::service('soccerbet.team_name_translator');
+  $map = $translator->getMap(); // Englisch → Deutsch
+
+  // Reverse-Mapping aufbauen: Deutsch → Englisch
+  // Bei Duplikaten (mehrere englische Namen für dasselbe deutsche) gewinnt der erste.
+  $reverse = [];
+  foreach ($map as $english => $german) {
+    if ($german !== '' && !isset($reverse[$german])) {
+      $reverse[$german] = $english;
+    }
+  }
+
+  if (empty($reverse)) {
+    return;
+  }
+
+  $db = \Drupal::database();
+  $teams = $db->select('soccerbet_teams', 't')
+    ->fields('t', ['team_id', 'team_name'])
+    ->execute()
+    ->fetchAll();
+
+  $updated = 0;
+  foreach ($teams as $team) {
+    if (isset($reverse[$team->team_name])) {
+      $db->update('soccerbet_teams')
+        ->fields(['team_name' => $reverse[$team->team_name]])
+        ->condition('team_id', $team->team_id)
+        ->execute();
+      $updated++;
+    }
+  }
+
+  \Drupal::logger('soccerbet')->info(
+    'Update 8012: @count Teamnamen auf englische API-Namen zurückgesetzt.',
+    ['@count' => $updated]
+  );
+}
+
+/**
+ * Update 8013: Restliche deutsche Teamnamen auf Englisch konvertieren.
+ *
+ * Erweitert Update 8012 um fehlende PO-Einträge (Algeria, Latvia, Tunisia usw.)
+ * und Großschreibungsvarianten mancher API-Anbieter.
+ * Verwendet dieselbe Logik wie 8012, liest aber das nun vollständige PO-Mapping.
+ */
+function soccerbet_update_8013(): void {
+  /** @var \Drupal\soccerbet\Service\TeamNameTranslator $translator */
+  $translator = \Drupal::service('soccerbet.team_name_translator');
+  $translator->clearCache();
+  $map = $translator->getMap(); // Englisch → Deutsch
+
+  $reverse = [];
+  foreach ($map as $english => $german) {
+    if ($german !== '' && !isset($reverse[$german])) {
+      $reverse[$german] = $english;
+    }
+  }
+
+  if (empty($reverse)) {
+    return;
+  }
+
+  $db = \Drupal::database();
+  $teams = $db->select('soccerbet_teams', 't')
+    ->fields('t', ['team_id', 'team_name'])
+    ->execute()
+    ->fetchAll();
+
+  $updated = 0;
+  foreach ($teams as $team) {
+    if (isset($reverse[$team->team_name])) {
+      $db->update('soccerbet_teams')
+        ->fields(['team_name' => $reverse[$team->team_name]])
+        ->condition('team_id', $team->team_id)
+        ->execute();
+      $updated++;
+    }
+  }
+
+  \Drupal::logger('soccerbet')->info(
+    'Update 8013: @count weitere Teamnamen auf englische API-Namen zurückgesetzt.',
+    ['@count' => $updated]
+  );
+}
+
+/**
+ * Update 8014: Teamnamen trimmen und verbleibende Sondervarianten korrigieren.
+ *
+ * Einige API-Anbieter liefern Namen mit Leerzeichen am Ende oder leicht
+ * abweichenden Schreibweisen ("Saudi Arabien" statt "Saudi Arabia"). Dieses
+ * Update bereinigt alle Team-Namen und korrigiert bekannte Varianten direkt.
+ */
+function soccerbet_update_8014(): void {
+  $db = \Drupal::database();
+
+  // Schritt 1: Alle Team-Namen trimmen (entfernt führende/nachfolgende Leerzeichen).
+  $teams = $db->select('soccerbet_teams', 't')
+    ->fields('t', ['team_id', 'team_name'])
+    ->execute()
+    ->fetchAll();
+
+  foreach ($teams as $team) {
+    $trimmed = trim($team->team_name);
+    if ($trimmed !== $team->team_name) {
+      $db->update('soccerbet_teams')
+        ->fields(['team_name' => $trimmed])
+        ->condition('team_id', $team->team_id)
+        ->execute();
+    }
+  }
+
+  // Schritt 2: Bekannte Varianten direkt auf den API-Originalnamen korrigieren.
+  $variants = [
+    'Bosnien und Herzegovina' => 'Bosnia and Herzegovina',
+    'Saudi Arabien'           => 'Saudi Arabia',
+    'Trinidad und Tobago'     => 'Trinidad and Tobago',
+  ];
+
+  foreach ($variants as $german => $english) {
+    $db->update('soccerbet_teams')
+      ->fields(['team_name' => $english])
+      ->condition('team_name', $german)
+      ->execute();
+  }
+
+  // Schritt 3: Großschreibungs-Varianten auf korrekte Schreibweise normalisieren.
+  $caps = [
+    'ALBANIA'         => 'Albania',
+    'CANADA'          => 'Canada',
+    'FINLAND'         => 'Finland',
+    'ICELAND'         => 'Iceland',
+    'NORTHERN IRELAND'=> 'Northern Ireland',
+    'QATAR'           => 'Qatar',
+    'WALES'           => 'Wales',
+  ];
+
+  foreach ($caps as $caps_name => $normal) {
+    $db->update('soccerbet_teams')
+      ->fields(['team_name' => $normal])
+      ->condition('team_name', $caps_name)
+      ->execute();
+  }
+
+  \Drupal::logger('soccerbet')->info('Update 8014: Teamnamen bereinigt und Varianten korrigiert.');
+}
+
 function soccerbet_update_8007(): void {
   $schema = \Drupal::database()->schema();
   if (!$schema->fieldExists('soccerbet_games', 'api_id')) {

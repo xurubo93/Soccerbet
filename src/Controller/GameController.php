@@ -53,7 +53,7 @@ final class GameController extends ControllerBase {
               'short'
             )
           : '—'),
-        $g->team1_name . ' vs. ' . $g->team2_name,
+        $this->t($g->team1_name) . ' vs. ' . $this->t($g->team2_name),
         $g->game_stadium ?: '—',
         $g->phase,
         $score,

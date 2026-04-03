@@ -53,7 +53,7 @@ final class TippsController extends ControllerBase {
 
     $header = [$this->t('Bettor')];
     foreach ($games as $game) {
-      $header[] = $game->team1_name . ' – ' . $game->team2_name;
+      $header[] = $this->t($game->team1_name) . ' – ' . $this->t($game->team2_name);
     }
 
     $rows = [];

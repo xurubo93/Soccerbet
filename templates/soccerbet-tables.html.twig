@@ -52,9 +52,9 @@
                   <td class="col-pos">{{ pos + 1 }}</td>
                   <td class="col-team">
                     {% if team.team_flag %}
-                      {{ flag_helper.flag(team.team_flag, team.team_name, 24, soccerbet_module_path) }}
+                      {{ flag_helper.flag(team.team_flag, team.team_name|t, 24, soccerbet_module_path) }}
                     {% endif %}
-                    {{ team.team_name }}
+                    {{ team.team_name|t }}
                   </td>
                   <td class="col-num">{{ team.games_played }}</td>
                   <td class="col-num">{{ team.games_won }}</td>
