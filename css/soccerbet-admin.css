@@ -1,0 +1,29 @@
+/* ── Game admin table ─────────────────────────────────────────────────────── */
+
+table.soccerbet-admin-games > tbody > tr:nth-child(odd) > td {
+  background-color: #ffffff;
+}
+
+table.soccerbet-admin-games > tbody > tr:nth-child(even) > td {
+  background-color: #f5f5f5;
+}
+
+table.soccerbet-admin-games > tbody > tr > td:first-child {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.soccerbet-admin-game__date {
+  font-size: 0.8em;
+  color: #666;
+}
+
+.soccerbet-admin-game__matchup {
+  font-weight: bold;
+  margin: 2px 0;
+}
+
+.soccerbet-admin-game__score {
+  font-size: 0.9em;
+  color: #444;
+}

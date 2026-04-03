@@ -28,7 +28,7 @@ soccerbet.tables:
 
 # Admin menu (under /admin)
 soccerbet.admin:
-  title: 'Betting game'
+  title: '⚽ Betting game'
   route_name: soccerbet.admin
   parent: system.admin
   description: 'Manage tournaments, matches, teams and participants.'

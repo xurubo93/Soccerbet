@@ -1,0 +1,4 @@
+/**
+ * @file
+ * Soccerbet admin JavaScript.
+ */

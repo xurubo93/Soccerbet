@@ -52,10 +52,6 @@ final class TeamController extends ControllerBase {
       $rows[] = [
         ['data' => ['#markup' => $flag_html . htmlspecialchars((string) $this->t($team->team_name))]],
         $team->team_group ?: '—',
-        $team->games_played,
-        $team->games_won . '/' . $team->games_drawn . '/' . $team->games_lost,
-        $team->goals_shot . ':' . $team->goals_got,
-        $team->points,
         [
           'data' => [
             '#type'  => 'operations',
@@ -78,10 +74,7 @@ final class TeamController extends ControllerBase {
       'table' => [
         '#theme'  => 'table',
         '#header' => [
-          $this->t('Team'), $this->t('Group'),
-          $this->t('Matches'), $this->t('W/D/L'),
-          $this->t('Goals'), $this->t('Points'),
-          $this->t('Actions'),
+          $this->t('Team'), $this->t('Group'), $this->t('Actions'),
         ],
         '#rows'  => $rows,
         '#empty' => $this->t('No teams for this tournament.'),

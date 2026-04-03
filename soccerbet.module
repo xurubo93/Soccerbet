@@ -154,6 +154,10 @@ function soccerbet_page_attachments(array &$attachments): void {
   }
   $attachments['#attached']['library'][] = 'soccerbet/global';
 
+  if (str_starts_with($route, 'soccerbet.admin')) {
+    $attachments['#attached']['library'][] = 'soccerbet/admin';
+  }
+
   // Live-JSON-URL für den Menüpunkt-Dot per drupalSettings übergeben.
   $tournament_id = (int) \Drupal::config('soccerbet.settings')->get('default_tournament');
   if ($tournament_id > 0) {

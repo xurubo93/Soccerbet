@@ -904,6 +904,9 @@ msgstr "Gruppentabellen"
 msgid "Betting game"
 msgstr "Tippspiel"
 
+msgid "⚽ Betting game"
+msgstr "⚽ Tippspiel"
+
 msgid "Manage tournaments, matches, teams and participants."
 msgstr "Turniere, Spiele, Teams und Teilnehmer verwalten."
 
@@ -1206,7 +1209,7 @@ msgstr "Elfenbeinküste"
 msgid "Côte d'Ivoire"
 msgstr "Elfenbeinküste"
 
-msgid "Cap Verde Islands"
+msgid "Cape Verde Islands"
 msgstr "Kap Verde"
 
 msgid "Congo DR"
