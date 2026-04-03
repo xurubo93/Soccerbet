@@ -50,7 +50,7 @@ final class TeamController extends ControllerBase {
       }
 
       $rows[] = [
-        ['data' => ['#markup' => $flag_html . htmlspecialchars($team->team_name)]],
+        ['data' => ['#markup' => $flag_html . htmlspecialchars((string) $this->t($team->team_name))]],
         $team->team_group ?: '—',
         $team->games_played,
         $team->games_won . '/' . $team->games_drawn . '/' . $team->games_lost,
