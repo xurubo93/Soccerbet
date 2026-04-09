@@ -22,10 +22,10 @@ soccerbet.settings:
       label: 'Selbst-Registrierung als Tipper erlauben'
     score_update_enabled:
       type: boolean
-      label: 'Automatisches Score-Update via OpenLigaDB aktivieren'
+      label: 'Automatisches Score-Update aktivieren'
     api_provider:
       type: string
-      label: 'API-Anbieter (openligadb oder footballdata)'
+      label: 'API-Anbieter'
     footballdata_api_key:
       type: string
       label: 'API-Key für football-data.org'

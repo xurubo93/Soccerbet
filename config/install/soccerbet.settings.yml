@@ -5,7 +5,7 @@ betting_closes_minutes_before: 0
 show_payment_status_in_standings: true
 allow_tipper_self_register: false
 score_update_enabled: false
-api_provider: openligadb
+api_provider: footballdata
 footballdata_api_key: ''
 livescores_enabled: false
 winner_bet_points:

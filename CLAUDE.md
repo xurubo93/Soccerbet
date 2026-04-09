@@ -56,7 +56,7 @@ Business logic is fully decoupled into services, injected via constructor DI. Ke
 - **ScoringService** — Core scoring logic. Calculates points per tipper using optimized JOINs (3 queries total). Scoring: exact result = 3pts, correct tendency = 1pt, KO round = N pts (tipper count), exclusive best bet = +1 bonus.
 - **TournamentManager** — Tournament CRUD and active tournament resolution. The active tournament is stored in `soccerbet.settings` → `default_tournament`.
 - **TipperManager** — Manages tippers, groups, teams, games. Handles Drupal user↔tipper mapping with duplicate prevention.
-- **ApiImportService** — Polymorphic import via `ApiClientFactory`. Supports OpenLigaDB (free, German) and football-data.org (requires API key). Switch via `soccerbet.settings` → `api_provider`.
+- **ApiImportService** — Imports teams and games via `ApiClientFactory` (football-data.org). API key required, configured in `soccerbet.settings` → `footballdata_api_key`.
 - **ScoreUpdateService** — Fetches live scores and recalculates standings.
 - **SoccerbetCronSubscriber** — Event listener on Drupal cron. Adaptive polling: live mode (game ±3h) = every cron run; idle mode = every 60min; nighttime (23:00–06:00 UTC) = skip.
 - **ShoutboxService** — Per-tournament chat messages.
@@ -101,7 +101,7 @@ Migration uses Drupal's Migrate API with custom source/destination plugins in `s
 
 ### Configuration
 
-Module settings live in `config/install/soccerbet.settings.yml` and are managed through `SettingsForm`. Key settings: `default_tournament`, `points_exact` (3), `points_tendency` (1), `api_provider`, `footballdata_api_key`, `betting_closes_minutes_before`, `score_update_enabled`.
+Module settings live in `config/install/soccerbet.settings.yml` and are managed through `SettingsForm`. Key settings: `default_tournament`, `points_exact` (3), `points_tendency` (1), `footballdata_api_key`, `betting_closes_minutes_before`, `score_update_enabled`.
 
 ### JavaScript Libraries
 

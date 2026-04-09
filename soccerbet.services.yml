@@ -12,13 +12,6 @@ services:
       - '@module_handler'
 
   # ── API-Clients ──────────────────────────────────────────────────────
-  soccerbet.openligadb_client:
-    class: Drupal\soccerbet\Service\OpenLigaDbClient
-    arguments:
-      - '@http_client'
-      - '@cache.default'
-      - '@logger.factory'
-
   soccerbet.footballdata_client:
     class: Drupal\soccerbet\Service\FootballDataClient
     arguments:
@@ -30,9 +23,7 @@ services:
   soccerbet.api_client_factory:
     class: Drupal\soccerbet\Service\ApiClientFactory
     arguments:
-      - '@soccerbet.openligadb_client'
       - '@soccerbet.footballdata_client'
-      - '@config.factory'
 
   # ── Import-Services ───────────────────────────────────────────────────
   soccerbet.api_import:
@@ -42,16 +33,6 @@ services:
       - '@soccerbet.api_client_factory'
       - '@soccerbet.team_flag_resolver'
       - '@soccerbet.team_name_translator'
-      - '@current_user'
-      - '@logger.factory'
-
-  # Legacy-Alias: OpenLigaDB-Only Import (für Rückwärtskompatibilität)
-  soccerbet.oldb_import:
-    class: Drupal\soccerbet\Service\OpenLigaDbImportService
-    arguments:
-      - '@database'
-      - '@soccerbet.openligadb_client'
-      - '@soccerbet.team_flag_resolver'
       - '@current_user'
       - '@logger.factory'
 

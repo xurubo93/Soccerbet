@@ -9,10 +9,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 
 /**
- * API-agnostischer Import-Service für Teams und Spiele.
- *
- * Nutzt ApiClientFactory um automatisch den konfigurierten Client
- * (OpenLigaDB oder football-data.org) zu verwenden.
+ * Import-Service für Teams und Spiele via football-data.org.
  */
 final class ApiImportService implements ApiImportInterface {
 
@@ -34,21 +31,11 @@ final class ApiImportService implements ApiImportInterface {
   }
 
   public function getLeagueHelp(): string {
-    return match ($this->clientFactory->getActiveProvider()) {
-      ApiClientFactory::PROVIDER_FOOTBALLDATA =>
-        'Competition-Code z.B. <code>BL1</code> (Bundesliga), <code>EC</code> (EM), <code>WC</code> (WM), <code>CL</code> (Champions League)',
-      default =>
-        'Z.B. <code>bl1</code> (Bundesliga), <code>em2024</code>, <code>wm2022</code>',
-    };
+    return 'Competition-Code z.B. <code>BL1</code> (Bundesliga), <code>EC</code> (EM), <code>WC</code> (WM), <code>CL</code> (Champions League)';
   }
 
   public function getSeasonHelp(): string {
-    return match ($this->clientFactory->getActiveProvider()) {
-      ApiClientFactory::PROVIDER_FOOTBALLDATA =>
-        'Jahr z.B. <code>2024</code> (= Saison 2024/25). Bei EM/WM das Turnierjahr.',
-      default =>
-        'Z.B. <code>2024</code>. Bei Turnieren oft gleich wie Liga-Kürzel.',
-    };
+    return 'Jahr z.B. <code>2024</code> (= Saison 2024/25). Bei EM/WM das Turnierjahr.';
   }
 
   /**
@@ -67,13 +54,10 @@ final class ApiImportService implements ApiImportInterface {
       'errors'         => [],
     ];
 
-    $client  = $this->clientFactory->getClient();
+    $client = $this->clientFactory->getClient();
 
     // Bei football-data.org: direkt stage=GROUP_STAGE filtern (spart API-Calls)
-    // Bei OpenLigaDB: stage wird ignoriert, filtern wir nachträglich
-    $stage = $group_only && $this->clientFactory->getActiveProvider() === ApiClientFactory::PROVIDER_FOOTBALLDATA
-      ? 'GROUP_STAGE'
-      : '';
+    $stage = $group_only ? 'GROUP_STAGE' : '';
 
     $matches = $client->getMatches($league, $season, $stage);
 
@@ -85,7 +69,7 @@ final class ApiImportService implements ApiImportInterface {
       return $stats;
     }
 
-    // OpenLigaDB: KO-Spiele nachträglich herausfiltern
+    // Fallback: KO-Spiele nachträglich herausfiltern wenn stage-Filter nicht griff
     if ($group_only && $stage === '') {
       $matches_filtered = [];
       foreach ($matches as $match) {
@@ -316,7 +300,7 @@ final class ApiImportService implements ApiImportInterface {
       return $stage_map[$match['stage']];
     }
 
-    // OpenLigaDB-Fallback: groupName analysieren
+    // Fallback: groupName analysieren
     $group_name = strtolower($match['group_name'] ?? '');
     if (str_contains($group_name, 'finale') && !str_contains($group_name, 'viertel') && !str_contains($group_name, 'halb') && !str_contains($group_name, 'achtel')) {
       return 'final';
@@ -345,7 +329,7 @@ final class ApiImportService implements ApiImportInterface {
     if (preg_match('/GROUP_([A-Z])/i', $group_name, $m)) {
       return strtoupper($m[1]);
     }
-    // OpenLigaDB: "Gruppe A", "Group B", "Gruppe: C"
+    // "Gruppe A", "Group B", "Gruppe: C"
     if (preg_match('/\b(?:gruppe|group)\s*:?\s*([A-Z])\b/i', $group_name, $m)) {
       return strtoupper($m[1]);
     }

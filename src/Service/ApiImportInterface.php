@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\soccerbet\Service;
 
 /**
- * Interface für API-Import-Services (OpenLigaDB, football-data.org, …).
+ * Interface für API-Import-Services.
  */
 interface ApiImportInterface {
 

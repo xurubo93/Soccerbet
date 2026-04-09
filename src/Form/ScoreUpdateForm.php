@@ -6,31 +6,27 @@ namespace Drupal\soccerbet\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Url;
-use Drupal\soccerbet\Service\OpenLigaDbClient;
 use Drupal\soccerbet\Service\ScoreUpdateService;
 use Drupal\soccerbet\Service\TournamentManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Formular: OpenLigaDB-Einstellungen und manueller Score-Update.
+ * Formular: Score-Update-Einstellungen und manueller Update-Button.
  *
  * Pro Turnier:
- *  - Liga-Kürzel (z.B. "bl1", "em2024", "aut_bl")
+ *  - Liga-Kürzel (z.B. "BL1", "EC", "WC")
  *  - Saison (z.B. "2024")
  *  - Manuelle Update-Schaltfläche mit Live-Feedback
  */
 final class ScoreUpdateForm extends FormBase {
 
   public function __construct(
-    private readonly OpenLigaDbClient $apiClient,
     private readonly ScoreUpdateService $scoreUpdateService,
     private readonly TournamentManager $tournamentManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('soccerbet.openligadb_client'),
       $container->get('soccerbet.score_update'),
       $container->get('soccerbet.tournament_manager'),
     );
@@ -55,7 +51,7 @@ final class ScoreUpdateForm extends FormBase {
     $form['global']['score_update_enabled'] = [
       '#type'          => 'checkbox',
       '#title'         => $this->t('Enable automatic score update via cron'),
-      '#description'   => $this->t('When enabled, scores are automatically fetched from OpenLigaDB.'),
+      '#description'   => $this->t('When enabled, scores are automatically fetched from football-data.org.'),
       '#default_value' => (bool) $config->get('score_update_enabled'),
     ];
 
@@ -67,9 +63,9 @@ final class ScoreUpdateForm extends FormBase {
       '#title'       => $this->t('League assignment per tournament'),
       '#open'        => TRUE,
       '#description' => $this->t(
-        'Enter the OpenLigaDB code and season for each tournament.
-         Examples: <code>bl1</code> (Bundesliga), <code>em2024</code> (Euro 2024),
-         <code>aut_bl</code> (Austrian Bundesliga).'
+        'Enter the football-data.org competition code and season for each tournament.
+         Examples: <code>BL1</code> (Bundesliga), <code>EC</code> (Euro), <code>WC</code> (World Cup),
+         <code>CL</code> (Champions League).'
       ),
     ];
 
@@ -83,19 +79,18 @@ final class ScoreUpdateForm extends FormBase {
         $tid = (int) $t->tournament_id;
 
         $form['tournaments']['tournament_' . $tid] = [
-          '#type'       => 'fieldset',
-          '#title'      => $t->tournament_desc . ($t->is_active ? ' ✓' : ''),
-          '#attributes' => ['class' => ['soccerbet-oldb-tournament']],
+          '#type'  => 'fieldset',
+          '#title' => $t->tournament_desc . ($t->is_active ? ' ✓' : ''),
         ];
 
         $form['tournaments']['tournament_' . $tid]['oldb_league_' . $tid] = [
           '#type'          => 'textfield',
-          '#title'         => $this->t('League code'),
-          '#description'   => $this->t('e.g. bl1, em2024, aut_bl, ucl'),
+          '#title'         => $this->t('Competition code'),
+          '#description'   => $this->t('e.g. BL1, EC, WC, CL'),
           '#default_value' => $t->oldb_league ?? '',
           '#size'          => 20,
           '#maxlength'     => 32,
-          '#placeholder'   => 'bl1',
+          '#placeholder'   => 'BL1',
         ];
 
         $form['tournaments']['tournament_' . $tid]['oldb_season_' . $tid] = [
@@ -128,46 +123,11 @@ final class ScoreUpdateForm extends FormBase {
             '#name'   => 'update_' . $tid,
             '#submit' => ['::manualUpdate'],
             '#attributes' => ['class' => ['button', 'button--secondary']],
-            // ID des Turniers für den Submit-Handler
             '#tournament_id' => $tid,
             '#limit_validation_errors' => [],
           ];
         }
       }
-    }
-
-    // ----------------------------------------------------------------
-    // Verfügbare Ligen (Hilfe-Bereich)
-    // ----------------------------------------------------------------
-    $form['available_leagues'] = [
-      '#type'        => 'details',
-      '#title'       => $this->t('Available leagues at OpenLigaDB'),
-      '#open'        => FALSE,
-      '#description' => $this->t('Load the list of available leagues from OpenLigaDB.'),
-    ];
-    $form['available_leagues']['load_leagues'] = [
-      '#type'   => 'submit',
-      '#value'  => $this->t('Load leagues from OpenLigaDB'),
-      '#submit' => ['::loadLeagues'],
-      '#limit_validation_errors' => [],
-    ];
-
-    // Geladene Ligen anzeigen
-    $leagues = $form_state->get('available_leagues');
-    if (!empty($leagues)) {
-      $rows = [];
-      foreach (array_slice($leagues, 0, 100) as $league) {
-        $rows[] = [
-          $league['leagueShortcut'] ?? '',
-          $league['leagueSeason']   ?? '',
-          $league['leagueName']     ?? '',
-        ];
-      }
-      $form['available_leagues']['table'] = [
-        '#theme'  => 'table',
-        '#header' => [$this->t('Code'), $this->t('Season'), $this->t('Name')],
-        '#rows'   => $rows,
-      ];
     }
 
     // ----------------------------------------------------------------
@@ -232,8 +192,6 @@ final class ScoreUpdateForm extends FormBase {
         return;
       }
 
-      // Forced: Last-Change-Cache ignorieren (manuell immer aktualisieren)
-      $this->apiClient->markAsSeen($league, $season); // Reset
       $result = $this->scoreUpdateService->updateTournament($tid, $league, $season);
 
       \Drupal::state()->set('soccerbet.last_update.' . $tid, \Drupal::time()->getRequestTime());
@@ -249,21 +207,6 @@ final class ScoreUpdateForm extends FormBase {
     catch (\Exception $e) {
       $this->messenger()->addError($this->t('Error: @msg', ['@msg' => $e->getMessage()]));
     }
-  }
-
-  /**
-   * Lädt verfügbare Ligen von OpenLigaDB und zeigt sie im Formular an.
-   */
-  public function loadLeagues(array &$form, FormStateInterface $form_state): void {
-    $leagues = $this->apiClient->getAvailableLeagues();
-    if (empty($leagues)) {
-      $this->messenger()->addWarning($this->t('No leagues received from OpenLigaDB.'));
-    }
-    else {
-      $form_state->set('available_leagues', $leagues);
-      $this->messenger()->addStatus($this->t('@count leagues loaded.', ['@count' => count($leagues)]));
-    }
-    $form_state->setRebuild(TRUE);
   }
 
 }

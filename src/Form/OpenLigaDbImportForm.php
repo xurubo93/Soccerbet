@@ -7,7 +7,6 @@ namespace Drupal\soccerbet\Form;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
-use Drupal\soccerbet\Service\ApiClientFactory;
 use Drupal\soccerbet\Service\ApiImportService;
 use Drupal\soccerbet\Service\TournamentManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,14 +18,12 @@ final class OpenLigaDbImportForm extends FormBase {
 
   public function __construct(
     private readonly ApiImportService $importService,
-    private readonly ApiClientFactory $clientFactory,
     private readonly TournamentManager $tournamentManager,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('soccerbet.api_import'),
-      $container->get('soccerbet.api_client_factory'),
       $container->get('soccerbet.tournament_manager'),
     );
   }
@@ -50,8 +47,7 @@ final class OpenLigaDbImportForm extends FormBase {
 
     $form_state->set('tournament_id', $tournament_id);
 
-    $active_provider = $this->clientFactory->getActiveProvider();
-    $api_name        = $this->importService->getApiName();
+    $api_name = $this->importService->getApiName();
 
     $form['#attributes'] = ['class' => ['soccerbet-import-form']];
 
@@ -63,35 +59,19 @@ final class OpenLigaDbImportForm extends FormBase {
       '#weight' => -10,
     ];
 
-    // Hinweis welche API aktiv ist
-    $provider_label = match($active_provider) {
-      ApiClientFactory::PROVIDER_FOOTBALLDATA => 'football-data.org',
-      default => 'OpenLigaDB',
-    };
     $settings_url = Url::fromRoute('soccerbet.settings')->toString();
-    $form['api_info'] = [
-      '#type'   => 'item',
-      '#markup' => '<p class="messages messages--status">'
-        . $this->t('Active API: <strong>@api</strong>. <a href=":url">Change API settings</a>.', [
-          '@api' => $provider_label,
-          ':url' => $settings_url,
-        ])
-        . '</p>',
-    ];
 
-    // football-data.org: API-Key-Warnung
-    if ($active_provider === ApiClientFactory::PROVIDER_FOOTBALLDATA) {
-      $api_key = \Drupal::config('soccerbet.settings')->get('footballdata_api_key') ?? '';
-      if (empty($api_key)) {
-        $form['api_key_warning'] = [
-          '#type'   => 'item',
-          '#markup' => '<p class="messages messages--warning">'
-            . $this->t('No API key for football-data.org configured. <a href=":url">Enter now</a>.', [
-              ':url' => $settings_url,
-            ])
-            . '</p>',
-        ];
-      }
+    // API-Key-Warnung
+    $api_key = \Drupal::config('soccerbet.settings')->get('footballdata_api_key') ?? '';
+    if (empty($api_key)) {
+      $form['api_key_warning'] = [
+        '#type'   => 'item',
+        '#markup' => '<p class="messages messages--warning">'
+          . $this->t('No API key for football-data.org configured. <a href=":url">Enter now</a>.', [
+            ':url' => $settings_url,
+          ])
+          . '</p>',
+      ];
     }
 
     $form['info'] = [

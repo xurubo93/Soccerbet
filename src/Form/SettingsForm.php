@@ -107,37 +107,18 @@ final class SettingsForm extends ConfigFormBase {
       '#type'  => 'fieldset',
       '#title' => $this->t('API configuration'),
     ];
-    $form['api']['api_provider'] = [
-      '#type'          => 'radios',
-      '#title'         => $this->t('Data source'),
-      '#options'       => [
-        'openligadb'   => $this->t('OpenLigaDB <em>(free, no key needed – focus Germany/Austria)</em>'),
-        'footballdata' => $this->t('football-data.org <em>(free with key – international leagues, more structured data)</em>'),
-      ],
-      '#default_value' => $config->get('api_provider') ?? 'openligadb',
-    ];
     $form['api']['footballdata_api_key'] = [
       '#type'          => 'textfield',
       '#title'         => $this->t('API-Key (football-data.org)'),
-      '#description'   => $this->t('Kostenlos registrieren auf <a href="https://www.football-data.org/client/register" target="_blank">football-data.org</a>. Nur benötigt wenn football-data.org als Quelle gewählt ist.'),
+      '#description'   => $this->t('Kostenlos registrieren auf <a href="https://www.football-data.org/client/register" target="_blank">football-data.org</a>.'),
       '#default_value' => $config->get('footballdata_api_key') ?? '',
       '#size'          => 40,
-      '#states'        => [
-        'visible' => [
-          ':input[name="api_provider"]' => ['value' => 'footballdata'],
-        ],
-      ],
     ];
     $form['api']['livescores_enabled'] = [
       '#type'          => 'checkbox',
       '#title'         => $this->t('Enable live scores'),
       '#description'   => $this->t('For live scores a Free+ plan or higher is required, see <a href="https://www.football-data.org/pricing" target="_blank">football-data.org/pricing</a>.'),
       '#default_value' => $config->get('livescores_enabled') ?? FALSE,
-      '#states'        => [
-        'visible' => [
-          ':input[name="api_provider"]' => ['value' => 'footballdata'],
-        ],
-      ],
     ];
 
     return parent::buildForm($form, $form_state);
@@ -151,7 +132,7 @@ final class SettingsForm extends ConfigFormBase {
       ->set('allow_tipper_self_register',        (bool) $form_state->getValue('allow_tipper_self_register'))
       ->set('show_payment_status_in_standings',  (bool) $form_state->getValue('show_payment_status_in_standings'))
       ->set('default_tournament',                (int)  $form_state->getValue('default_tournament'))
-      ->set('api_provider',                      (string) $form_state->getValue('api_provider'))
+      ->set('api_provider',                      'footballdata')
       ->set('footballdata_api_key',              trim($form_state->getValue('footballdata_api_key') ?? ''))
       ->set('livescores_enabled',               (bool) $form_state->getValue('livescores_enabled'))
       ->set('winner_bet_points', array_values(array_map(

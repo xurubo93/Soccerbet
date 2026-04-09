@@ -297,12 +297,11 @@ soccerbet.settings:
   requirements:
     _permission: 'administer soccerbet'
 
-# Score-Update / OpenLigaDB
 soccerbet.admin.score_update:
   path: '/soccerbet/admin/score-update'
   defaults:
     _form: '\Drupal\soccerbet\Form\ScoreUpdateForm'
-    _title: 'Score update & OpenLigaDB'
+    _title: 'Score update'
   requirements:
     _permission: 'administer soccerbet'
 
@@ -319,7 +318,7 @@ soccerbet.admin.tournament.import:
   path: '/admin/soccerbet/tournament/{tournament_id}/import'
   defaults:
     _form: '\Drupal\soccerbet\Form\OpenLigaDbImportForm'
-    _title: 'OpenLigaDB import'
+    _title: 'API import'
   requirements:
     _permission: 'administer soccerbet'
     tournament_id: '\d+'

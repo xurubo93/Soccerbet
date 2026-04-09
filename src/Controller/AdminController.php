@@ -20,7 +20,7 @@ final class AdminController extends ControllerBase {
       ['title' => $this->t('Betting groups'),              'route' => 'soccerbet.admin.tippergroups.list'],
       ['title' => $this->t('Manage payments'),             'route' => 'soccerbet.admin.payments'],
       ['title' => $this->t('Bets overview'),               'route' => 'soccerbet.admin.tipps.overview'],
-      ['title' => $this->t('Score update (OpenLigaDB)'),   'route' => 'soccerbet.admin.score_update'],
+      ['title' => $this->t('Score update'),                 'route' => 'soccerbet.admin.score_update'],
       ['title' => $this->t('Settings'),                    'route' => 'soccerbet.settings'],
     ];
 

@@ -10,7 +10,7 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
- * Gleicht API-Daten (OpenLigaDB oder football-data.org) mit der lokalen DB ab.
+ * Gleicht API-Daten (football-data.org) mit der lokalen DB ab.
  * Nutzt ApiClientFactory – arbeitet mit dem normalisierten getMatches()-Format.
  */
 final class ScoreUpdateService {

@@ -34,8 +34,8 @@ msgstr "Einsätze verwalten"
 msgid "Bets overview"
 msgstr "Tipps-Übersicht"
 
-msgid "Score update (OpenLigaDB)"
-msgstr "Ergebnis-Update (OpenLigaDB)"
+msgid "Score update"
+msgstr "Ergebnis-Update"
 
 msgid "Settings"
 msgstr "Einstellungen"
@@ -730,17 +730,17 @@ msgstr "Automatisches Ergebnis-Update"
 msgid "Enable automatic score update via cron"
 msgstr "Automatisches Ergebnis-Update per Cron aktivieren"
 
-msgid "When enabled, scores are automatically fetched from OpenLigaDB."
-msgstr "Wenn aktiviert, werden Ergebnisse automatisch von OpenLigaDB abgerufen."
+msgid "When enabled, scores are automatically fetched from football-data.org."
+msgstr "Wenn aktiviert, werden Ergebnisse automatisch von football-data.org abgerufen."
 
 msgid "League assignment per tournament"
 msgstr "Liga-Zuweisung pro Turnier"
 
-msgid "League code"
-msgstr "Liga-Code"
+msgid "Competition code"
+msgstr "Wettbewerbs-Code"
 
-msgid "e.g. bl1, em2024, aut_bl, ucl"
-msgstr "z.B. bl1, em2024, aut_bl, ucl"
+msgid "e.g. BL1, EC, WC, CL"
+msgstr "z.B. BL1, EC, WC, CL"
 
 msgid "e.g. 2024 (for season 2024/25)"
 msgstr "z.B. 2024 (für Saison 2024/25)"
@@ -750,15 +750,6 @@ msgstr "Letztes Update: @date"
 
 msgid "Update now"
 msgstr "Jetzt aktualisieren"
-
-msgid "Available leagues at OpenLigaDB"
-msgstr "Verfügbare Ligen bei OpenLigaDB"
-
-msgid "Load the list of available leagues from OpenLigaDB."
-msgstr "Die Liste der verfügbaren Ligen von OpenLigaDB laden."
-
-msgid "Load leagues from OpenLigaDB"
-msgstr "Ligen von OpenLigaDB laden"
 
 msgid "Code"
 msgstr "Code"
@@ -771,9 +762,6 @@ msgstr "Einstellungen wurden gespeichert."
 
 msgid "No league code configured."
 msgstr "Kein Liga-Code konfiguriert."
-
-msgid "No leagues received from OpenLigaDB."
-msgstr "Keine Ligen von OpenLigaDB erhalten."
 
 msgid "@count leagues loaded."
 msgstr "@count Ligen geladen."
@@ -831,20 +819,11 @@ msgstr "Punkte nach Phase @n"
 msgid "API configuration"
 msgstr "API-Konfiguration"
 
-msgid "Data source"
-msgstr "Datenquelle"
-
-msgid "OpenLigaDB <em>(free, no key needed – focus Germany/Austria)</em>"
-msgstr "OpenLigaDB <em>(kostenlos, kein Key nötig – Fokus Deutschland/Österreich)</em>"
-
-msgid "football-data.org <em>(free with key – international leagues, more structured data)</em>"
-msgstr "football-data.org <em>(kostenlos mit Key – internationale Ligen, strukturiertere Daten)</em>"
-
 msgid "API-Key (football-data.org)"
 msgstr "API-Key (football-data.org)"
 
-msgid "Kostenlos registrieren auf <a href=\"https://www.football-data.org/client/register\" target=\"_blank\">football-data.org</a>. Nur benötigt wenn football-data.org als Quelle gewählt ist."
-msgstr "Kostenlos registrieren auf <a href=\"https://www.football-data.org/client/register\" target=\"_blank\">football-data.org</a>. Nur benötigt wenn football-data.org als Quelle gewählt ist."
+msgid "Kostenlos registrieren auf <a href=\"https://www.football-data.org/client/register\" target=\"_blank\">football-data.org</a>."
+msgstr "Kostenlos registrieren auf <a href=\"https://www.football-data.org/client/register\" target=\"_blank\">football-data.org</a>."
 
 msgid "Enable live scores"
 msgstr "Livescores aktivieren"
@@ -852,10 +831,7 @@ msgstr "Livescores aktivieren"
 msgid "For live scores a Free+ plan or higher is required, see <a href=\"https://www.football-data.org/pricing\" target=\"_blank\">football-data.org/pricing</a>."
 msgstr "Für Livescores ist zumindest ein Free+ Plan erforderlich, siehe <a href=\"https://www.football-data.org/pricing\" target=\"_blank\">football-data.org/pricing</a>."
 
-# ── OpenLigaDB import form ────────────────────────────────────────────────────
-
-msgid "Active API: <strong>@api</strong>. <a href=\":url\">Change API settings</a>."
-msgstr "Aktive API: <strong>@api</strong>. <a href=\":url\">API-Einstellungen ändern</a>."
+# ── API import form ───────────────────────────────────────────────────────────
 
 msgid "No API key for football-data.org configured. <a href=\":url\">Enter now</a>."
 msgstr "Kein API-Key für football-data.org konfiguriert. <a href=\":url\">Jetzt eingeben</a>."
@@ -928,9 +904,6 @@ msgstr "Tipps-Übersicht"
 msgid "Settings"
 msgstr "Einstellungen"
 
-msgid "Score update (OpenLigaDB)"
-msgstr "Score-Update (OpenLigaDB)"
-
 # ── Route titles ──────────────────────────────────────────────────────────────
 
 msgid "Standings by round"
@@ -987,14 +960,11 @@ msgstr "Zahlungen verwalten"
 msgid "Betting game settings"
 msgstr "Tippspiel-Einstellungen"
 
-msgid "Score update & OpenLigaDB"
-msgstr "Score-Update & OpenLigaDB"
-
 msgid "Delete message"
 msgstr "Nachricht löschen"
 
-msgid "OpenLigaDB import"
-msgstr "OpenLigaDB Import"
+msgid "API import"
+msgstr "API-Import"
 
 msgid "Live standings"
 msgstr "Live-Rangliste"

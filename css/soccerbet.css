@@ -158,12 +158,6 @@
 }
 
 /* --- Score-Update Admin ------------------------------------------ */
-.soccerbet-oldb-tournament {
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background: var(--sb-color-qualifier, #e8f4fd);
-  border-radius: var(--sb-radius);
-}
 .soccerbet-update-status {
   font-size: 0.82em;
   color: var(--sb-text-muted);

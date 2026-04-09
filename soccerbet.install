@@ -65,13 +65,13 @@ function soccerbet_schema(): array {
         'type'        => 'varchar',
         'length'      => 32,
         'not null'    => FALSE,
-        'description' => 'OpenLigaDB Liga-Kürzel (z.B. bl1, em2024).',
+        'description' => 'API-Liga-/Wettbewerbscode (z.B. BL1, EC, WC).',
       ],
       'oldb_season' => [
         'type'        => 'varchar',
         'length'      => 8,
         'not null'    => FALSE,
-        'description' => 'OpenLigaDB Saison (z.B. 2024).',
+        'description' => 'API-Saison (z.B. 2024).',
       ],
     ],
     'primary key' => ['tournament_id'],
@@ -418,7 +418,7 @@ function soccerbet_uninstall(): void {
 }
 
 /**
- * Update 8001: OpenLigaDB-Felder zur Tournament-Tabelle hinzufügen.
+ * Update 8001: API-Felder zur Tournament-Tabelle hinzufügen.
  */
 function soccerbet_update_8001(): void {
   $schema = \Drupal::database()->schema();

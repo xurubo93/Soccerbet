@@ -6,10 +6,6 @@ namespace Drupal\soccerbet\Service;
 
 /**
  * Interface für externe Fußball-API-Clients.
- *
- * Beide Implementierungen (OpenLigaDB und football-data.org) müssen
- * normalisierte Datenstrukturen zurückgeben damit Import und Score-Update
- * API-unabhängig funktionieren.
  */
 interface ApiClientInterface {
 
