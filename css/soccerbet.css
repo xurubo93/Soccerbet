@@ -152,46 +152,72 @@
 }
 .soccerbet-tipps-overview th,
 .soccerbet-tipps-overview td {
-  padding: .3rem .5rem;
+  padding: .25rem .4rem;
   border: 1px solid var(--sb-border);
   text-align: center;
-  white-space: nowrap;
+  vertical-align: middle;
 }
 .soccerbet-tipps-overview th {
   background: #f8f9fa;
   font-weight: 600;
-  font-size: .78rem;
+  font-size: .75rem;
+  line-height: 1.2;
+  white-space: normal;   /* Zeilenumbruch im Tippernahmen erlaubt */
 }
+/* Spiel-Spalte: sticky links */
 .soccerbet-tipps-overview .col-game {
   text-align: left;
   position: sticky;
   left: 0;
-  background: #fff;
   z-index: 1;
-  min-width: 130px;
-  max-width: 180px;
+  min-width: 100px;
+  max-width: 150px;
+  white-space: normal;
 }
 .soccerbet-tipps-overview thead .col-game {
-  background: #f8f9fa;
   z-index: 2;
 }
+/* alternating rows – inkl. sticky col-game */
+.soccerbet-tipps-overview tbody tr:nth-child(odd)  td           { background: #fff; }
+.soccerbet-tipps-overview tbody tr:nth-child(even) td           { background: #f5f5f5; }
+.soccerbet-tipps-overview tbody tr:nth-child(odd)  .col-game    { background: #fff; }
+.soccerbet-tipps-overview tbody tr:nth-child(even) .col-game    { background: #f5f5f5; }
+.soccerbet-tipps-overview thead th                              { background: #f8f9fa; }
+
+/* Inhalte in der Spiel-Spalte */
 .tipps-ov__date {
   display: block;
-  font-size: .72rem;
+  font-size: .7rem;
   color: var(--sb-text-muted);
 }
-.tipps-ov__teams {
+.tipps-ov__team {
   display: block;
   font-weight: 500;
+  font-size: .78rem;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
+.tipps-ov__score {
+  display: block;
+  font-weight: 700;
+  font-size: .8rem;
+  margin-top: 2px;
+  color: #c00;
+}
+.tipps-ov__score--pending { color: var(--sb-text-muted); font-weight: 400; }
+
+/* Tipp-Zellen */
 .soccerbet-tipps-overview .col-tipp {
-  min-width: 48px;
+  min-width: 40px;
+  font-size: .8rem;
+  white-space: nowrap;
 }
-/* alternating row colors */
-.soccerbet-tipps-overview tbody tr:nth-child(even) .col-game { background: #f5f5f5; }
-.soccerbet-tipps-overview tbody tr:nth-child(even) td { background-color: #f5f5f5; }
-.soccerbet-tipps-overview tbody tr:nth-child(odd) td { background-color: #fff; }
-.soccerbet-tipps-overview tbody tr:nth-child(odd) .col-game { background: #fff; }
+.tipps-ov__cell--exact     { background: #d4edda !important; color: #155724; font-weight: 700; }
+.tipps-ov__cell--tendency  { background: #fff3cd !important; color: #856404; }
+.tipps-ov__cell--wrong     { background: #e9ecef !important; color: #6c757d; }
+.tipps-ov__cell--none      { color: #ccc; }
 
 /* --- Standings links sep ------------------------------------------------- */
 .soccerbet-standings__links-sep { margin: 0 .4rem; color: var(--sb-text-muted); }

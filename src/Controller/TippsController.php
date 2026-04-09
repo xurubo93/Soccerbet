@@ -54,10 +54,13 @@ final class TippsController extends ControllerBase {
         ->loadTippsByTipper((int) $tipper->tipper_id, $tournament_id);
     }
 
-    // Header: erste Spalte leer (Spielbezeichnung), dann ein Tipper pro Spalte
-    $header = [['data' => $this->t('Match'), 'class' => ['col-game']]];
+    // Header: erste Spalte "Spiel", dann Tipper-Namen mit Zeilenumbruch am ersten Leerzeichen
+    $header = [['data' => ['#markup' => $this->t('Match')], 'class' => ['col-game']]];
     foreach ($tippers as $tipper) {
-      $header[] = ['data' => $tipper->tipper_name, 'class' => ['col-tipper']];
+      $name = htmlspecialchars($tipper->tipper_name);
+      // Ersten Leerzeichen durch <br> ersetzen (Vor-/Nachname untereinander)
+      $name_wrapped = preg_replace('/ /', '<br>', $name, 1);
+      $header[] = ['data' => ['#markup' => $name_wrapped], 'class' => ['col-tipper']];
     }
 
     // Eine Zeile pro Spiel
@@ -70,18 +73,38 @@ final class TippsController extends ControllerBase {
           )
         : '';
 
+      $has_result  = ($game->team1_score !== NULL && $game->team2_score !== NULL);
+      $score_label = $has_result
+        ? '<span class="tipps-ov__score">' . $game->team1_score . ':' . $game->team2_score . '</span>'
+        : '<span class="tipps-ov__score tipps-ov__score--pending">—</span>';
+
       $game_label = ($date ? '<span class="tipps-ov__date">' . $date . '</span>' : '')
-        . '<span class="tipps-ov__teams">'
-        . htmlspecialchars((string) $this->t($game->team1_name))
-        . ' – '
-        . htmlspecialchars((string) $this->t($game->team2_name))
-        . '</span>';
+        . '<span class="tipps-ov__team">' . htmlspecialchars((string) $this->t($game->team1_name)) . '</span>'
+        . '<span class="tipps-ov__team">' . htmlspecialchars((string) $this->t($game->team2_name)) . '</span>'
+        . $score_label;
 
       $row = [['data' => ['#markup' => $game_label], 'class' => ['col-game']]];
 
       foreach ($tippers as $tipper) {
         $tipp = $all_tipps[(int) $tipper->tipper_id][(int) $game->game_id] ?? NULL;
-        $row[] = ['data' => $tipp ? $tipp->team1_tipp . ':' . $tipp->team2_tipp : '—', 'class' => ['col-tipp']];
+
+        if (!$tipp) {
+          $row[] = ['data' => '—', 'class' => ['col-tipp', 'tipps-ov__cell--none']];
+          continue;
+        }
+
+        $label = $tipp->team1_tipp . ':' . $tipp->team2_tipp;
+
+        if (!$has_result) {
+          $row[] = ['data' => $label, 'class' => ['col-tipp']];
+          continue;
+        }
+
+        $css = $this->tippClass(
+          (int) $tipp->team1_tipp,   (int) $tipp->team2_tipp,
+          (int) $game->team1_score,  (int) $game->team2_score,
+        );
+        $row[] = ['data' => $label, 'class' => ['col-tipp', $css]];
       }
 
       $rows[] = $row;
@@ -90,11 +113,11 @@ final class TippsController extends ControllerBase {
     $back_url = Url::fromRoute('soccerbet.standings', ['tournament_id' => $tournament_id])->toString();
 
     return [
-      '#type'     => 'container',
+      '#type'       => 'container',
       '#attributes' => ['class' => ['soccerbet-tipps-overview-wrap']],
-      'heading'   => ['#markup' => '<h2>' . $this->t('Bets overview: @name', ['@name' => $tournament->tournament_desc]) . '</h2>'],
-      'back'      => ['#markup' => '<div class="soccerbet-standings__links"><a href="' . $back_url . '">← ' . $this->t('Back to standings') . '</a></div>'],
-      'scroll'    => [
+      'heading'     => ['#markup' => '<h2>' . $this->t('Bets overview: @name', ['@name' => $tournament->tournament_desc]) . '</h2>'],
+      'back'        => ['#markup' => '<div class="soccerbet-standings__links"><a href="' . $back_url . '">← ' . $this->t('Back to standings') . '</a></div>'],
+      'scroll'      => [
         '#type'       => 'container',
         '#attributes' => ['class' => ['soccerbet-tipps-scroll']],
         'table'       => [
@@ -107,5 +130,17 @@ final class TippsController extends ControllerBase {
         ],
       ],
     ];
+  }
+
+  /**
+   * CSS-Klasse für eine Tipp-Zelle basierend auf dem Spielergebnis.
+   */
+  private function tippClass(int $t1, int $t2, int $s1, int $s2): string {
+    if ($t1 === $s1 && $t2 === $s2) {
+      return 'tipps-ov__cell--exact';
+    }
+    $tipp_tend   = $t1 <=> $t2;   // -1, 0, +1
+    $result_tend = $s1 <=> $s2;
+    return $tipp_tend === $result_tend ? 'tipps-ov__cell--tendency' : 'tipps-ov__cell--wrong';
   }
 }
