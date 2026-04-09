@@ -265,14 +265,14 @@ soccerbet.admin.payments:
 # Admin: Tipps
 # ============================================================
 
-soccerbet.admin.tipps.overview:
-  path: '/soccerbet/admin/tipps/{tournament_id}'
+soccerbet.tipps.overview:
+  path: '/soccerbet/tipps/{tournament_id}'
   defaults:
-    _controller: '\Drupal\soccerbet\Controller\TippsController::adminOverview'
+    _controller: '\Drupal\soccerbet\Controller\TippsController::overview'
     _title: 'Bets overview'
     tournament_id: 0
   requirements:
-    _permission: 'administer soccerbet'
+    _permission: 'access soccerbet content'
     tournament_id: '\d*'
 
 soccerbet.admin.tipps.edit:

@@ -64,12 +64,6 @@ soccerbet.admin.payments:
   parent: soccerbet.admin
   weight: 50
 
-soccerbet.admin.tipps.overview:
-  title: 'Bets overview'
-  route_name: soccerbet.admin.tipps.overview
-  parent: soccerbet.admin
-  weight: 60
-
 soccerbet.settings:
   title: 'Settings'
   route_name: soccerbet.settings

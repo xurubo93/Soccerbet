@@ -59,13 +59,19 @@
              class="soccerbet-steps__btn">{{ 'Next round'|t }} →</a>
         {% endif %}
       </nav>
-    {% elseif played_games > 1 %}
-      <div class="soccerbet-standings__links">
+    {% endif %}
+
+    <div class="soccerbet-standings__links">
+      {% if not step_mode and played_games > 1 %}
         <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: 1}) }}">
           {{ 'Browse rounds'|t }}
         </a>
-      </div>
-    {% endif %}
+        <span class="soccerbet-standings__links-sep">·</span>
+      {% endif %}
+      <a href="{{ path('soccerbet.tipps.overview', {tournament_id: tournament.tournament_id}) }}">
+        {{ 'All bets'|t }}
+      </a>
+    </div>
 
     <table class="soccerbet-standings__table">
       <thead>

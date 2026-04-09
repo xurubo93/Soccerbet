@@ -598,6 +598,9 @@ msgstr "Nächste Runde"
 msgid "Browse rounds"
 msgstr "Runden durchblättern"
 
+msgid "All bets"
+msgstr "Alle Tipps"
+
 msgid "Correct results"
 msgstr "Ergebnisse"
 
