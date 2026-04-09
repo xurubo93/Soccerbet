@@ -141,11 +141,12 @@
 .soccerbet-team-flag { vertical-align:middle; margin-right:5px; border:1px solid #ddd; }
 
 /* --- Tipps-Übersicht ---------------------------------------------------- */
-/* overflow-x:auto impliziert overflow-y:auto → bricht position:sticky.
-   Workaround: Wrapper nur horizontal scrollen, vertikales Sticky via <body>. */
+/* overflow-x:auto würde implizit overflow-y:auto setzen → bricht position:sticky.
+   overflow-y:clip schneidet visuell ab, erzeugt aber KEINEN Scroll-Container,
+   daher bleibt der vertikale Sticky-Kontext beim body. */
 .soccerbet-tipps-scroll {
   overflow-x: auto;
-  overflow-y: visible;
+  overflow-y: clip;
   -webkit-overflow-scrolling: touch;
 }
 .soccerbet-tipps-overview {
@@ -165,13 +166,10 @@
   font-weight: 600;
   font-size: .75rem;
   line-height: 1.2;
-  white-space: normal;      /* Zeilenumbruch bei <br> erlaubt */
-  hyphens: none;            /* keine automatische Silbentrennung */
+  white-space: normal;
+  hyphens: none;
   overflow-wrap: normal;
   word-break: normal;
-  position: sticky;
-  top: 0;
-  z-index: 3;
 }
 /* Spiel-Spalte: sticky links + zentriert */
 .soccerbet-tipps-overview .col-game {
@@ -184,7 +182,7 @@
   white-space: normal;
 }
 .soccerbet-tipps-overview thead .col-game {
-  z-index: 4;   /* über anderen sticky-th UND sticky-td */
+  z-index: 2;
 }
 /* alternating rows – inkl. sticky col-game */
 .soccerbet-tipps-overview tbody tr:nth-child(odd)  td           { background: #fff; }
@@ -227,6 +225,35 @@
 .tipps-ov__cell--tendency  { background: #fff3cd !important; color: #856404; }
 .tipps-ov__cell--wrong     { background: #e9ecef !important; color: #6c757d; }
 .tipps-ov__cell--none      { color: #ccc; }
+
+/* Ghost-Header (JS-Sticky) */
+.tipps-ov__ghost {
+  position: fixed;
+  top: 0;
+  overflow: hidden;
+  display: none;
+  z-index: 200;
+  box-shadow: 0 2px 4px rgba(0,0,0,.12);
+}
+.tipps-ov__ghost table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.tipps-ov__ghost th {
+  background: #f8f9fa;
+  font-weight: 600;
+  font-size: .75rem;
+  line-height: 1.2;
+  hyphens: none;
+  overflow-wrap: normal;
+  word-break: normal;
+  padding: .25rem .4rem;
+  border: 1px solid var(--sb-border);
+  text-align: center;
+  vertical-align: middle;
+  white-space: normal;
+  overflow: hidden;
+}
 
 /* --- Standings links sep ------------------------------------------------- */
 .soccerbet-standings__links-sep { margin: 0 .4rem; color: var(--sb-text-muted); }

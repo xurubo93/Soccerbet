@@ -196,6 +196,73 @@
     },
   };
 
+  /**
+   * Tipps-Übersicht: JS-Sticky-Header.
+   *
+   * CSS position:sticky auf thead funktioniert nicht zuverlässig wenn
+   * ein Vorfahren-Element overflow:hidden/auto hat (typisch in Drupal-Themes).
+   * Lösung: thead-Klon als position:fixed, synchronisiert mit dem
+   * horizontalen Scroll-Offset des Containers.
+   */
+  Drupal.behaviors.soccerbetTippsSticky = {
+    attach(context) {
+      once('soccerbet-tipps-sticky', '.soccerbet-tipps-scroll', context).forEach(function (scroll) {
+        const table = scroll.querySelector('.soccerbet-tipps-overview');
+        if (!table) return;
+        const thead = table.querySelector('thead');
+        if (!thead) return;
+
+        // Klon-Container erstellen
+        const ghost = document.createElement('div');
+        ghost.className = 'tipps-ov__ghost';
+
+        const ghostTable = document.createElement('table');
+        ghostTable.className = table.className;
+        const ghostThead = thead.cloneNode(true);
+        // Sticky-CSS im Klon deaktivieren (kein Scroll-Container vorhanden)
+        ghostThead.querySelectorAll('th').forEach(th => {
+          th.style.position = 'static';
+        });
+        ghostTable.appendChild(ghostThead);
+        ghost.appendChild(ghostTable);
+        document.body.appendChild(ghost);
+
+        function syncWidths() {
+          const ths     = thead.querySelectorAll('th');
+          const ghostThs = ghostThead.querySelectorAll('th');
+          ths.forEach(function (th, i) {
+            if (!ghostThs[i]) return;
+            const w = th.getBoundingClientRect().width;
+            ghostThs[i].style.width    = w + 'px';
+            ghostThs[i].style.minWidth = w + 'px';
+          });
+        }
+
+        function update() {
+          const scrollRect  = scroll.getBoundingClientRect();
+          const theadBottom = thead.getBoundingClientRect().bottom;
+          const tableBottom = table.getBoundingClientRect().bottom;
+
+          if (theadBottom <= 0 && tableBottom > 0) {
+            syncWidths();
+            ghost.style.left    = scrollRect.left + 'px';
+            ghost.style.width   = scrollRect.width + 'px';
+            ghost.style.display = 'block';
+            // Horizontalen Scroll-Offset spiegeln
+            ghostTable.style.transform = 'translateX(' + (-scroll.scrollLeft) + 'px)';
+          }
+          else {
+            ghost.style.display = 'none';
+          }
+        }
+
+        window.addEventListener('scroll',  update, { passive: true });
+        scroll.addEventListener('scroll',  update, { passive: true });
+        window.addEventListener('resize',  update, { passive: true });
+      });
+    },
+  };
+
   function setLiveMenuDot(isLive) {
     const menuLink = document.querySelector('a.menu-item--live');
     if (!menuLink) return;
