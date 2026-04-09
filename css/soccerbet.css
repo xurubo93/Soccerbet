@@ -38,7 +38,7 @@
 .rank-diff--up { color:#28a745; } .rank-diff--down { color:#dc3545; }
 .soccerbet-badge { display:inline-block; font-size:.7em; padding:2px 7px; border-radius:3px; margin-left:6px; vertical-align:middle; font-weight:500; }
 .soccerbet-badge--unpaid { background:#fff3cd; color:#856404; border:1px solid #ffc107; }
-.soccerbet-standings__links { margin-top:1rem; font-size:.9em; }
+.soccerbet-standings__links { margin-top:1rem; font-size:.9em; display:flex; gap:.6rem; flex-wrap:wrap; }
 /* --- Bonus-Tab ---------------------------------------------------------- */
 .col-bonus-pts,.col-bonus-result { text-align:center; }
 .soccerbet-bonus__row--correct { background:#d4edda !important; }

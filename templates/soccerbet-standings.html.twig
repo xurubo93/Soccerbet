@@ -63,12 +63,13 @@
 
     <div class="soccerbet-standings__links">
       {% if not step_mode and played_games > 1 %}
-        <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: 1}) }}">
+        <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: 1}) }}"
+           class="soccerbet-steps__btn">
           {{ 'Browse rounds'|t }}
         </a>
-        <span class="soccerbet-standings__links-sep">·</span>
       {% endif %}
-      <a href="{{ path('soccerbet.tipps.overview', {tournament_id: tournament.tournament_id}) }}">
+      <a href="{{ path('soccerbet.tipps.overview', {tournament_id: tournament.tournament_id}) }}"
+         class="soccerbet-steps__btn">
         {{ 'All bets'|t }}
       </a>
     </div>

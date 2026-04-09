@@ -875,6 +875,51 @@ function soccerbet_update_8014(): void {
   \Drupal::logger('soccerbet')->info('Update 8014: Teamnamen bereinigt und Varianten korrigiert.');
 }
 
+/**
+ * Update 8015: Fehlende team_flag-Werte per TeamFlagResolver nachträglich befüllen.
+ */
+function soccerbet_update_8015(): void {
+  $db       = \Drupal::database();
+  $resolver = \Drupal::service('soccerbet.team_flag_resolver');
+
+  $teams = $db->select('soccerbet_teams', 't')
+    ->fields('t', ['team_id', 'team_name', 'team_flag'])
+    ->execute()
+    ->fetchAll();
+
+  $updated = 0;
+  $skipped = 0;
+
+  foreach ($teams as $team) {
+    // Nur Teams ohne gültigen Flag-Code aktualisieren
+    if (!empty($team->team_flag) && $resolver->codeIsValid($team->team_flag)) {
+      $skipped++;
+      continue;
+    }
+
+    $code = $resolver->resolve($team->team_name);
+    if ($code === '') {
+      \Drupal::logger('soccerbet')->warning(
+        'Update 8015: Kein Flag-Code gefunden für "@name" (team_id @id).',
+        ['@name' => $team->team_name, '@id' => $team->team_id]
+      );
+      $skipped++;
+      continue;
+    }
+
+    $db->update('soccerbet_teams')
+      ->fields(['team_flag' => $code])
+      ->condition('team_id', $team->team_id)
+      ->execute();
+    $updated++;
+  }
+
+  \Drupal::logger('soccerbet')->info(
+    'Update 8015: @u Teams mit Flag-Code befüllt, @s übersprungen.',
+    ['@u' => $updated, '@s' => $skipped]
+  );
+}
+
 function soccerbet_update_8007(): void {
   $schema = \Drupal::database()->schema();
   if (!$schema->fieldExists('soccerbet_games', 'api_id')) {

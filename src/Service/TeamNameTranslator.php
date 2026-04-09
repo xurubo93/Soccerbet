@@ -44,11 +44,11 @@ final class TeamNameTranslator {
 
     $langcode   = $this->languageManager->getCurrentLanguage()->getId();
     $module_path = $this->moduleHandler->getModule('soccerbet')->getPath();
-    $po_file    = $module_path . '/translations/' . $langcode . '.po';
+    $po_file = $module_path . '/translations/soccerbet.' . $langcode . '.po';
 
     // Fallback auf 'de' wenn aktuelle Sprache keine PO hat
     if (!file_exists($po_file) && $langcode !== 'de') {
-      $po_file = $module_path . '/translations/de.po';
+      $po_file = $module_path . '/translations/soccerbet.de.po';
     }
 
     $this->map = file_exists($po_file) ? $this->parsePo($po_file) : [];

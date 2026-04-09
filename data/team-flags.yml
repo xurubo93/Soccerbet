@@ -103,6 +103,12 @@
 "Luxembourg": "LUX"
 "Iceland": "ISL"
 "Faroe Islands": "FRO"
+"Latvia": "LVA"
+"Lithuania": "LTU"
+"Estonia": "EST"
+"Ireland": "IRL"
+"Republic of Ireland": "IRL"
+"Northern Ireland": "NIR"
 "Ivory Coast": "CIV"
 "Côte d'Ivoire": "CIV"
 
@@ -208,6 +214,7 @@
 # -----------------------------------------------------------------------
 "Nigeria": "NGA"
 "Ghana": "GHA"
+"Togo": "TGO"
 "Kamerun": "CMR"
 "Senegal": "SEN"
 "Marokko": "MAR"
