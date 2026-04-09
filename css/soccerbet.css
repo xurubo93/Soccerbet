@@ -141,8 +141,11 @@
 .soccerbet-team-flag { vertical-align:middle; margin-right:5px; border:1px solid #ddd; }
 
 /* --- Tipps-Übersicht ---------------------------------------------------- */
+/* overflow-x:auto impliziert overflow-y:auto → bricht position:sticky.
+   Workaround: Wrapper nur horizontal scrollen, vertikales Sticky via <body>. */
 .soccerbet-tipps-scroll {
   overflow-x: auto;
+  overflow-y: visible;
   -webkit-overflow-scrolling: touch;
 }
 .soccerbet-tipps-overview {
@@ -162,11 +165,17 @@
   font-weight: 600;
   font-size: .75rem;
   line-height: 1.2;
-  white-space: normal;   /* Zeilenumbruch im Tippernahmen erlaubt */
+  white-space: normal;      /* Zeilenumbruch bei <br> erlaubt */
+  hyphens: none;            /* keine automatische Silbentrennung */
+  overflow-wrap: normal;
+  word-break: normal;
+  position: sticky;
+  top: 0;
+  z-index: 3;
 }
-/* Spiel-Spalte: sticky links */
+/* Spiel-Spalte: sticky links + zentriert */
 .soccerbet-tipps-overview .col-game {
-  text-align: left;
+  text-align: center;
   position: sticky;
   left: 0;
   z-index: 1;
@@ -175,7 +184,7 @@
   white-space: normal;
 }
 .soccerbet-tipps-overview thead .col-game {
-  z-index: 2;
+  z-index: 4;   /* über anderen sticky-th UND sticky-td */
 }
 /* alternating rows – inkl. sticky col-game */
 .soccerbet-tipps-overview tbody tr:nth-child(odd)  td           { background: #fff; }
