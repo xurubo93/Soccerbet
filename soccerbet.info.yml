@@ -3,13 +3,4 @@ type: module
 description: 'Fußball-Tippspiel mit Turnieren, Ranglisten und Zahlungsverwaltung.'
 package: 'Soccer Bet'
 core_version_requirement: ^10 || ^11
-version: '1.0.0-beta3'
-
-dependencies:
-  - drupal:user
-  - drupal:system
-  - drupal:field
-  - drupal:text
-  - drupal:options
-  - drupal:datetime
-  - drupal:views
+configure: soccerbet.admin
