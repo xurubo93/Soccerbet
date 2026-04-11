@@ -1,0 +1,11 @@
+soccerbet.settings.tab:
+  title: 'Settings'
+  route_name: soccerbet.settings
+  base_route: soccerbet.settings
+  weight: 0
+
+soccerbet.admin.score_update.tab:
+  title: 'Score update'
+  route_name: soccerbet.admin.score_update
+  base_route: soccerbet.settings
+  weight: 10

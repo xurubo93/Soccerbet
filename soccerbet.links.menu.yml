@@ -70,8 +70,3 @@ soccerbet.settings:
   parent: soccerbet.admin
   weight: 100
 
-soccerbet.admin.score_update:
-  title: 'Score update'
-  route_name: soccerbet.admin.score_update
-  parent: soccerbet.admin
-  weight: 55

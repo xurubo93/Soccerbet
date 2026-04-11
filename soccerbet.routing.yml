@@ -298,7 +298,7 @@ soccerbet.settings:
     _permission: 'administer soccerbet'
 
 soccerbet.admin.score_update:
-  path: '/soccerbet/admin/score-update'
+  path: '/admin/config/soccerbet/score-update'
   defaults:
     _form: '\Drupal\soccerbet\Form\ScoreUpdateForm'
     _title: 'Score update'

@@ -1,125 +1,130 @@
-# Soccer Bet – Drupal 11
+# Soccer Bet
 
-Fußball-Tippspiel für Drupal 11. Migriert und neu entwickelt aus dem ursprünglichen Drupal-6-Modul.
+Soccer Bet is a football prediction game (Tippspiel) for Drupal 10/11. It allows groups of users to place score predictions on football matches, earn points, and compete on a leaderboard.
 
-## Punktesystem
+## Features
 
-| Situation | Punkte |
-|---|---|
-| Exaktes Ergebnis getippt | **3 Punkte** (konfigurierbar) |
-| Richtige Tendenz (Sieg/Unentschieden/Niederlage) | **1 Punkt** (konfigurierbar) |
-| Aufsteiger in KO-Runden richtig getippt | **N Punkte** (= Anzahl Teilnehmer) |
-| Exklusiv bestes Tipp-Ergebnis eines Spiels | **+1 Bonuspunkt** |
+- **Tournaments** — create and manage multiple betting tournaments; one active tournament shown on the public leaderboard at a time
+- **Teams & Matches** — manual entry or automatic import via the football-data.org API
+- **Score Predictions** — participants place home/away score predictions before each match; configurable lockout window (e.g. 15 minutes before kick-off)
+- **KO Round Support** — participants also predict the advancing team when a draw is possible in knockout rounds
+- **Tournament Winner Bet** — bonus bet on the overall tournament winner with configurable points
+- **Scoring System**
+  - Exact result: 3 points (configurable)
+  - Correct tendency (win/draw/loss): 1 point (configurable)
+  - Bonus points flow between players per match: correct bettors receive points from wrong bettors
+  - KO round winner correct: points equal to number of participants
+- **Live Leaderboard** — real-time rank updates during matches via automatic score polling (football-data.org API)
+- **Round-by-Round History** — step through standings after each match day
+- **Bets Overview** — transposed table showing all bets from all participants across all matches, colour-coded by result
+- **Payment Tracking** — mark participation fees as paid per tournament
+- **Shoutbox** — per-tournament chat
+- **Flags** — national team and club flags via circle-flags SVGs (ISO 3166-1 Alpha-3)
+- **Multilingual** — all UI strings in English; German translation included
 
-Rangliste sortiert nach: **Total → Richtige Ergebnisse → Tendenzen**
+## Requirements
 
----
+- Drupal 10 or 11
+- PHP 8.2+
+- A free or paid API key from [football-data.org](https://www.football-data.org) *(optional — required only for automatic match import and live score updates; manual score entry works without it)*
 
 ## Installation
 
-### Voraussetzungen
-- PHP 8.2+
-- Drupal 11
-- Composer
-- MySQL 8.0+ / MariaDB 10.6+
-
-### Shared Hosting (SSH)
-
 ```bash
-# 1. In Drupal-Verzeichnis wechseln
-cd /var/www/html
-
-# 2. Modul in custom-Verzeichnis ablegen
-cp -r path/to/soccerbet web/modules/custom/
-
-# 3. Drupal-Cache leeren und Modul installieren
-vendor/bin/drush en soccerbet -y
-vendor/bin/drush cr
-
-# 4. Datenbankschema installieren (passiert automatisch via drush en)
-# 5. Konfiguration prüfen
-vendor/bin/drush cget soccerbet.settings
+composer require drupal/soccerbet
+drush en soccerbet -y
+drush updb -y
 ```
 
----
+## Configuration
 
-## Modulstruktur
+Go to **Administration → Soccer Bet → Settings** (`/admin/config/soccerbet`).
 
-```
-soccerbet/
-├── src/
-│   ├── Controller/          # Seiten-Controller
-│   │   ├── StandingsController.php   ← Rangliste
-│   │   ├── TablesController.php      ← Gruppentabellen
-│   │   ├── TournamentController.php  ← Admin Turniere
-│   │   ├── TeamController.php        ← Admin Teams
-│   │   ├── GameController.php        ← Admin Spiele
-│   │   └── TipperGroupController.php ← Admin Gruppen
-│   ├── Form/                # Drupal FormBase-Klassen
-│   │   ├── PlaceBetsForm.php         ← Tipp-Eingabe
-│   │   ├── TournamentForm.php        ← Turnier anlegen/bearbeiten
-│   │   ├── GameForm.php              ← Spiel anlegen/bearbeiten
-│   │   ├── GameScoreForm.php         ← Ergebnis eintragen
-│   │   ├── TeamForm.php              ← Team anlegen/bearbeiten
-│   │   ├── TipperGroupForm.php       ← Tippergruppe
-│   │   ├── TournamentMembersForm.php ← Teilnehmer zuordnen
-│   │   ├── PaymentForm.php           ← Zahlungen verwalten
-│   │   └── SettingsForm.php          ← Globale Einstellungen
-│   └── Service/
-│       ├── ScoringService.php        ← KERNLOGIK: Punkte & Rangliste
-│       ├── TournamentManager.php     ← Turnier CRUD
-│       └── TipperManager.php         ← Tipper CRUD
-├── templates/
-│   ├── soccerbet-standings.html.twig
-│   ├── soccerbet-place-bets.html.twig
-│   ├── soccerbet-tipper-detail.html.twig
-│   └── soccerbet-tables.html.twig
-├── config/
-│   ├── install/soccerbet.settings.yml
-│   └── schema/soccerbet.schema.yml
-├── css/soccerbet.css
-├── js/soccerbet.js
-├── soccerbet.info.yml
-├── soccerbet.module
-├── soccerbet.install        ← Datenbankschema (7 Tabellen)
-├── soccerbet.routing.yml    ← Alle Routen
-├── soccerbet.permissions.yml
-├── soccerbet.services.yml   ← Dependency Injection
-├── soccerbet.libraries.yml
-└── soccerbet.links.menu.yml
-```
+| Setting | Description | Default |
+|---|---|---|
+| Default tournament | Tournament shown on the public leaderboard | — |
+| Points for exact result | Points awarded for a correct score | 3 |
+| Points for correct tendency | Points awarded for correct win/draw/loss | 1 |
+| Betting closes N minutes before kick-off | 0 = bets close exactly at kick-off | 0 |
+| football-data.org API key | Required for API import and live updates | — |
+| Enable automatic score updates | Polls the API on every Drupal cron run | off |
+| Enable live scores | Enables the live leaderboard page | off |
 
----
+### Permissions
 
-## Datenbank-Tabellen
+Assign the following permissions to the appropriate roles:
 
-| Tabelle | Beschreibung |
+| Permission | Recommended for |
 |---|---|
-| `soccerbet_tournament` | Turniere |
-| `soccerbet_teams` | Teams mit Tabellenstand |
-| `soccerbet_games` | Spiele mit Ergebnis |
-| `soccerbet_tipps` | Tipper-Tipps pro Spiel |
-| `soccerbet_tippers` | Teilnehmer (→ Drupal User) |
-| `soccerbet_tipper_groups` | Wettgemeinschaften |
-| `soccerbet_tournament_tippers` | Turnier ↔ Tipper + Zahlungsstatus |
+| `access soccerbet content` | Authenticated users |
+| `place soccerbet bets` | Authenticated users |
+| `administer soccerbet` | Administrators |
+| `edit soccerbet scores` | Scorekeeper role |
+| `manage soccerbet payments` | Administrators |
 
----
+### Tipper–User mapping
 
-## Berechtigungen
+Each bettor (*Tipper*) is linked to a Drupal user account. Go to **Admin → Soccer Bet → Participants** to create tippers and link them to user accounts.
 
-| Permission | Beschreibung |
+Tippers can be organised into groups. A tournament can be restricted to one or more groups, so different groups of friends or colleagues can run separate competitions on the same Drupal site.
+
+## Using the football-data.org API
+
+Soccer Bet integrates with [football-data.org](https://www.football-data.org) for automatic match import and live score updates.
+
+### 1. Get an API key
+
+Register at football-data.org. The free tier covers most major competitions (Bundesliga, Premier League, Champions League, World Cup, Euro, etc.) with a rate limit of 10 requests/minute.
+
+### 2. Enter the API key
+
+Go to **Admin → Soccer Bet → Settings** and enter your API key in the *football-data.org API key* field.
+
+### 3. Import matches
+
+Go to **Admin → Soccer Bet → Settings → Score update** and enter the competition code for your tournament. Common codes:
+
+| Code | Competition |
 |---|---|
-| `access soccerbet content` | Ranglisten & Spielpläne sehen |
-| `place soccerbet bets` | Tipps abgeben |
-| `administer soccerbet` | Alles verwalten |
-| `edit soccerbet scores` | Ergebnisse eintragen |
-| `manage soccerbet payments` | Zahlungen bestätigen |
+| `BL1` | Bundesliga (Germany) |
+| `PL` | Premier League (England) |
+| `CL` | UEFA Champions League |
+| `WC` | FIFA World Cup |
+| `EC` | UEFA European Championship |
+| `SA` | Serie A (Italy) |
+| `PD` | La Liga (Spain) |
+| `FL1` | Ligue 1 (France) |
 
----
+A full list of available competitions is available on the football-data.org website.
 
-## Nächste Phasen
+Select the season (year) and click **Import** to fetch all teams and matches. Existing matches are updated, not duplicated.
 
-- **Phase 2**: TournamentManager, TipperManager, weitere Services
-- **Phase 3**: Admin-Formulare (TournamentForm, GameForm, TeamForm, ...)
-- **Phase 4**: PlaceBetsForm, Twig-Templates für Frontend
-- **Phase 5**: Migrate-API-Plugins für Datenmigration vom Altsystem
+### 4. Automatic score updates via cron
+
+Enable **Automatic score updates** in the settings. Soccer Bet hooks into Drupal cron with an adaptive polling strategy:
+
+| Mode | Condition | Behaviour |
+|---|---|---|
+| Live | A match is within ±3 hours of kick-off (UTC) | Updates on every cron run |
+| Idle | No matches within the ±3 hour window | Updates at most every 60 minutes |
+| Night | 23:00–06:00 UTC | No updates |
+
+Make sure Drupal cron runs frequently — at least every few minutes during live matches (e.g. via system crontab or the [Ultimate Cron](https://www.drupal.org/project/ultimate_cron) module).
+
+### 5. Live leaderboard
+
+Enable **Live scores** in the settings. The live leaderboard is available at `/soccerbet/live/{tournament_id}` and updates automatically in the browser without page reload.
+
+## Public pages
+
+| Path | Description |
+|---|---|
+| `/soccerbet/standings/{tournament_id}` | Leaderboard with rank changes |
+| `/soccerbet/place-bets/{tournament_id}` | Bet placement form |
+| `/soccerbet/tipps/{tournament_id}` | All bets from all participants |
+| `/soccerbet/live/{tournament_id}` | Live leaderboard |
+| `/soccerbet/tables/{tournament_id}` | Group tables |
+
+## Maintainers
+
+- [Peter Windholz](https://www.drupal.org/u/xurubo93)
