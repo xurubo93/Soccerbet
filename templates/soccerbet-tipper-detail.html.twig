@@ -86,9 +86,14 @@
             {% else %}row--wrong{% endif %}">
             <td class="col-game">
               <span class="soccerbet-game-matchup">
-                {%- if flags.team1_flag is defined -%}{{ flag_helper.flag(flags.team1_flag, flags.team1_name|t, 24, soccerbet_module_path) }}{%- endif -%}
-                <span>{{ flags.team1_name|t }} : {{ flags.team2_name|t }}</span>
-                {%- if flags.team2_flag is defined -%}{{ flag_helper.flag(flags.team2_flag, flags.team2_name|t, 24, soccerbet_module_path) }}{%- endif -%}
+                <span class="soccerbet-game-matchup__team">
+                  {{ flag_helper.flag(flags.team1_flag ?? '', flags.team1_name|t, 20, soccerbet_module_path) }}
+                  <span>{{ flags.team1_name|t }}</span>
+                </span>
+                <span class="soccerbet-game-matchup__team">
+                  {{ flag_helper.flag(flags.team2_flag ?? '', flags.team2_name|t, 20, soccerbet_module_path) }}
+                  <span>{{ flags.team2_name|t }}</span>
+                </span>
               </span>
             </td>
             <td class="col-result">{{ score }}</td>
@@ -108,11 +113,13 @@
       </tbody>
       <tfoot>
         <tr class="row--total">
-          <td colspan="3"><strong>{{ 'Total'|t }}</strong></td>
-          <td>{{ tipper.ergebnisse ~ '×3' }}</td>
-          <td></td>
-          <td></td>
-          <td><strong>{{ tipper.total }}</strong></td>
+          <td class="col-game"><strong>{{ 'Total'|t }}</strong></td>
+          <td class="col-result">{{ tipper.ergebnisse }}</td>
+          <td class="col-tipp">{{ tipper.tendenzen }}</td>
+          <td class="col-base">{{ tipper.ergebnisse ~ '×3' }}</td>
+          <td class="col-bonus"></td>
+          <td class="col-special"></td>
+          <td class="col-total"><strong>{{ tipper.total }}</strong></td>
         </tr>
       </tfoot>
     </table>

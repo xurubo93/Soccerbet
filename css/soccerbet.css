@@ -214,6 +214,7 @@
   color: #c00;
 }
 .tipps-ov__score--pending { color: var(--sb-text-muted); font-weight: 400; }
+.tipps-ov__pts { display: block; font-size: .75rem; color: rgba(0,0,0,.55); }
 
 /* Tipp-Zellen */
 .soccerbet-tipps-overview .col-tipp {
@@ -269,6 +270,10 @@
   .soccerbet-tipper-detail__table .col-base,
   .soccerbet-tipper-detail__table .col-bonus,
   .soccerbet-tipper-detail__table .col-special { display:none; }
+  .soccerbet-tipper-detail__table .col-game { width:100%; }
+  .soccerbet-tipper-detail__table .col-result,
+  .soccerbet-tipper-detail__table .col-tipp,
+  .soccerbet-tipper-detail__table .col-total { width:3.5rem; white-space:nowrap; }
 }
 
 /* --- Score-Update Admin ------------------------------------------ */
@@ -704,8 +709,16 @@
 }
 .soccerbet-game-matchup {
   display: inline-flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+.soccerbet-game-matchup__team {
+  display: flex;
   align-items: center;
   gap: .3rem;
+  hyphens: none;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 /* --- Sticky Submit-Button auf der Tipp-Abgabe-Seite ------------------- */

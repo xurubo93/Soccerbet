@@ -6,6 +6,7 @@ namespace Drupal\soccerbet\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\soccerbet\Service\ScoringService;
 use Drupal\soccerbet\Service\TipperManager;
 use Drupal\soccerbet\Service\TournamentManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,12 +19,14 @@ final class TippsController extends ControllerBase {
   public function __construct(
     private readonly TournamentManager $tournamentManager,
     private readonly TipperManager $tipperManager,
+    private readonly ScoringService $scoringService,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.tipper_manager'),
+      $container->get('soccerbet.scoring'),
     );
   }
 
@@ -52,6 +55,14 @@ final class TippsController extends ControllerBase {
     foreach ($tippers as $tipper) {
       $all_tipps[(int) $tipper->tipper_id] = $this->tipperManager
         ->loadTippsByTipper((int) $tipper->tipper_id, $tournament_id);
+    }
+
+    // Punkte pro Tipper pro Spiel (nur für bereits gespielte Spiele)
+    $scored = $this->scoringService->getTipperPoints($tournament_id);
+    // Indiziert als $points[$tipper_id][$game_id]
+    $points = [];
+    foreach ($scored as $tipper_id => $data) {
+      $points[(int) $tipper_id] = $data['totalpergame'] ?? [];
     }
 
     // Header: erste Spalte "Spiel", dann Tipper-Namen mit Zeilenumbruch am ersten Leerzeichen
@@ -96,7 +107,7 @@ final class TippsController extends ControllerBase {
         $label = $tipp->team1_tipp . ':' . $tipp->team2_tipp;
 
         if (!$has_result) {
-          $row[] = ['data' => $label, 'class' => ['col-tipp']];
+          $row[] = ['data' => ['#markup' => $label], 'class' => ['col-tipp']];
           continue;
         }
 
@@ -104,7 +115,13 @@ final class TippsController extends ControllerBase {
           (int) $tipp->team1_tipp,   (int) $tipp->team2_tipp,
           (int) $game->team1_score,  (int) $game->team2_score,
         );
-        $row[] = ['data' => $label, 'class' => ['col-tipp', $css]];
+        $tipper_id = (int) $tipper->tipper_id;
+        $game_id   = (int) $game->game_id;
+        $pts = $points[$tipper_id][$game_id] ?? NULL;
+        $pts_html = $pts !== NULL
+          ? '<br><span class="tipps-ov__pts">(' . $pts . ')</span>'
+          : '';
+        $row[] = ['data' => ['#markup' => $label . $pts_html], 'class' => ['col-tipp', $css]];
       }
 
       $rows[] = $row;
