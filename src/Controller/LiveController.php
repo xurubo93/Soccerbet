@@ -88,8 +88,10 @@ final class LiveController extends ControllerBase {
     $live_games = $this->loadLiveGames($tournament_id);
     $live_data  = $this->buildLiveData($tournament_id, $live_games);
 
-    $games_html   = (string) $this->renderer->renderRoot($this->buildScoreboardRender($live_data['games']));
-    $ranking_html = (string) $this->renderer->renderRoot($this->buildRankingRender($live_data, $tournament_id));
+    $games_render   = $this->buildScoreboardRender($live_data['games']);
+    $ranking_render = $this->buildRankingRender($live_data, $tournament_id);
+    $games_html     = (string) $this->renderer->renderRoot($games_render);
+    $ranking_html   = (string) $this->renderer->renderRoot($ranking_render);
 
     return new JsonResponse([
       'is_live'      => !empty($live_games),
