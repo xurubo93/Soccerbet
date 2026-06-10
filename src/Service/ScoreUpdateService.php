@@ -7,6 +7,7 @@ namespace Drupal\soccerbet\Service;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
+use Drupal\Core\State\StateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
@@ -17,12 +18,65 @@ final class ScoreUpdateService {
 
   use StringTranslationTrait;
 
+  /** State-Key: Letzter automatischer Update-Zeitpunkt (Cron + LiveController). */
+  public const STATE_LAST_RUN = 'soccerbet.score_update.last_run';
+
+  /** Default-Interval falls Config nicht gesetzt. */
+  private const DEFAULT_INTERVAL = 120;
+
+  /** Fenster ab Anpfiff, in dem ein Spiel als „aktiv" gilt (Sekunden). */
+  private const ACTIVE_WINDOW = 180 * 60;
+
   public function __construct(
     private readonly Connection $db,
     private readonly ApiClientFactory $clientFactory,
     private readonly ConfigFactoryInterface $configFactory,
+    private readonly StateInterface $state,
     private readonly LoggerChannelFactoryInterface $loggerFactory,
   ) {}
+
+  /**
+   * Prüft, ob aktuell ein Spiel läuft (Anpfiff bis Anpfiff + 180 min).
+   */
+  public function hasActiveGames(): bool {
+    $now = \Drupal::time()->getRequestTime();
+    $start_str = gmdate('Y-m-d\TH:i:s', $now - self::ACTIVE_WINDOW);
+    $now_str   = gmdate('Y-m-d\TH:i:s', $now);
+
+    $count = $this->db->select('soccerbet_games', 'g')
+      ->condition('g.game_date', $start_str, '>=')
+      ->condition('g.game_date', $now_str, '<=')
+      ->condition('g.published', 1)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
+
+    return (int) $count > 0;
+  }
+
+  /**
+   * Versucht ein automatisches Update unter Beachtung von Aktiv-Fenster
+   * und konfiguriertem Throttle. Manuelle Aufrufer (Admin-Form) nutzen
+   * weiterhin updateAll() direkt — die unterliegen keiner Drosselung.
+   *
+   * @return bool TRUE wenn updateAll() tatsächlich ausgeführt wurde.
+   */
+  public function tryAutomaticUpdate(): bool {
+    if (!$this->hasActiveGames()) {
+      return FALSE;
+    }
+    $now      = \Drupal::time()->getRequestTime();
+    $last_run = (int) $this->state->get(self::STATE_LAST_RUN, 0);
+    $interval = (int) ($this->configFactory->get('soccerbet.settings')->get('livescores_interval') ?: self::DEFAULT_INTERVAL);
+
+    if (($now - $last_run) < $interval) {
+      return FALSE;
+    }
+
+    $this->updateAll();
+    $this->state->set(self::STATE_LAST_RUN, $now);
+    return TRUE;
+  }
 
   // ================================================================== //
   // Haupt-Entry-Points                                                   //

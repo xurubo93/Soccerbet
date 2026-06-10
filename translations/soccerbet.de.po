@@ -834,6 +834,15 @@ msgstr "Livescores aktivieren"
 msgid "For live scores a Free+ plan or higher is required, see <a href=\"https://www.football-data.org/pricing\" target=\"_blank\">football-data.org/pricing</a>."
 msgstr "Für Livescores ist zumindest ein Free+ Plan erforderlich, siehe <a href=\"https://www.football-data.org/pricing\" target=\"_blank\">football-data.org/pricing</a>."
 
+msgid "Live update interval (seconds)"
+msgstr "Live-Update-Intervall (Sekunden)"
+
+msgid "Minimum time between API calls. Updates only run while a match is active (kickoff to kickoff + 180 min)."
+msgstr "Mindestabstand zwischen API-Aufrufen. Updates laufen nur bei aktivem Spiel (Anpfiff bis Anpfiff + 180 Min.)."
+
+msgid "sec."
+msgstr "Sek."
+
 # ── API import form ───────────────────────────────────────────────────────────
 
 msgid "No API key for football-data.org configured. <a href=\":url\">Enter now</a>."

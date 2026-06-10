@@ -120,6 +120,19 @@ final class SettingsForm extends ConfigFormBase {
       '#description'   => $this->t('For live scores a Free+ plan or higher is required, see <a href="https://www.football-data.org/pricing" target="_blank">football-data.org/pricing</a>.'),
       '#default_value' => $config->get('livescores_enabled') ?? FALSE,
     ];
+    $form['api']['livescores_interval'] = [
+      '#type'          => 'number',
+      '#title'         => $this->t('Live update interval (seconds)'),
+      '#description'   => $this->t('Minimum time between API calls. Updates only run while a match is active (kickoff to kickoff + 180 min).'),
+      '#default_value' => $config->get('livescores_interval') ?? 120,
+      '#min'           => 60,
+      '#max'           => 600,
+      '#field_suffix'  => $this->t('sec.'),
+      '#states'        => [
+        'visible'  => [':input[name="livescores_enabled"]' => ['checked' => TRUE]],
+        'required' => [':input[name="livescores_enabled"]' => ['checked' => TRUE]],
+      ],
+    ];
 
     return parent::buildForm($form, $form_state);
   }
@@ -135,6 +148,7 @@ final class SettingsForm extends ConfigFormBase {
       ->set('api_provider',                      'footballdata')
       ->set('footballdata_api_key',              trim($form_state->getValue('footballdata_api_key') ?? ''))
       ->set('livescores_enabled',               (bool) $form_state->getValue('livescores_enabled'))
+      ->set('livescores_interval',              max(60, min(600, (int) ($form_state->getValue('livescores_interval') ?: 120))))
       ->set('winner_bet_points', array_values(array_map(
         fn($i) => (int) $form_state->getValue('winner_bet_points_' . $i),
         range(0, 4)

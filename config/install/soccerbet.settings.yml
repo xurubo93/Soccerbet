@@ -8,6 +8,7 @@ score_update_enabled: false
 api_provider: footballdata
 footballdata_api_key: ''
 livescores_enabled: false
+livescores_interval: 120
 winner_bet_points:
   - 10
   - 7

@@ -43,6 +43,7 @@ services:
       - '@database'
       - '@soccerbet.api_client_factory'
       - '@config.factory'
+      - '@state'
       - '@logger.factory'
 
   soccerbet.cron_subscriber:
@@ -50,7 +51,6 @@ services:
     arguments:
       - '@soccerbet.score_update'
       - '@config.factory'
-      - '@state'
       - '@logger.factory'
     tags:
       - { name: event_subscriber }

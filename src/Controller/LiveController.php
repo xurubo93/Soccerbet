@@ -82,7 +82,7 @@ final class LiveController extends ControllerBase {
 
     $config = $this->config('soccerbet.settings');
     if ($config->get('livescores_enabled') && $config->get('api_provider') === 'footballdata') {
-      $this->scoreUpdate->updateAll();
+      $this->scoreUpdate->tryAutomaticUpdate();
     }
 
     $live_games = $this->loadLiveGames($tournament_id);
