@@ -11,12 +11,12 @@
         const refreshUrl = root.dataset.refreshUrl;
         const btn        = root.querySelector('.soccerbet-live__refresh');
         const updatedEl  = root.querySelector('#soccerbet-live-updated');
-        if (!refreshUrl || !btn) return;
+        if (!refreshUrl) return;
 
         let autoTimer = null;
 
         function doRefresh(silent) {
-          if (!silent) {
+          if (!silent && btn) {
             btn.disabled = true;
             btn.textContent = Drupal.t('Wird geladen…');
           }
@@ -38,7 +38,7 @@
               scheduleAutoRefresh(false);
             })
             .finally(() => {
-              if (!silent) {
+              if (!silent && btn) {
                 btn.disabled = false;
                 btn.textContent = '↻ ' + Drupal.t('Aktualisieren');
               }
@@ -50,7 +50,7 @@
           autoTimer = setTimeout(() => doRefresh(true), isLive ? 30000 : 300000);
         }
 
-        btn.addEventListener('click', function () { doRefresh(false); });
+        if (btn) btn.addEventListener('click', function () { doRefresh(false); });
 
         // Ersten Auto-Refresh starten
         scheduleAutoRefresh(root.querySelector('.soccerbet-live__dot') !== null);

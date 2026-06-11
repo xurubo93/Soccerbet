@@ -66,8 +66,9 @@ final class LiveController extends ControllerBase {
       '#tournament_id'    => $tournament_id,
       '#scoreboard'       => $this->buildScoreboardRender($live_data['games']),
       '#ranking_content'  => $this->buildRankingRender($live_data, $tournament_id),
+      '#can_refresh'      => $this->currentUser()->hasPermission('edit soccerbet scores'),
       '#attached'         => ['library' => ['soccerbet/live']],
-      '#cache'            => ['max-age' => 0],
+      '#cache'            => ['max-age' => 0, 'contexts' => ['user.permissions']],
     ];
   }
 

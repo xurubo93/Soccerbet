@@ -69,6 +69,7 @@ function soccerbet_theme(): array {
         'tournament_id'   => 0,
         'scoreboard'      => [],
         'ranking_content' => [],
+        'can_refresh'     => FALSE,
       ],
       'template' => 'soccerbet-live',
     ],

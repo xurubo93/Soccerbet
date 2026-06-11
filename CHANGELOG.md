@@ -5,6 +5,14 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.4] - 2026-06-11
+
+### Changed
+
+- The manual "Refresh" button on the live page is now restricted to
+  users with the `edit soccerbet scores` permission. Regular users
+  still get the automatic refresh, just no manual trigger.
+
 ## [1.1.3] - 2026-06-11
 
 ### Fixed

@@ -14,9 +14,11 @@
       {% if is_live %}<span class="soccerbet-live__dot" aria-label="{{ 'Live'|t }}"></span>{% endif %}
       {{ 'Live standings'|t }}{% if tournament %} – {{ tournament.tournament_desc }}{% endif %}
     </h2>
+    {% if can_refresh %}
     <button class="soccerbet-live__refresh button button--small" type="button">
       ↻ {{ 'Refresh'|t }}
     </button>
+    {% endif %}
   </div>
 
   <div id="soccerbet-live-games">{{ scoreboard }}</div>
