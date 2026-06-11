@@ -146,22 +146,21 @@ final class ScoreUpdateService {
     $team_map    = $this->buildTeamNameMap($local_teams);
 
     foreach ($api_matches as $match) {
-      if (!($match['is_finished'] ?? FALSE)) {
-        continue;
-      }
       if ($match['score1'] === NULL || $match['score2'] === NULL) {
         continue;
       }
+      $is_finished = (bool) ($match['is_finished'] ?? FALSE);
 
       // Lokales Spiel suchen: zuerst via api_id (exakt), dann via Team-Namen (fuzzy)
-      $ext_id = (int) ($match['external_id'] ?? 0);
+      $ext_id   = (int) ($match['external_id'] ?? 0);
+      $team1_id = $this->resolveTeamId($match['team1_name'], $team_map);
+      $team2_id = $this->resolveTeamId($match['team2_name'], $team_map);
+
       $local_game = $ext_id > 0
         ? $this->findLocalGameByApiId($local_games, $ext_id)
         : NULL;
 
       if (!$local_game) {
-        $team1_id = $this->resolveTeamId($match['team1_name'], $team_map);
-        $team2_id = $this->resolveTeamId($match['team2_name'], $team_map);
         if (!$team1_id || !$team2_id) {
           $this->logger()->debug('Team nicht gefunden: "@t1" oder "@t2"', [
             '@t1' => $match['team1_name'], '@t2' => $match['team2_name'],
@@ -184,13 +183,15 @@ final class ScoreUpdateService {
         continue;
       }
 
-      // Sieger bestimmen
+      // Sieger nur bei beendetem Spiel setzen (relevant für KO-Runden).
       $winner_side = NULL;
-      if ($s1 > $s2) {
-        $winner_side = 'team1';
-      }
-      elseif ($s2 > $s1) {
-        $winner_side = 'team2';
+      if ($is_finished) {
+        if ($s1 > $s2) {
+          $winner_side = 'team1';
+        }
+        elseif ($s2 > $s1) {
+          $winner_side = 'team2';
+        }
       }
 
       // Bei umgekehrter Spielreihenfolge Teams tauschen

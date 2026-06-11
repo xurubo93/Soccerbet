@@ -71,7 +71,7 @@ final class FootballDataClient implements ApiClientInterface {
     foreach ($data['matches'] as $m) {
       $score1 = NULL;
       $score2 = NULL;
-      if ($m['status'] === 'FINISHED') {
+      if (in_array($m['status'], ['FINISHED', 'IN_PLAY', 'PAUSED'], TRUE)) {
         $score1 = $m['score']['fullTime']['home'] ?? NULL;
         $score2 = $m['score']['fullTime']['away'] ?? NULL;
         // Falls fullTime null ist, extraTime prüfen
@@ -172,8 +172,9 @@ final class FootballDataClient implements ApiClientInterface {
   public function hasChangedSince(string $competition, string $season): bool {
     $key    = self::CACHE_SEEN . $competition . '_' . $season;
     $cached = $this->cache->get($key);
-    // Kein smarter Change-Endpoint bei football-data.org → nach 5 Min. neu laden
-    if ($cached && (time() - $cached->data) < 300) {
+    // Kein smarter Change-Endpoint bei football-data.org → nach 60s neu laden
+    // (kombiniert mit livescores_interval-Throttle in ScoreUpdateService).
+    if ($cached && (time() - $cached->data) < 60) {
       return FALSE;
     }
     return TRUE;

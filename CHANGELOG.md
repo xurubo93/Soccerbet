@@ -5,6 +5,21 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.2] - 2026-06-11
+
+### Fixed
+
+- Live scores: the `FootballDataClient` now reads scores not only for
+  `FINISHED` matches but also for `IN_PLAY` and `PAUSED` — live results
+  actually land in the database now.
+- `ScoreUpdateService` no longer skips non-finished matches in the
+  update loop. `winner_team_id` is only set once a match is finished
+  (relevant for knockout rounds).
+- API change-cache shortened from 300 s to 60 s so live goals are not
+  delayed by the cache window.
+- Fixed an undefined-variable warning that triggered when a match was
+  matched directly via api_id.
+
 ## [1.1.1] - 2026-06-11
 
 ### Changed
