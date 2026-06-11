@@ -5,6 +5,13 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-06-11
+
+### Changed
+
+- Bets overview (`/soccerbet/tipps`) now only lists matches that have
+  already kicked off. Upcoming matches are hidden until kickoff.
+
 ## [1.1.0] - 2026-06-10
 
 ### Added

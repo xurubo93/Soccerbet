@@ -50,6 +50,10 @@ final class TippsController extends ControllerBase {
     $tippers = $this->tournamentManager->loadTippers($tournament_id);
     $games   = $this->tipperManager->loadGamesByTournament($tournament_id);
 
+    // Nur bereits angepfiffene Spiele anzeigen.
+    $now_utc = gmdate('Y-m-d\TH:i:s', \Drupal::time()->getRequestTime());
+    $games   = array_filter($games, fn($g) => !empty($g->game_date) && $g->game_date <= $now_utc);
+
     // Alle Tipps laden: [tipper_id][game_id] => tipp-Objekt
     $all_tipps = [];
     foreach ($tippers as $tipper) {
