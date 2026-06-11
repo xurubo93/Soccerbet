@@ -5,6 +5,16 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.5] - 2026-06-11
+
+### Fixed
+
+- Bets overview cached the render output indefinitely (no
+  `#cache.max-age`). Live score updates landed in the DB but the page
+  kept serving stale data, so points were computed from the previous
+  result. Set `max-age` to 0 so the view always reflects the current
+  scores.
+
 ## [1.1.4] - 2026-06-11
 
 ### Changed

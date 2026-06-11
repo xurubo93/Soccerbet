@@ -150,6 +150,7 @@ final class TippsController extends ControllerBase {
           '#attributes' => ['class' => ['soccerbet-tipps-overview']],
         ],
       ],
+      '#cache'      => ['max-age' => 0],
     ];
   }
 
