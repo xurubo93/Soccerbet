@@ -5,6 +5,15 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.3] - 2026-06-11
+
+### Fixed
+
+- Live page kept matches in the live view too short. The window from
+  kickoff is now 180 min (was 120 min), matching the update throttle
+  window. Long matches with extra time / extra periods stay marked as
+  live until they actually end.
+
 ## [1.1.2] - 2026-06-11
 
 ### Fixed

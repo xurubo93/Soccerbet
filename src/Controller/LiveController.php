@@ -102,12 +102,12 @@ final class LiveController extends ControllerBase {
   }
 
   /**
-   * Lädt gerade laufende Spiele (Anpfiff vor ≤ 120 min, noch kein Ergebnis
-   * oder Ergebnis aber noch innerhalb des Zeitfensters).
+   * Lädt gerade laufende Spiele (Anpfiff vor ≤ 180 min). Fenster passt zum
+   * Aktiv-Fenster in ScoreUpdateService::hasActiveGames().
    */
   private function loadLiveGames(int $tournament_id): array {
     $now        = \Drupal::time()->getRequestTime();
-    $window_ago = gmdate('Y-m-d\TH:i:s', $now - 120 * 60); // 2h zurück
+    $window_ago = gmdate('Y-m-d\TH:i:s', $now - 180 * 60); // 3h zurück
     $window_now = gmdate('Y-m-d\TH:i:s', $now);
 
     $q = $this->db->select('soccerbet_games', 'g');
