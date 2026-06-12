@@ -5,6 +5,16 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.6] - 2026-06-12
+
+### Fixed
+
+- Tournament winner bet: saving the bet form when the winner pick is
+  unchanged no longer re-writes the record. Previously every save
+  refreshed `phase_index` to the current phase and silently demoted
+  the bet to the next-lower point tier even though the tipper had
+  only edited match bets.
+
 ## [1.1.5] - 2026-06-11
 
 ### Fixed

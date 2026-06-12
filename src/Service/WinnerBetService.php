@@ -86,9 +86,15 @@ final class WinnerBetService {
   }
 
   /**
-   * Speichert/aktualisiert den Turniersieger-Tipp.
+   * Speichert/aktualisiert den Turniersieger-Tipp. Bleibt der Tipp identisch
+   * zum bestehenden, wird nichts geschrieben — sonst würde phase_index auf
+   * die kleinere Punktzahl der aktuellen Phase fallen.
    */
   public function saveBet(int $tournament_id, int $tipper_id, int $team_id): void {
+    $existing = $this->loadBet($tournament_id, $tipper_id);
+    if ($existing && (int) $existing->team_id === $team_id) {
+      return;
+    }
     $phase_index = $this->getCurrentPhaseIndex($tournament_id);
     $this->db->merge('soccerbet_winner_tipp')
       ->keys(['tournament_id' => $tournament_id, 'tipper_id' => $tipper_id])
