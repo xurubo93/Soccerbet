@@ -5,6 +5,16 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.7] - 2026-06-13
+
+### Fixed
+
+- Score update never wrote the 0:0 kickoff state. The skip-check in
+  `ScoreUpdateService::updateTournament()` cast NULL to 0, so a fresh
+  match (DB NULL/NULL) compared equal to the API value 0:0 and was
+  treated as unchanged. The score only landed on the first actual
+  goal. NULL is now treated as "never set" and triggers a write.
+
 ## [1.1.6] - 2026-06-12
 
 ### Fixed

@@ -178,7 +178,12 @@ final class ScoreUpdateService {
       $s1 = (int) $match['score1'];
       $s2 = (int) $match['score2'];
 
-      if ((int) $local_game->team1_score === $s1 && (int) $local_game->team2_score === $s2) {
+      // NULL muss als "noch nie gesetzt" gelten, sonst würde ein API-Stand
+      // von 0:0 fälschlich als unverändert skipped (PHP castet NULL → 0).
+      if ($local_game->team1_score !== NULL
+        && $local_game->team2_score !== NULL
+        && (int) $local_game->team1_score === $s1
+        && (int) $local_game->team2_score === $s2) {
         $stats['scores_skipped']++;
         continue;
       }
