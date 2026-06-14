@@ -83,6 +83,7 @@ final class TournamentController extends ControllerBase {
         '#attributes' => ['class' => ['responsive-enabled']],
         '#attached'   => ['library' => ['core/drupal.tableresponsive']],
       ],
+      '#cache' => ['max-age' => 0],
     ];
   }
 }

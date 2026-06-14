@@ -5,6 +5,39 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.8] - 2026-06-14
+
+### Added
+
+- Standings heading now shows the number of played matches in
+  parentheses, e.g. "WM 2026 (8 matches)".
+- Place-bets form: submit button starts disabled and only activates
+  when a value changes; active state shows a red "!" hint.
+- Place-bets form: jump link to next match now uses smooth scroll
+  and centers the target vertically in the viewport.
+
+### Changed
+
+- Place-bets jump link points to the next *untipped* match instead of
+  the next open match. Most tippers had already filled the next open
+  match before, which made the link confusing.
+- Save confirmation on the place-bets form only counts bets that were
+  actually changed or newly created. `TipperManager::saveTipp()` now
+  returns `bool`.
+- Standings round navigation reworked for mobile: round indicator
+  ("Round X of Y") moves to its own line above the buttons; the
+  buttons themselves are shortened to "Previous" / "Next" and share
+  the full width 50/50.
+- Standings and live-standings headings drop the redundant
+  "Standings" / "Live standings" prefix — the page already has an
+  `h1`. Only the tournament name (and match count / live dot) remain.
+
+### Fixed
+
+- Admin overview lists (Games, Teams, Tournaments, Tipper groups,
+  admin landing page) had no `#cache.max-age`, so updates landed in
+  the DB but the rendered list kept showing the stale state.
+
 ## [1.1.7] - 2026-06-13
 
 ### Fixed

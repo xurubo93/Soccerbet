@@ -59,6 +59,7 @@ final class TipperGroupController extends ControllerBase {
         '#rows'   => $rows,
         '#empty'  => $this->t('No betting groups created yet.'),
       ],
+      '#cache' => ['max-age' => 0],
     ];
   }
 }

@@ -352,15 +352,24 @@ final class TipperManager {
 
   /**
    * Speichert oder aktualisiert einen Tipp (upsert).
+   *
+   * @return bool TRUE wenn neu eingefügt oder die Werte sich tatsächlich
+   *   geändert haben. FALSE wenn der bestehende Tipp identisch übergeben wurde.
    */
-  public function saveTipp(int $tipper_id, int $game_id, int $tipp1, int $tipp2, ?int $winner_team_id = NULL): void {
+  public function saveTipp(int $tipper_id, int $game_id, int $tipp1, int $tipp2, ?int $winner_team_id = NULL): bool {
     $now = \Drupal::time()->getRequestTime();
-    $exists = $this->db->select('soccerbet_tipps', 't')
+    $existing = $this->db->select('soccerbet_tipps', 't')
+      ->fields('t', ['team1_tipp', 'team2_tipp', 'winner_team_id'])
       ->condition('t.tipper_id', $tipper_id)
       ->condition('t.game_id', $game_id)
-      ->countQuery()->execute()->fetchField();
+      ->execute()->fetchObject();
 
-    if ($exists) {
+    if ($existing) {
+      if ((int) $existing->team1_tipp === $tipp1
+        && (int) $existing->team2_tipp === $tipp2
+        && (int) ($existing->winner_team_id ?? 0) === (int) ($winner_team_id ?? 0)) {
+        return FALSE;
+      }
       $this->db->update('soccerbet_tipps')
         ->fields([
           'team1_tipp'     => $tipp1,
@@ -370,20 +379,21 @@ final class TipperManager {
         ])
         ->condition('tipper_id', $tipper_id)
         ->condition('game_id', $game_id)->execute();
+      return TRUE;
     }
-    else {
-      $this->db->insert('soccerbet_tipps')
-        ->fields([
-          'tipper_id'      => $tipper_id,
-          'game_id'        => $game_id,
-          'team1_tipp'     => $tipp1,
-          'team2_tipp'     => $tipp2,
-          'winner_team_id' => $winner_team_id,
-          'uid'            => $this->currentUser->id(),
-          'created'        => $now,
-          'changed'        => $now,
-        ])->execute();
-    }
+
+    $this->db->insert('soccerbet_tipps')
+      ->fields([
+        'tipper_id'      => $tipper_id,
+        'game_id'        => $game_id,
+        'team1_tipp'     => $tipp1,
+        'team2_tipp'     => $tipp2,
+        'winner_team_id' => $winner_team_id,
+        'uid'            => $this->currentUser->id(),
+        'created'        => $now,
+        'changed'        => $now,
+      ])->execute();
+    return TRUE;
   }
 
   /**

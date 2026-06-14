@@ -128,6 +128,8 @@ final class GameController extends ControllerBase {
       ];
     }
 
+    $build['#cache'] = ['max-age' => 0];
+
     return $build;
   }
 

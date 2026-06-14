@@ -530,8 +530,13 @@ msgstr "Sie bearbeiten die Tipps von <strong>@name</strong> als Administrator."
 msgid "@count played/locked matches"
 msgstr "@count gespielte/gesperrte Spiele"
 
-msgid "↓ To the next open match"
-msgstr "↓ Zum nächsten offenen Spiel"
+msgid "1 match"
+msgid_plural "@count matches"
+msgstr[0] "1 Spiel"
+msgstr[1] "@count Spiele"
+
+msgid "↓ To the next untipped match"
+msgstr "↓ Zum nächsten nicht getippten Spiel"
 
 msgid "Tournament winner bet"
 msgstr "Turniersieger-Tipp"
@@ -586,14 +591,14 @@ msgstr "Noch keine Spiele gespielt oder keine Tipps abgegeben."
 msgid "Select round"
 msgstr "Runde wählen"
 
-msgid "Previous round"
-msgstr "Vorherige Runde"
+msgid "Previous"
+msgstr "Vorherige"
 
 msgid "Round @current of @max"
 msgstr "Runde @current von @max"
 
-msgid "Next round"
-msgstr "Nächste Runde"
+msgid "Next"
+msgstr "Nächste"
 
 msgid "Browse rounds"
 msgstr "Runden durchblättern"

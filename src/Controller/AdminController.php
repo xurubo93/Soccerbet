@@ -36,6 +36,7 @@ final class AdminController extends ControllerBase {
       '#theme' => 'item_list',
       '#items' => $items,
       '#title' => $this->t('Betting game administration'),
+      '#cache' => ['max-age' => 0],
     ];
   }
 }

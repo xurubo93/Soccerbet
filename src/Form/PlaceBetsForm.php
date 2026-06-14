@@ -143,8 +143,8 @@ final class PlaceBetsForm extends FormBase {
       ];
     }
 
-    // Anker-Ziel für "Zum nächsten offenen Spiel" – wird später gesetzt
-    $first_open_anchor = NULL;
+    // Anker-Ziel für "Zum nächsten nicht getippten Spiel" – wird später gesetzt
+    $first_untipped_anchor = NULL;
 
     foreach ($games_by_phase as $phase => $phase_games) {
       $phase_label = $phase_labels[$phase] ?? $phase;
@@ -164,8 +164,8 @@ final class PlaceBetsForm extends FormBase {
         }
         else {
           $open_games[] = $game;
-          if ($first_open_anchor === NULL) {
-            $first_open_anchor = 'open-' . (int) $game->game_id;
+          if ($first_untipped_anchor === NULL && !isset($saved_tipps[(int) $game->game_id])) {
+            $first_untipped_anchor = 'open-' . (int) $game->game_id;
           }
         }
       }
@@ -236,11 +236,11 @@ final class PlaceBetsForm extends FormBase {
     ];
 
     // Mobiler Schnell-Link
-    if ($first_open_anchor) {
+    if ($first_untipped_anchor) {
       $form['mobile_jump'] = [
         '#markup' => '<div class="soccerbet-mobile-jump">'
-          . '<a href="#' . $first_open_anchor . '" class="soccerbet-mobile-jump__link button button--small">'
-          . $this->t('↓ To the next open match')
+          . '<a href="#' . $first_untipped_anchor . '" class="soccerbet-mobile-jump__link button button--small">'
+          . $this->t('↓ To the next untipped match')
           . '</a></div>',
         '#weight' => -100,
       ];
@@ -476,14 +476,16 @@ final class PlaceBetsForm extends FormBase {
         $winner = $w > 0 ? $w : NULL;
       }
 
-      $this->tipperManager->saveTipp(
+      $changed = $this->tipperManager->saveTipp(
         $tipper_id,
         $game_id,
         (int) $tipp1,
         (int) $tipp2,
         $winner,
       );
-      $saved_count++;
+      if ($changed) {
+        $saved_count++;
+      }
     }
 
     // Turniersieger-Tipp speichern

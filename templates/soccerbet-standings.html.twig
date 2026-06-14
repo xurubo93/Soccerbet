@@ -12,9 +12,11 @@
 <div class="soccerbet-standings">
 
   <h2 class="soccerbet-standings__title">
-    {{ 'Standings'|t }}
     {% if tournament %}
-      – {{ tournament.tournament_desc }}
+      {{ tournament.tournament_desc }}
+    {% endif %}
+    {% if played_games > 0 %}
+      ({% trans %}1 match{% plural played_games %}@count matches{% endtrans %})
     {% endif %}
   </h2>
 
@@ -47,17 +49,19 @@
     {# Steps-Navigation – sticky, über der Tabelle #}
     {% if step_mode %}
       <nav class="soccerbet-steps" aria-label="{{ 'Select round'|t }}">
-        {% if step_limit > 1 %}
-          <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: step_limit - 1}) }}"
-             class="soccerbet-steps__btn">← {{ 'Previous round'|t }}</a>
-        {% endif %}
-        <span class="soccerbet-steps__info">
+        <div class="soccerbet-steps__info">
           {{ 'Round @current of @max'|t({'@current': step_limit, '@max': max_games}) }}
-        </span>
-        {% if step_limit < max_games %}
-          <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: step_limit + 1}) }}"
-             class="soccerbet-steps__btn">{{ 'Next round'|t }} →</a>
-        {% endif %}
+        </div>
+        <div class="soccerbet-steps__buttons">
+          {% if step_limit > 1 %}
+            <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: step_limit - 1}) }}"
+               class="soccerbet-steps__btn">← {{ 'Previous'|t }}</a>
+          {% endif %}
+          {% if step_limit < max_games %}
+            <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: step_limit + 1}) }}"
+               class="soccerbet-steps__btn">{{ 'Next'|t }} →</a>
+          {% endif %}
+        </div>
       </nav>
     {% endif %}
 

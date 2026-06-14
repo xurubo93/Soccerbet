@@ -277,4 +277,45 @@
     }
   }
 
+  /**
+   * Tipp-Formular: Submit-Button erst aktivieren, wenn ein Wert geändert wurde.
+   */
+  Drupal.behaviors.soccerbetTippDirty = {
+    attach(context) {
+      once('soccerbet-tipp-dirty', '.soccerbet-submit', context).forEach((btn) => {
+        const form = btn.closest('form');
+        if (!form) return;
+        btn.disabled = true;
+        btn.classList.add('soccerbet-submit--clean');
+
+        function markDirty() {
+          btn.disabled = false;
+          btn.classList.remove('soccerbet-submit--clean');
+          btn.classList.add('soccerbet-submit--dirty');
+        }
+
+        form.addEventListener('input',  markDirty, { once: true });
+        form.addEventListener('change', markDirty, { once: true });
+      });
+    },
+  };
+
+  /**
+   * Mobile-Jump-Link: smooth scroll, Target vertikal mittig im Viewport.
+   */
+  Drupal.behaviors.soccerbetMobileJump = {
+    attach(context) {
+      once('soccerbet-mobile-jump', '.soccerbet-mobile-jump__link', context).forEach((link) => {
+        link.addEventListener('click', function (e) {
+          const targetId = (this.getAttribute('href') || '').replace(/^#/, '');
+          if (!targetId) return;
+          const target = document.getElementById(targetId);
+          if (!target) return;
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      });
+    },
+  };
+
 })(jQuery, Drupal, once);

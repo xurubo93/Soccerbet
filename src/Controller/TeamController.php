@@ -79,6 +79,7 @@ final class TeamController extends ControllerBase {
         '#rows'  => $rows,
         '#empty' => $this->t('No teams for this tournament.'),
       ],
+      '#cache' => ['max-age' => 0],
     ];
   }
 }
