@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Plugin\migrate\source;
 
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\migrate\Row;
 
 /**
@@ -26,7 +27,7 @@ final class GameSource extends SoccerbetSourceBase {
    */
   private array $gameCounts = [];
 
-  public function query(): \Drupal\Core\Database\Query\SelectInterface {
+  public function query(): SelectInterface {
     $q = $this->select('soccerbet_games', 'g')
       ->fields('g', [
         'game_id',

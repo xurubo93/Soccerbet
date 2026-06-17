@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Service;
 
+use Psr\Log\LoggerInterface;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -283,7 +284,7 @@ final class FootballDataClient implements ApiClientInterface {
     }
   }
 
-  private function logger(): \Psr\Log\LoggerInterface {
+  private function logger(): LoggerInterface {
     return $this->loggerFactory->get('soccerbet');
   }
 }

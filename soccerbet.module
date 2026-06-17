@@ -7,99 +7,25 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Hook\Attribute\LegacyHook;
+use Drupal\soccerbet\Hook\SoccerbetHooks;
+use Drupal\Core\Url;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Implements hook_help().
  */
+#[LegacyHook]
 function soccerbet_help(string $route_name, RouteMatchInterface $route_match): string {
-  return match($route_name) {
-    'help.page.soccerbet' => '<p>' . t('Fußball-Tippspiel: Verwalte Turniere, Teams, Spiele und Teilnehmer-Ranglisten.') . '</p>',
-    default => '',
-  };
+  return \Drupal::service(SoccerbetHooks::class)->help($route_name, $route_match);
 }
 
 /**
  * Implements hook_theme().
  */
+#[LegacyHook]
 function soccerbet_theme(): array {
-  return [
-    'soccerbet_standings' => [
-      'variables' => [
-        'rows'             => [],
-        'tournament'       => NULL,
-        'played_games'     => 0,
-        'past_tournaments' => [],
-        'step_mode'        => FALSE,
-        'step_limit'       => 0,
-        'max_games'        => 0,
-        'winner_bets'      => [],
-        'step_game'        => NULL,
-        'step_tipps'       => [],
-      ],
-      'template' => 'soccerbet-standings',
-    ],
-    'soccerbet_place_bets' => [
-      'variables' => [
-        'form'       => NULL,
-        'games'      => [],
-        'tournament' => NULL,
-      ],
-      'template' => 'soccerbet-place-bets',
-    ],
-    'soccerbet_tipper_detail' => [
-      'variables' => [
-        'tipper'     => NULL,
-        'points'     => [],
-        'tournament' => NULL,
-        'avatar_url' => NULL,
-        'stars'      => 0,
-      ],
-      'template' => 'soccerbet-tipper-detail',
-    ],
-    'soccerbet_tables' => [
-      'variables' => [
-        'groups'     => [],
-        'tournament' => NULL,
-      ],
-      'template' => 'soccerbet-tables',
-    ],
-    'soccerbet_live' => [
-      'variables' => [
-        'tournament'      => NULL,
-        'is_live'         => FALSE,
-        'tournament_id'   => 0,
-        'scoreboard'      => [],
-        'ranking_content' => [],
-        'can_refresh'     => FALSE,
-      ],
-      'template' => 'soccerbet-live',
-    ],
-    'soccerbet_live_scoreboard' => [
-      'variables' => [
-        'live_games' => [],
-      ],
-      'template' => 'soccerbet-live-scoreboard',
-    ],
-    'soccerbet_live_ranking' => [
-      'variables' => [
-        'live_games'    => [],
-        'ranking'       => [],
-        'final_started' => FALSE,
-        'tournament_id' => 0,
-      ],
-      'template' => 'soccerbet-live-ranking',
-    ],
-    'soccerbet_shoutbox' => [
-      'variables' => [
-        'messages'      => [],
-        'form'          => NULL,
-        'can_delete'    => FALSE,
-        'tournament_id' => 0,
-      ],
-      'template' => 'soccerbet-shoutbox',
-    ],
-  ];
+  return \Drupal::service(SoccerbetHooks::class)->theme();
 }
 
 /**
@@ -107,54 +33,41 @@ function soccerbet_theme(): array {
  *
  * Nach der Tournament-Migration: aktives Turnier in soccerbet.settings setzen.
  */
-function soccerbet_migrate_import_soccerbet_tournaments_finish(string $migration_id, array $context): void {
-  // Das aktive Turnier (is_active = 1) als default_tournament konfigurieren
-  $active_id = \Drupal::database()
-    ->select('soccerbet_tournament', 't')
-    ->fields('t', ['tournament_id'])
-    ->condition('t.is_active', 1)
-    ->orderBy('t.tournament_id', 'DESC')
-    ->range(0, 1)
-    ->execute()
-    ->fetchField();
-
-  if ($active_id) {
-    \Drupal::configFactory()
-      ->getEditable('soccerbet.settings')
-      ->set('default_tournament', (int) $active_id)
-      ->save();
-    \Drupal::logger('soccerbet')->info(
-      'Standard-Turnier nach Migration auf ID @id gesetzt.',
-      ['@id' => $active_id]
-    );
-  }
+#[LegacyHook]
+function soccerbet_migrate_import_soccerbet_tournaments_finish(string $migration_id, array $context): void
+{
+    \Drupal::service(SoccerbetHooks::class)->migrateImportSoccerbetTournamentsFinish($migration_id, $context);
 }
 /**
  * Implements hook_preprocess_HOOK() for soccerbet_live_scoreboard.
  */
+#[LegacyHook]
 function soccerbet_preprocess_soccerbet_live_scoreboard(array &$variables): void {
-  $variables['soccerbet_module_path'] = \Drupal::service('extension.list.module')->getPath('soccerbet');
+  \Drupal::service(SoccerbetHooks::class)->preprocessSoccerbetLiveScoreboard($variables);
 }
 
 /**
  * Implements hook_preprocess_HOOK() for soccerbet_standings.
  */
+#[LegacyHook]
 function soccerbet_preprocess_soccerbet_standings(array &$variables): void {
-  $variables['soccerbet_module_path'] = \Drupal::service('extension.list.module')->getPath('soccerbet');
+  \Drupal::service(SoccerbetHooks::class)->preprocessSoccerbetStandings($variables);
 }
 
 /**
  * Implements hook_preprocess_HOOK() for soccerbet_tables.
  */
+#[LegacyHook]
 function soccerbet_preprocess_soccerbet_tables(array &$variables): void {
-  $variables['soccerbet_module_path'] = \Drupal::service('extension.list.module')->getPath('soccerbet');
+  \Drupal::service(SoccerbetHooks::class)->preprocessSoccerbetTables($variables);
 }
 
 /**
  * Implements hook_preprocess_HOOK() for soccerbet_tipper_detail.
  */
+#[LegacyHook]
 function soccerbet_preprocess_soccerbet_tipper_detail(array &$variables): void {
-  $variables['soccerbet_module_path'] = \Drupal::service('extension.list.module')->getPath('soccerbet');
+  \Drupal::service(SoccerbetHooks::class)->preprocessSoccerbetTipperDetail($variables);
 }
 
 function soccerbet_page_attachments(array &$attachments): void {
@@ -172,7 +85,7 @@ function soccerbet_page_attachments(array &$attachments): void {
   $tournament_id = (int) \Drupal::config('soccerbet.settings')->get('default_tournament');
   if ($tournament_id > 0) {
     $attachments['#attached']['drupalSettings']['soccerbet']['liveJsonUrl'] =
-      \Drupal\Core\Url::fromRoute('soccerbet.live.json', ['tournament_id' => $tournament_id])
+      Url::fromRoute('soccerbet.live.json', ['tournament_id' => $tournament_id])
         ->toString();
   }
 }

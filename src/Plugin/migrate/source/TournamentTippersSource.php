@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Plugin\migrate\source;
 
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\migrate\Row;
 
 /**
@@ -20,7 +21,7 @@ use Drupal\migrate\Row;
  */
 final class TournamentTippersSource extends SoccerbetSourceBase {
 
-  public function query(): \Drupal\Core\Database\Query\SelectInterface {
+  public function query(): SelectInterface {
     // Prüfen ob die Tabelle existiert
     try {
       $q = $this->select('soccerbet_tournament_tippers', 'stt')
@@ -47,7 +48,7 @@ final class TournamentTippersSource extends SoccerbetSourceBase {
    * Jeder Tipper, der mindestens einen Tipp in einem Turnier hat,
    * wird als Teilnehmer gewertet.
    */
-  private function reconstructFromTipps(): \Drupal\Core\Database\Query\SelectInterface {
+  private function reconstructFromTipps(): SelectInterface {
     $q = $this->select('soccerbet_tipps', 'st');
     $q->addField('sg', 'tournament_id');
     $q->addField('st', 'tipper_id');

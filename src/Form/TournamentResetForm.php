@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -29,17 +30,17 @@ final class TournamentResetForm extends ConfirmFormBase {
     return 'soccerbet_tournament_reset_form';
   }
 
-  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Reset all data for tournament "@name"?', [
       '@name' => $this->tournament?->tournament_desc ?? '',
     ]);
   }
 
-  public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getDescription(): TranslatableMarkup {
     return $this->t('This will permanently delete all teams, matches, bets, winner bets, participant assignments and group assignments for this tournament. Only the tournament itself will be kept.');
   }
 
-  public function getConfirmText(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->t('Reset data');
   }
 

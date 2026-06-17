@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -29,11 +30,11 @@ final class GameDeleteForm extends ConfirmFormBase {
     return 'soccerbet_game_delete_form';
   }
 
-  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Really delete this match?');
   }
 
-  public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getDescription(): TranslatableMarkup {
     return $this->t('All bets for this match will also be deleted.');
   }
 

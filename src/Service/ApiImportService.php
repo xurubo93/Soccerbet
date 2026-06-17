@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Service;
 
+use Psr\Log\LoggerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -340,7 +341,7 @@ final class ApiImportService implements ApiImportInterface {
     return '';
   }
 
-  private function logger(): \Psr\Log\LoggerInterface {
+  private function logger(): LoggerInterface {
     return $this->loggerFactory->get('soccerbet');
   }
 }

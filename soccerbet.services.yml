@@ -86,3 +86,7 @@ services:
     arguments:
       - '@database'
       - '@config.factory'
+
+  Drupal\soccerbet\Hook\SoccerbetHooks:
+    class: Drupal\soccerbet\Hook\SoccerbetHooks
+    autowire: true

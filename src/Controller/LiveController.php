@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Controller;
 
+use Drupal\Core\Url;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Render\RendererInterface;
@@ -323,7 +324,7 @@ final class LiveController extends ControllerBase {
         'uid'         => (int) $tipper->uid,
         'name'        => $tipper->tipper_name,
         'stars'       => $stars[$tipper_id] ?? 0,
-        'detail_url'  => \Drupal\Core\Url::fromRoute('soccerbet.standings_tipper', [
+        'detail_url'  => Url::fromRoute('soccerbet.standings_tipper', [
           'tournament_id' => $tournament_id,
           'tipper_id'     => $tipper_id,
         ])->toString(),

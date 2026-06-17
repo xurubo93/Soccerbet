@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Plugin\migrate\source;
 
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\migrate\Row;
 
 /**
@@ -16,7 +17,7 @@ use Drupal\migrate\Row;
  */
 final class TipperSource extends SoccerbetSourceBase {
 
-  public function query(): \Drupal\Core\Database\Query\SelectInterface {
+  public function query(): SelectInterface {
     $q = $this->select('soccerbet_tippers', 't')
       ->fields('t', [
         'tipper_id',

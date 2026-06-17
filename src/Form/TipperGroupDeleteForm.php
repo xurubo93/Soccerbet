@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Form;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -29,13 +30,13 @@ final class TipperGroupDeleteForm extends ConfirmFormBase {
     return 'soccerbet_tippergroup_delete_form';
   }
 
-  public function getQuestion(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getQuestion(): TranslatableMarkup {
     return $this->t('Really delete betting group "@name"?', [
       '@name' => $this->group?->tipper_grp_name ?? '',
     ]);
   }
 
-  public function getDescription(): \Drupal\Core\StringTranslation\TranslatableMarkup {
+  public function getDescription(): TranslatableMarkup {
     return $this->t('This will permanently delete all bettors, bets, invitations and tournament assignments of this group.');
   }
 

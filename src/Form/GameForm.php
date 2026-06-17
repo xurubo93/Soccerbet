@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Form;
 
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -95,7 +96,7 @@ final class GameForm extends FormBase {
     $default_date = NULL;
     if ($game?->game_date) {
       // DB speichert UTC – für Anzeige im Formular in User-Zeitzone konvertieren
-      $default_date = new \Drupal\Core\Datetime\DrupalDateTime(
+      $default_date = new DrupalDateTime(
         $game->game_date,
         new \DateTimeZone('UTC')
       );

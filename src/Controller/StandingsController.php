@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\soccerbet\Controller;
 
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Drupal\Core\Url;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\soccerbet\Service\ScoringService;
@@ -223,7 +225,7 @@ final class StandingsController extends ControllerBase {
     $tipper_data   = $tipper_points[$tipper_id] ?? NULL;
 
     if (!$tipper_data) {
-      throw new \Symfony\Component\HttpKernel\Exception\NotFoundHttpException();
+      throw new NotFoundHttpException();
     }
 
     $avatars    = $this->loadAvatarUrls([$tipper_data]);
@@ -260,7 +262,7 @@ final class StandingsController extends ControllerBase {
           continue;
         }
         $seen[$tid] = TRUE;
-        $t->url = \Drupal\Core\Url::fromRoute('soccerbet.standings', ['tournament_id' => $tid])->toString();
+        $t->url = Url::fromRoute('soccerbet.standings', ['tournament_id' => $tid])->toString();
 
         $cid = 'soccerbet:past_top3:' . $tid;
         if ($cached = \Drupal::cache()->get($cid)) {
@@ -322,7 +324,7 @@ final class StandingsController extends ControllerBase {
       '#markup' => '<div class="soccerbet-no-tournament">'
         . '<p>' . $this->t(
             'No active tournament configured. Please first <a href=":url">create a tournament and set it as default</a>.',
-            [':url' => \Drupal\Core\Url::fromRoute('soccerbet.admin.tournament.create')->toString()]
+            [':url' => Url::fromRoute('soccerbet.admin.tournament.create')->toString()]
           )
         . '</p></div>',
     ];

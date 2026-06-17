@@ -83,7 +83,7 @@ abstract class SoccerbetDestinationBase extends DestinationBase implements Conta
   /**
    * {@inheritdoc}
    */
-  public function fields(MigrationInterface $migration = NULL): array {
+  public function fields(?MigrationInterface $migration = NULL): array {
     return [];
   }
 
