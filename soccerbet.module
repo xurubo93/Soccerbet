@@ -34,6 +34,8 @@ function soccerbet_theme(): array {
         'step_limit'       => 0,
         'max_games'        => 0,
         'winner_bets'      => [],
+        'step_game'        => NULL,
+        'step_tipps'       => [],
       ],
       'template' => 'soccerbet-standings',
     ],
@@ -131,6 +133,13 @@ function soccerbet_migrate_import_soccerbet_tournaments_finish(string $migration
  * Implements hook_preprocess_HOOK() for soccerbet_live_scoreboard.
  */
 function soccerbet_preprocess_soccerbet_live_scoreboard(array &$variables): void {
+  $variables['soccerbet_module_path'] = \Drupal::service('extension.list.module')->getPath('soccerbet');
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for soccerbet_standings.
+ */
+function soccerbet_preprocess_soccerbet_standings(array &$variables): void {
   $variables['soccerbet_module_path'] = \Drupal::service('extension.list.module')->getPath('soccerbet');
 }
 

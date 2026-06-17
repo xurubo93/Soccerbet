@@ -123,6 +123,9 @@ final class StandingsController extends ControllerBase {
     }
     unset($row);
 
+    $step_game  = $this->loadStepGame($tournament_id, $limit);
+    $step_tipps = $step_game ? $this->loadStepTipps($step_game, $tournament_id, $limit) : [];
+
     return [
       '#theme'        => 'soccerbet_standings',
       '#rows'         => $rows,
@@ -131,8 +134,75 @@ final class StandingsController extends ControllerBase {
       '#step_mode'    => TRUE,
       '#step_limit'   => $limit,
       '#max_games'    => $max_games,
+      '#step_game'    => $step_game,
+      '#step_tipps'   => $step_tipps,
       '#cache'        => ['max-age' => 300],
     ];
+  }
+
+  /**
+   * Lädt das N-te gespielte Spiel eines Turniers (sortiert nach Anpfiff).
+   */
+  private function loadStepGame(int $tournament_id, int $limit): ?object {
+    $q = \Drupal::database()->select('soccerbet_games', 'g');
+    $q->fields('g', ['game_id', 'team_id_1', 'team_id_2', 'game_date', 'team1_score', 'team2_score']);
+    $q->addField('t1', 'team_name', 'team1_name');
+    $q->addField('t1', 'team_flag', 'team1_flag');
+    $q->addField('t2', 'team_name', 'team2_name');
+    $q->addField('t2', 'team_flag', 'team2_flag');
+    $q->join('soccerbet_teams', 't1', 'g.team_id_1 = t1.team_id');
+    $q->join('soccerbet_teams', 't2', 'g.team_id_2 = t2.team_id');
+    $q->condition('g.tournament_id', $tournament_id);
+    $q->condition('g.published', 1);
+    $q->isNotNull('g.team1_score');
+    $q->condition('g.game_date', gmdate('Y-m-d\TH:i:s'), '<');
+    $q->orderBy('g.game_date', 'ASC');
+    $q->range($limit - 1, 1);
+    $game = $q->execute()->fetchObject();
+    if (!$game) {
+      return NULL;
+    }
+    // Alias score1/score2 für Scoreboard-Wiederverwendung im Template.
+    $game->score1 = (int) $game->team1_score;
+    $game->score2 = (int) $game->team2_score;
+    return $game;
+  }
+
+  /**
+   * Liefert pro Tipper den Tipp für das Step-Spiel sowie die
+   * Gesamtpunkte (inkl. Bonus) und einen Status (exact/tendency/wrong).
+   *
+   * @return array<int, array{tipp: string, status: string, points: int}>
+   */
+  private function loadStepTipps(object $game, int $tournament_id, int $limit): array {
+    $tipper_points = $this->scoring->getTipperPoints($tournament_id, $limit);
+    $config        = $this->config('soccerbet.settings');
+    $pts_exact     = (int) $config->get('points_exact');
+    $pts_tendency  = (int) $config->get('points_tendency');
+    $game_id       = (int) $game->game_id;
+
+    $result = [];
+    foreach ($tipper_points as $tipper_id => $data) {
+      $tipp = $data['tipp'][$game_id] ?? 'N.A.';
+      if ($tipp === 'N.A.') {
+        continue;
+      }
+      $base  = (int) ($data['basispunkte'][$game_id]  ?? 0);
+      $total = (int) ($data['totalpergame'][$game_id] ?? 0);
+
+      $status = match (TRUE) {
+        $base === $pts_exact    => 'exact',
+        $base === $pts_tendency => 'tendency',
+        default                 => 'wrong',
+      };
+
+      $result[(int) $tipper_id] = [
+        'tipp'   => str_replace(' : ', ':', $tipp),
+        'status' => $status,
+        'points' => $total,
+      ];
+    }
+    return $result;
   }
 
   /**

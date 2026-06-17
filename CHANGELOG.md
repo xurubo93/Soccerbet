@@ -5,6 +5,19 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.9] - 2026-06-17
+
+### Changed
+
+- Standings step view (round-by-round browse) shows the step's match
+  as a scoreboard above the table, styled like the live scoreboard
+  (flags + final score).
+- The "Correct results" and "Correct tendencies" columns are replaced
+  in step mode by a single "Bet" column showing each tipper's bet for
+  the step's match plus the total points earned (incl. bonus and KO
+  multiplier), with the same colour coding as the live view
+  (exact / tendency / wrong).
+
 ## [1.1.8] - 2026-06-14
 
 ### Added

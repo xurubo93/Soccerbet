@@ -78,13 +78,37 @@
       </a>
     </div>
 
+    {# Scoreboard für das aktuelle Step-Spiel – Live-Stil #}
+    {% if step_mode and step_game %}
+      {% import '@soccerbet/soccerbet-flag.html.twig' as flag_helper %}
+      <div class="soccerbet-live__scoreboard soccerbet-standings__scoreboard">
+        <div class="soccerbet-live__match">
+          <div class="soccerbet-live__match-team soccerbet-live__match-team--home">
+            {{ flag_helper.flag(step_game.team1_flag, step_game.team1_name|t, 36, soccerbet_module_path) }}
+            <span>{{ step_game.team1_name|t }}</span>
+          </div>
+          <div class="soccerbet-live__match-score">
+            <strong>{{ step_game.score1 }} : {{ step_game.score2 }}</strong>
+          </div>
+          <div class="soccerbet-live__match-team soccerbet-live__match-team--away">
+            <span>{{ step_game.team2_name|t }}</span>
+            {{ flag_helper.flag(step_game.team2_flag, step_game.team2_name|t, 36, soccerbet_module_path) }}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
     <table class="soccerbet-standings__table">
       <thead>
         <tr>
           <th class="col-rank">{{ 'Rank'|t }}</th>
           <th class="col-name">{{ 'Name'|t }}</th>
-          <th class="col-exact">{{ 'Correct results'|t }}</th>
-          <th class="col-tend">{{ 'Correct tendencies'|t }}</th>
+          {% if step_mode %}
+            <th class="col-step-tipp">{{ 'Bet'|t }}</th>
+          {% else %}
+            <th class="col-exact">{{ 'Correct results'|t }}</th>
+            <th class="col-tend">{{ 'Correct tendencies'|t }}</th>
+          {% endif %}
           <th class="col-total">{{ 'Points'|t }}</th>
         </tr>
       </thead>
@@ -127,8 +151,24 @@
               {% endif %}
             </td>
 
-            <td class="col-exact">{{ row.ergebnisse }}</td>
-            <td class="col-tend">{{ row.tendenzen }}</td>
+            {% if step_mode %}
+              <td class="col-step-tipp">
+                {% set tipp = step_tipps[row.tipper_id] ?? null %}
+                {% if tipp %}
+                  <span class="soccerbet-live__tipp soccerbet-live__tipp--{{ tipp.status }}">
+                    <span class="soccerbet-live__tipp-score">{{ tipp.tipp }}</span>
+                    <span class="soccerbet-live__tipp-pts">({{ tipp.points }})</span>
+                  </span>
+                {% else %}
+                  <span class="soccerbet-live__tipp soccerbet-live__tipp--none">
+                    <span class="soccerbet-live__tipp-score">—</span>
+                  </span>
+                {% endif %}
+              </td>
+            {% else %}
+              <td class="col-exact">{{ row.ergebnisse }}</td>
+              <td class="col-tend">{{ row.tendenzen }}</td>
+            {% endif %}
             <td class="col-total"><strong>{{ row.total }}</strong></td>
           </tr>
         {% endfor %}
