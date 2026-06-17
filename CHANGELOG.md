@@ -5,6 +5,16 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.10] - 2026-06-17
+
+### Fixed
+
+- Live standings sort order now matches the regular standings:
+  total points → correct results → correct tendencies → name.
+  Previously the live view used live_points as second-level
+  tiebreaker, which produced a ranking that diverged from the
+  standings page whenever total points were equal.
+
 ## [1.1.9] - 2026-06-17
 
 ### Changed

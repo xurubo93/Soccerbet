@@ -331,14 +331,19 @@ final class LiveController extends ControllerBase {
         'live_points' => $live_points,
         'base_total'  => $base_total,
         'total'       => $total,
+        'ergebnisse'  => (int) ($tipper_points_full[$tipper_id]['ergebnisse'] ?? 0),
+        'tendenzen'   => (int) ($tipper_points_full[$tipper_id]['tendenzen']  ?? 0),
         'winner_bet'  => $winner_bet_entry,
       ];
     }
 
-    // Rang VOR Live-Punkten berechnen (für Veränderungsanzeige)
+    // Rang VOR Live-Punkten berechnen (für Veränderungsanzeige).
+    // Sortierung wie in der Rangliste: Total → Ergebnisse → Tendenzen → Name.
     $ranking_before = $ranking;
     usort($ranking_before, static fn($a, $b) =>
       $b['base_total'] <=> $a['base_total']
+      ?: $b['ergebnisse'] <=> $a['ergebnisse']
+      ?: $b['tendenzen']  <=> $a['tendenzen']
       ?: strcmp($a['name'], $b['name'])
     );
     $rank_before_map = [];
@@ -346,10 +351,11 @@ final class LiveController extends ControllerBase {
       $rank_before_map[$row['tipper_id']] = $rank + 1;
     }
 
-    // Sortierung mit Live-Punkten
+    // Sortierung mit Live-Punkten – identisch zur Rangliste.
     usort($ranking, static fn($a, $b) =>
-      $b['total'] <=> $a['total']
-      ?: $b['live_points'] <=> $a['live_points']
+      $b['total']       <=> $a['total']
+      ?: $b['ergebnisse'] <=> $a['ergebnisse']
+      ?: $b['tendenzen']  <=> $a['tendenzen']
       ?: strcmp($a['name'], $b['name'])
     );
 
