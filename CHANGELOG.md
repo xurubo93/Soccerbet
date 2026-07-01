@@ -5,6 +5,53 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.11] - 2026-07-01
+
+### Added
+
+- New schema columns `penalty_score_1` / `penalty_score_2` on
+  `soccerbet_games` for storing penalty shootout results
+  (hook_update_N 8016).
+- Bets overview shows the penalty shootout score next to a draw
+  result, e.g. `1:1 (3:4 i.E.)`.
+- Bonus tab now flags an eliminated tournament-winner bet: the team
+  name is struck through with an "(eliminated)" hint, and the
+  affected tipper sees a red alert badge on the Bonus tab plus a
+  banner with a direct "Update bet" link.
+- Score edit form (admin) gets an optional penalty shootout result
+  field.
+
+### Changed
+
+- Live score update: use the correct 120-minute result for knockout
+  matches. `fullTime` is used for `REGULAR`/`EXTRA_TIME`;
+  `regularTime + extraTime` is used for `PENALTY_SHOOTOUT` (so the
+  penalty goals are not added to the match score). The qualifier for
+  the knockout bonus is now taken from the API `score.winner` field,
+  which handles penalty shootouts correctly.
+- Team-name fallback in `ScoreUpdateService` no longer overwrites
+  games that already have a score. Setting a game's `api_id` to NULL
+  now acts as an explicit opt-out from automatic updates for that
+  match.
+- Knockout qualifier bonus is only awarded when the match actually
+  ended in a draw after 120 min (previously the bonus could be
+  granted on any correct qualifier match, even when the qualifier
+  was already obvious from the result).
+- `WinnerBetService`: tips on eliminated teams show
+  `possible_points = 0` / `actual_points = 0`. Static request cache
+  for the eliminated-teams lookup.
+- Standings sticky header: the JS ghost header now accounts for the
+  Drupal admin toolbar height and runs an initial update so the
+  header shows up on desktop and tablet, not just on mobile.
+- Translation update: "Weiterkommer" replaced with "Aufsteiger"
+  throughout the German translation.
+
+### Fixed
+
+- `GameScoreForm` no longer requires selecting a qualifier when the
+  admin saves a draw score. This lets admins record the 1:1 result
+  of a running penalty shootout before the qualifier is decided.
+
 ## [1.1.10] - 2026-06-17
 
 ### Fixed

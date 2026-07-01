@@ -86,16 +86,34 @@ final class StandingsController extends ControllerBase {
     }
     unset($row);
 
+    // Eigenen ausgeschiedenen WM-Tipp erkennen — für rotes Rufzeichen am Bonus-Tab.
+    $own_bet_eliminated = FALSE;
+    $current_uid = (int) $this->currentUser()->id();
+    if ($current_uid > 0) {
+      foreach ($winner_bets as $bet) {
+        if (!$bet->is_eliminated) {
+          continue;
+        }
+        $row = array_values(array_filter($rows, fn($r) => $r['tipper_id'] === $bet->tipper_id))[0] ?? NULL;
+        if ($row && (int) $row['uid'] === $current_uid) {
+          $own_bet_eliminated = TRUE;
+          break;
+        }
+      }
+    }
+
     return [
-      '#theme'            => 'soccerbet_standings',
-      '#rows'             => $rows,
-      '#tournament'       => $tournament,
-      '#played_games'     => $played_games,
-      '#past_tournaments' => $past_tournaments,
-      '#winner_bets'      => $winner_bets,
-      '#cache'            => [
-        'tags'    => ['soccerbet_standings:' . $tournament_id],
-        'max-age' => 60,
+      '#theme'              => 'soccerbet_standings',
+      '#rows'               => $rows,
+      '#tournament'         => $tournament,
+      '#played_games'       => $played_games,
+      '#past_tournaments'   => $past_tournaments,
+      '#winner_bets'        => $winner_bets,
+      '#own_bet_eliminated' => $own_bet_eliminated,
+      '#cache'              => [
+        'tags'     => ['soccerbet_standings:' . $tournament_id],
+        'contexts' => ['user'],
+        'max-age'  => 60,
       ],
     ];
   }

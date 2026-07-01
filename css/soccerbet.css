@@ -18,6 +18,7 @@
 .soccerbet-standings__tab { padding:.5rem 1.1rem; text-decoration:none; color:var(--sb-text-muted); border-radius:var(--sb-radius) var(--sb-radius) 0 0; font-size:.9rem; font-weight:500; border:1px solid transparent; border-bottom:none; position:relative; bottom:-2px; }
 .soccerbet-standings__tab--active { color:var(--sb-color-primary, #0071b8); border-color:var(--sb-border); background:#fff; }
 .soccerbet-standings__tab-badge { display:inline-block; background:var(--sb-color-primary, #0071b8); color:#fff; font-size:.7em; padding:1px 5px; border-radius:10px; margin-left:4px; vertical-align:middle; }
+.soccerbet-standings__tab-alert { display:inline-block; background:#d33; color:#fff; font-weight:700; font-size:.75em; line-height:1; padding:2px 6px; border-radius:50%; margin-left:4px; vertical-align:middle; }
 
 /* --- Rangliste ---------------------------------------------------------- */
 .soccerbet-standings__table { width:100%; border-collapse:collapse; font-size:.95rem; }
@@ -43,6 +44,12 @@
 .col-bonus-pts,.col-bonus-result { text-align:center; }
 .soccerbet-bonus__row--correct { background:#d4edda !important; }
 .soccerbet-bonus__row--wrong { color:var(--sb-text-muted); }
+.soccerbet-bonus__row--eliminated { color:var(--sb-text-muted); }
+.soccerbet-bonus__team--eliminated { text-decoration:line-through; }
+.soccerbet-bonus__eliminated-hint { font-size:.8em; color:#6c757d; margin-left:.3em; }
+.soccerbet-bonus__alert { display:flex; align-items:center; gap:.6rem; padding:.6rem .9rem; margin-bottom:1rem; background:#fdecec; border:1px solid #f5c2c2; border-radius:var(--sb-radius); color:#8a1f1f; }
+.soccerbet-bonus__alert-icon { display:inline-block; background:#d33; color:#fff; font-weight:700; font-size:.85em; line-height:1; padding:3px 8px; border-radius:50%; flex-shrink:0; }
+.soccerbet-bonus__alert a { margin-left:auto; }
 .soccerbet-bonus__correct { color:#155724; font-weight:700; }
 .soccerbet-bonus__wrong { color:#6c757d; }
 /* --- Live Turniersieger-Spalte ------------------------------------------ */
@@ -217,6 +224,7 @@
   color: #c00;
 }
 .tipps-ov__score--pending { color: var(--sb-text-muted); font-weight: 400; }
+.tipps-ov__penalty { font-weight: 400; font-size: .72rem; color: var(--sb-text-muted); white-space: nowrap; }
 .tipps-ov__pts { display: block; font-size: .75rem; color: rgba(0,0,0,.55); }
 
 /* Tipp-Zellen */

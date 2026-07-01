@@ -140,36 +140,52 @@ final class WinnerBetService {
 
     $final_started  = $this->isFinalStarted($tournament_id);
     $final_finished = $this->isFinalFinished($tournament_id);
+    $eliminated     = $this->loadEliminatedTeams($tournament_id);
 
     $result = [];
     foreach ($rows as $row) {
-      $possible_points = $this->getPointsForPhaseIndex((int) $row->phase_index);
-      $is_correct      = $winner_team_id && ((int) $row->team_id === $winner_team_id);
-      $actual_points   = $final_finished ? ($is_correct ? $possible_points : 0) : NULL;
+      $team_id       = (int) $row->team_id;
+      $is_eliminated = isset($eliminated[$team_id]);
 
-      // display_points: ab Finalanpfiff sichtbar
-      // – Finale läuft/gestartet, kein Ergebnis: possible_points (ausstehend)
-      // – Finale beendet: actual_points (0 oder possible_points)
-      // – Vor Finalanpfiff: NULL
-      $display_points = NULL;
-      if ($final_finished) {
-        $display_points = $actual_points;
+      if ($is_eliminated) {
+        // Team ist im KO ausgeschieden → kein Bonus mehr möglich.
+        $possible_points = 0;
+        $actual_points   = 0;
+        $display_points  = 0;
+        $is_correct      = FALSE;
+        $is_pending      = FALSE;
       }
-      elseif ($final_started) {
-        $display_points = $possible_points; // ausstehend
+      else {
+        $possible_points = $this->getPointsForPhaseIndex((int) $row->phase_index);
+        $is_correct      = $winner_team_id && ($team_id === $winner_team_id);
+        $actual_points   = $final_finished ? ($is_correct ? $possible_points : 0) : NULL;
+
+        // display_points: ab Finalanpfiff sichtbar
+        // – Finale läuft/gestartet, kein Ergebnis: possible_points (ausstehend)
+        // – Finale beendet: actual_points (0 oder possible_points)
+        // – Vor Finalanpfiff: NULL
+        $display_points = NULL;
+        if ($final_finished) {
+          $display_points = $actual_points;
+        }
+        elseif ($final_started) {
+          $display_points = $possible_points; // ausstehend
+        }
+        $is_pending = $final_started && !$final_finished;
       }
 
       $result[] = (object) [
         'tipper_id'       => (int) $row->tipper_id,
         'tipper_name'     => $tipper_rows[$row->tipper_id] ?? '?',
-        'team_id'         => (int) $row->team_id,
-        'team_name'       => $team_rows[$row->team_id] ?? '?',
+        'team_id'         => $team_id,
+        'team_name'       => $team_rows[$team_id] ?? '?',
         'phase_index'     => (int) $row->phase_index,
         'possible_points' => $possible_points,
         'actual_points'   => $actual_points,
         'display_points'  => $display_points, // ab Finalanpfiff != NULL
         'is_correct'      => $is_correct,
-        'is_pending'      => $final_started && !$final_finished,
+        'is_pending'      => $is_pending,
+        'is_eliminated'   => $is_eliminated,
       ];
     }
 
@@ -199,6 +215,46 @@ final class WinnerBetService {
   // ------------------------------------------------------------------ //
   // Hilfsmethoden                                                        //
   // ------------------------------------------------------------------ //
+
+  /**
+   * Liefert die IDs aller Teams, die im KO als Verlierer feststehen und
+   * damit als Weltmeister-Kandidat ausgeschieden sind. Static-Cache pro
+   * Request, damit mehrfaches loadBetsForTournament() nur einmal abfragt.
+   *
+   * @return array<int, TRUE> team_id => TRUE
+   */
+  private function loadEliminatedTeams(int $tournament_id): array {
+    static $cache = [];
+    if (array_key_exists($tournament_id, $cache)) {
+      return $cache[$tournament_id];
+    }
+
+    $rows = $this->db->select('soccerbet_games', 'g')
+      ->fields('g', ['team_id_1', 'team_id_2', 'team1_score', 'team2_score', 'winner_team_id'])
+      ->condition('g.tournament_id', $tournament_id)
+      ->condition('g.phase', ['round_of_32', 'round_of_16', 'quarter', 'semi', 'final'], 'IN')
+      ->isNotNull('g.team1_score')
+      ->execute()->fetchAll();
+
+    $eliminated = [];
+    foreach ($rows as $row) {
+      $t1     = (int) $row->team_id_1;
+      $t2     = (int) $row->team_id_2;
+      $s1     = (int) $row->team1_score;
+      $s2     = (int) $row->team2_score;
+      $winner = (int) ($row->winner_team_id ?? 0);
+
+      if ($winner === 0) {
+        if ($s1 > $s2)      { $winner = $t1; }
+        elseif ($s2 > $s1)  { $winner = $t2; }
+        else                { continue; }  // Draw ohne winner → noch offen
+      }
+
+      $loser = ($winner === $t1) ? $t2 : $t1;
+      $eliminated[$loser] = TRUE;
+    }
+    return $cache[$tournament_id] = $eliminated;
+  }
 
   /**
    * Ermittelt die Team-ID des Turniersiegers anhand des Finalspiels.

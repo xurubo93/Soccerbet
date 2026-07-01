@@ -89,8 +89,13 @@ final class TippsController extends ControllerBase {
         : '';
 
       $has_result  = ($game->team1_score !== NULL && $game->team2_score !== NULL);
+      $has_penalty = ($game->penalty_score_1 ?? NULL) !== NULL
+        && ($game->penalty_score_2 ?? NULL) !== NULL;
+      $penalty_suffix = $has_penalty
+        ? ' <span class="tipps-ov__penalty">(' . (int) $game->penalty_score_1 . ':' . (int) $game->penalty_score_2 . ' ' . $this->t('i.E.') . ')</span>'
+        : '';
       $score_label = $has_result
-        ? '<span class="tipps-ov__score">' . $game->team1_score . ':' . $game->team2_score . '</span>'
+        ? '<span class="tipps-ov__score">' . $game->team1_score . ':' . $game->team2_score . $penalty_suffix . '</span>'
         : '<span class="tipps-ov__score tipps-ov__score--pending">—</span>';
 
       $game_label = ($date ? '<span class="tipps-ov__date">' . $date . '</span>' : '')

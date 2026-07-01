@@ -167,9 +167,13 @@ final class ScoringService {
         }
         $tipper_points[$tipper_id]['basispunkte'][$game_id] = $basispunkte;
 
-        // Sonderpunkte: Aufsteiger in KO-Runden richtig getippt
+        // Sonderpunkte: Aufsteiger in KO-Runden richtig getippt — nur wenn
+        // das Match nach 120 Min. tatsächlich unentschieden endete (Aufsteiger
+        // per Verlängerung/Elfmeterschießen), sonst wäre der Aufsteiger
+        // bereits durch den Ergebnistipp abgedeckt.
         $sonderpunkte = 0;
-        if ($tipp->winner_team_id && $game->winner_team_id
+        $is_draw = (int) $game->team1_score === (int) $game->team2_score;
+        if ($is_draw && $tipp->winner_team_id && $game->winner_team_id
           && (int) $game->winner_team_id === (int) $tipp->winner_team_id) {
           $sonderpunkte = $tipper_count; // Anzahl Teilnehmer als Multiplikator
         }

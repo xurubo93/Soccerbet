@@ -326,14 +326,16 @@ final class TipperManager {
   /**
    * Trägt das Ergebnis eines Spiels ein und invalidiert den Ranglisten-Cache.
    */
-  public function saveScore(int $game_id, int $score1, int $score2, ?int $winner_team_id = NULL): void {
+  public function saveScore(int $game_id, int $score1, int $score2, ?int $winner_team_id = NULL, ?int $penalty_score1 = NULL, ?int $penalty_score2 = NULL): void {
     $game = $this->loadGame($game_id);
     $this->db->update('soccerbet_games')
       ->fields([
-        'team1_score'    => $score1,
-        'team2_score'    => $score2,
-        'winner_team_id' => $winner_team_id,
-        'changed'        => \Drupal::time()->getRequestTime(),
+        'team1_score'     => $score1,
+        'team2_score'     => $score2,
+        'penalty_score_1' => $penalty_score1,
+        'penalty_score_2' => $penalty_score2,
+        'winner_team_id'  => $winner_team_id,
+        'changed'         => \Drupal::time()->getRequestTime(),
       ])
       ->condition('game_id', $game_id)->execute();
 

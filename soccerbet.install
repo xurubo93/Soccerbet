@@ -190,6 +190,14 @@ function soccerbet_schema(): array {
       'team2_score' => [
         'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => FALSE,
       ],
+      'penalty_score_1' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Elfmeter-Tore Heim (nur bei Elfmeterschießen).',
+      ],
+      'penalty_score_2' => [
+        'type' => 'int', 'size' => 'tiny', 'unsigned' => TRUE, 'not null' => FALSE,
+        'description' => 'Elfmeter-Tore Auswärts (nur bei Elfmeterschießen).',
+      ],
       'winner_team_id' => [
         'type' => 'int', 'unsigned' => TRUE, 'not null' => FALSE,
         'description' => 'Sieger in KO-Spielen (kann Verlängerung/Elfmeter beinhalten).',
@@ -932,5 +940,23 @@ function soccerbet_update_8007(): void {
     $schema->addIndex('soccerbet_games', 'api_id', ['api_id'], [
       'fields' => ['api_id' => ['type' => 'int', 'unsigned' => TRUE]],
     ]);
+  }
+}
+
+/**
+ * Update 8016: Elfmeter-Ergebnis-Spalten zu soccerbet_games hinzufügen.
+ */
+function soccerbet_update_8016(): void {
+  $schema = \Drupal::database()->schema();
+  foreach (['penalty_score_1', 'penalty_score_2'] as $field) {
+    if (!$schema->fieldExists('soccerbet_games', $field)) {
+      $schema->addField('soccerbet_games', $field, [
+        'type'        => 'int',
+        'size'        => 'tiny',
+        'unsigned'    => TRUE,
+        'not null'    => FALSE,
+        'description' => 'Elfmeter-Tore ' . ($field === 'penalty_score_1' ? 'Heim' : 'Auswärts') . ' (nur bei Elfmeterschießen).',
+      ]);
+    }
   }
 }

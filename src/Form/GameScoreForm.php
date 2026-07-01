@@ -79,6 +79,28 @@ final class GameScoreForm extends FormBase {
         ],
         '#default_value' => $game->winner_team_id ?? 0,
       ];
+
+      $form['penalty'] = [
+        '#type'        => 'fieldset',
+        '#title'       => $this->t('Penalty shootout result (optional)'),
+        '#description' => $this->t('Only fill in if the match was decided by a penalty shootout.'),
+      ];
+      $form['penalty']['penalty_score_1'] = [
+        '#type'          => 'number',
+        '#title'         => $this->t($team1->team_name),
+        '#min'           => 0,
+        '#max'           => 99,
+        '#default_value' => $game->penalty_score_1 ?? '',
+        '#attributes'    => ['style' => 'width: 70px;'],
+      ];
+      $form['penalty']['penalty_score_2'] = [
+        '#type'          => 'number',
+        '#title'         => $this->t($team2->team_name),
+        '#min'           => 0,
+        '#max'           => 99,
+        '#default_value' => $game->penalty_score_2 ?? '',
+        '#attributes'    => ['style' => 'width: 70px;'],
+      ];
     }
 
     $form['submit'] = [
@@ -89,31 +111,23 @@ final class GameScoreForm extends FormBase {
     return $form;
   }
 
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $ko_phases = ['round_of_32', 'round_of_16', 'quarter', 'semi', 'third_place', 'final'];
-    if (!in_array($form_state->get('game_phase'), $ko_phases, TRUE)) {
-      return;
-    }
-    $s1 = (int) $form_state->getValue('team1_score');
-    $s2 = (int) $form_state->getValue('team2_score');
-    if ($s1 === $s2 && (int) ($form_state->getValue('winner_team_id') ?? 0) === 0) {
-      $form_state->setErrorByName(
-        'winner_team_id',
-        $this->t('In case of a draw, a qualifier must be selected.')
-      );
-    }
-  }
-
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $game_id      = $form_state->get('game_id');
     $tournament_id = $form_state->get('tournament_id');
     $winner       = (int) ($form_state->getValue('winner_team_id') ?? 0);
+
+    $pen1_raw = $form_state->getValue('penalty_score_1');
+    $pen2_raw = $form_state->getValue('penalty_score_2');
+    $pen1 = ($pen1_raw === NULL || $pen1_raw === '') ? NULL : (int) $pen1_raw;
+    $pen2 = ($pen2_raw === NULL || $pen2_raw === '') ? NULL : (int) $pen2_raw;
 
     $this->tipperManager->saveScore(
       $game_id,
       (int) $form_state->getValue('team1_score'),
       (int) $form_state->getValue('team2_score'),
       $winner > 0 ? $winner : NULL,
+      $pen1,
+      $pen2,
     );
 
     $this->messenger()->addStatus($this->t('Result has been saved. The standings will be updated.'));

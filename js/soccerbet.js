@@ -199,10 +199,11 @@
   /**
    * Tipps-Übersicht: JS-Sticky-Header.
    *
-   * CSS position:sticky auf thead funktioniert nicht zuverlässig wenn
-   * ein Vorfahren-Element overflow:hidden/auto hat (typisch in Drupal-Themes).
-   * Lösung: thead-Klon als position:fixed, synchronisiert mit dem
-   * horizontalen Scroll-Offset des Containers.
+   * CSS position:sticky auf thead ist nicht zuverlässig, weil der
+   * horizontale Scroll-Container (overflow-x:auto) auf manchen Browsern
+   * implizit auch den vertikalen Scroll-Ancestor stellt.
+   * Lösung: thead-Klon als position:fixed unterhalb der Toolbar,
+   * synchronisiert mit horizontalem Scroll-Offset.
    */
   Drupal.behaviors.soccerbetTippsSticky = {
     attach(context) {
@@ -219,13 +220,23 @@
         const ghostTable = document.createElement('table');
         ghostTable.className = table.className;
         const ghostThead = thead.cloneNode(true);
-        // Sticky-CSS im Klon deaktivieren (kein Scroll-Container vorhanden)
         ghostThead.querySelectorAll('th').forEach(th => {
           th.style.position = 'static';
         });
         ghostTable.appendChild(ghostThead);
         ghost.appendChild(ghostTable);
         document.body.appendChild(ghost);
+
+        function topOffset() {
+          // Drupal-Admin-Toolbar unter Klaro/Bartik verdeckt sonst den
+          // Ghost-Header. Ermittle deren untere Kante.
+          const toolbar = document.querySelector('#toolbar-bar');
+          const tray    = document.querySelector('.toolbar-tray-horizontal.is-active');
+          let offset = 0;
+          if (toolbar) offset += toolbar.getBoundingClientRect().height;
+          if (tray)    offset += tray.getBoundingClientRect().height;
+          return offset;
+        }
 
         function syncWidths() {
           const ths     = thead.querySelectorAll('th');
@@ -240,15 +251,18 @@
 
         function update() {
           const scrollRect  = scroll.getBoundingClientRect();
+          const offset      = topOffset();
           const theadBottom = thead.getBoundingClientRect().bottom;
           const tableBottom = table.getBoundingClientRect().bottom;
 
-          if (theadBottom <= 0 && tableBottom > 0) {
+          // Ghost anzeigen, sobald der thead die Toolbar-Kante nach oben
+          // durchbrochen hat und die Tabelle darunter noch sichtbar wäre.
+          if (theadBottom <= offset && tableBottom > offset) {
             syncWidths();
+            ghost.style.top     = offset + 'px';
             ghost.style.left    = scrollRect.left + 'px';
             ghost.style.width   = scrollRect.width + 'px';
             ghost.style.display = 'block';
-            // Horizontalen Scroll-Offset spiegeln
             ghostTable.style.transform = 'translateX(' + (-scroll.scrollLeft) + 'px)';
           }
           else {
@@ -259,6 +273,8 @@
         window.addEventListener('scroll',  update, { passive: true });
         scroll.addEventListener('scroll',  update, { passive: true });
         window.addEventListener('resize',  update, { passive: true });
+        // Initial ausführen (falls User bereits gescrollt hatte).
+        update();
       });
     },
   };

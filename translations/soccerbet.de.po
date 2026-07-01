@@ -254,16 +254,37 @@ msgid "Home and away team must be different."
 msgstr "Heim- und Auswärtsteam müssen verschieden sein."
 
 msgid "In case of a draw, a qualifier must be selected."
-msgstr "Bei Unentschieden muss ein Weiterkommer ausgewählt werden."
+msgstr "Bei Unentschieden muss ein Aufsteiger ausgewählt werden."
 
 msgid "Qualifier / Winner (after extra time/penalties)"
-msgstr "Weiterkommer / Sieger (nach Verlängerung/Elfmeter)"
+msgstr "Aufsteiger / Sieger (nach Verlängerung/Elfmeter)"
 
 msgid "Qualifier/Winner"
-msgstr "Weiterkommer"
+msgstr "Aufsteiger"
 
 msgid "Only fill in if not determined by the 90 min. result."
 msgstr "Nur ausfüllen, wenn nicht durch das 90-Minuten-Ergebnis bestimmt."
+
+msgid "Penalty shootout result (optional)"
+msgstr "Ergebnis des Elfmeterschießens (optional)"
+
+msgid "Only fill in if the match was decided by a penalty shootout."
+msgstr "Nur ausfüllen, wenn das Spiel im Elfmeterschießen entschieden wurde."
+
+msgid "i.E."
+msgstr "i.E."
+
+msgid "eliminated"
+msgstr "ausgeschieden"
+
+msgid "Your tournament winner bet has been eliminated — please update it."
+msgstr "Deine Weltmeister-Wette ist ausgeschieden — bitte aktualisieren."
+
+msgid "Your tournament winner bet has been eliminated."
+msgstr "Deine Weltmeister-Wette ist ausgeschieden."
+
+msgid "Update bet"
+msgstr "Tipp ändern"
 
 msgid "From result (no penalty shootout)"
 msgstr "Aus Ergebnis (kein Elfmetersch.)"
@@ -654,7 +675,7 @@ msgid "Special"
 msgstr "Spezial"
 
 msgid "Special points: correct qualifier in KO round = number of participants"
-msgstr "Spezialpunkte: richtiger Weiterkommer in KO-Runde = Anzahl Teilnehmer"
+msgstr "Spezialpunkte: richtiger Aufsteiger in KO-Runde = Anzahl Teilnehmer"
 
 msgid "Total"
 msgstr "Gesamt"

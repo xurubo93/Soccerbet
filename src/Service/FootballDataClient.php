@@ -71,14 +71,45 @@ final class FootballDataClient implements ApiClientInterface {
     foreach ($data['matches'] as $m) {
       $score1 = NULL;
       $score2 = NULL;
+      // Für das Tippspiel gilt der 120-Minuten-Stand: bei Elfmeterschießen
+      // liefert `fullTime` die Elfer-Tore mit — dort müssen wir regularTime
+      // und extraTime addieren, um den Stand nach der Verlängerung zu
+      // erhalten. Bei EXTRA_TIME entspricht fullTime schon dem 120-Min-Stand,
+      // bei REGULAR dem 90-Min-Stand.
       if (in_array($m['status'], ['FINISHED', 'IN_PLAY', 'PAUSED'], TRUE)) {
-        $score1 = $m['score']['fullTime']['home'] ?? NULL;
-        $score2 = $m['score']['fullTime']['away'] ?? NULL;
-        // Falls fullTime null ist, extraTime prüfen
-        if ($score1 === NULL && isset($m['score']['extraTime']['home'])) {
-          $score1 = $m['score']['extraTime']['home'];
-          $score2 = $m['score']['extraTime']['away'];
+        $duration = $m['score']['duration'] ?? 'REGULAR';
+        if ($duration === 'PENALTY_SHOOTOUT') {
+          $reg1 = $m['score']['regularTime']['home'] ?? NULL;
+          $reg2 = $m['score']['regularTime']['away'] ?? NULL;
+          $et1  = $m['score']['extraTime']['home']   ?? 0;
+          $et2  = $m['score']['extraTime']['away']   ?? 0;
+          if ($reg1 !== NULL && $reg2 !== NULL) {
+            $score1 = (int) $reg1 + (int) $et1;
+            $score2 = (int) $reg2 + (int) $et2;
+          }
         }
+        else {
+          $score1 = $m['score']['fullTime']['home'] ?? NULL;
+          $score2 = $m['score']['fullTime']['away'] ?? NULL;
+        }
+      }
+
+      // Aufsteiger aus der API übernehmen — wichtig bei Elfmeterschießen,
+      // wo der 120-Min-Stand unentschieden ist, der Sieger aber feststeht.
+      $api_winner_side = match ($m['score']['winner'] ?? NULL) {
+        'HOME_TEAM' => 'team1',
+        'AWAY_TEAM' => 'team2',
+        default     => NULL,
+      };
+
+      // Elfmeter-Tore nur bei entsprechendem Ausgang.
+      $penalty_score1 = NULL;
+      $penalty_score2 = NULL;
+      if (($m['score']['duration'] ?? '') === 'PENALTY_SHOOTOUT') {
+        $penalty_score1 = $m['score']['penalties']['home'] ?? NULL;
+        $penalty_score2 = $m['score']['penalties']['away'] ?? NULL;
+        $penalty_score1 = $penalty_score1 !== NULL ? (int) $penalty_score1 : NULL;
+        $penalty_score2 = $penalty_score2 !== NULL ? (int) $penalty_score2 : NULL;
       }
 
       // Datum ist UTC in ISO 8601
@@ -127,11 +158,14 @@ final class FootballDataClient implements ApiClientInterface {
         'team2_id'    => (int) $m['awayTeam']['id'],
         'team2_name'  => (string) ($m['awayTeam']['name'] ?? ''),
         'team2_flag'  => $team2_flag,
-        'score1'      => $score1 !== NULL ? (int) $score1 : NULL,
-        'score2'      => $score2 !== NULL ? (int) $score2 : NULL,
-        'is_finished' => $m['status'] === 'FINISHED',
-        'stadium'     => (string) ($m['venue'] ?? ''),
-        'stage'       => $stage,
+        'score1'         => $score1 !== NULL ? (int) $score1 : NULL,
+        'score2'         => $score2 !== NULL ? (int) $score2 : NULL,
+        'penalty_score1' => $penalty_score1,
+        'penalty_score2' => $penalty_score2,
+        'is_finished'    => $m['status'] === 'FINISHED',
+        'winner_side'    => $api_winner_side,
+        'stadium'        => (string) ($m['venue'] ?? ''),
+        'stage'          => $stage,
       ];
     }
     return $result;

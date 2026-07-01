@@ -169,6 +169,13 @@ final class ScoreUpdateService {
           continue;
         }
         $local_game = $this->findLocalGame($local_games, $team1_id, $team2_id);
+        // Team-Fallback nur für noch nicht bewertete Spiele: wenn ein Spiel
+        // bereits einen Score hat und keine api_id, wurde es entweder manuell
+        // gepflegt oder bewusst vom Auto-Update ausgeschlossen.
+        if ($local_game && $local_game->team1_score !== NULL) {
+          $stats['scores_skipped']++;
+          continue;
+        }
       }
       if (!$local_game) {
         $stats['scores_skipped']++;
@@ -177,25 +184,42 @@ final class ScoreUpdateService {
 
       $s1 = (int) $match['score1'];
       $s2 = (int) $match['score2'];
+      $api_pen1 = $match['penalty_score1'] ?? NULL;
+      $api_pen2 = $match['penalty_score2'] ?? NULL;
 
       // NULL muss als "noch nie gesetzt" gelten, sonst würde ein API-Stand
       // von 0:0 fälschlich als unverändert skipped (PHP castet NULL → 0).
+      // Ausserdem: wenn die API einen Aufsteiger oder ein Elfmeterergebnis
+      // meldet, wir aber lokal noch nichts gespeichert haben, muss trotz
+      // identischem Score neu geschrieben werden.
+      $api_winner_pending = $is_finished
+        && !empty($match['winner_side'])
+        && $local_game->winner_team_id === NULL;
+      $api_penalty_pending = $api_pen1 !== NULL
+        && ($local_game->penalty_score_1 ?? NULL) === NULL;
       if ($local_game->team1_score !== NULL
         && $local_game->team2_score !== NULL
         && (int) $local_game->team1_score === $s1
-        && (int) $local_game->team2_score === $s2) {
+        && (int) $local_game->team2_score === $s2
+        && !$api_winner_pending
+        && !$api_penalty_pending) {
         $stats['scores_skipped']++;
         continue;
       }
 
       // Sieger nur bei beendetem Spiel setzen (relevant für KO-Runden).
+      // Primär den API-Winner nehmen (deckt Elfmeterschießen ab, wo der
+      // 120-Min-Stand unentschieden ist), sonst aus Score-Vergleich ableiten.
       $winner_side = NULL;
       if ($is_finished) {
-        if ($s1 > $s2) {
-          $winner_side = 'team1';
-        }
-        elseif ($s2 > $s1) {
-          $winner_side = 'team2';
+        $winner_side = $match['winner_side'] ?? NULL;
+        if ($winner_side === NULL) {
+          if ($s1 > $s2) {
+            $winner_side = 'team1';
+          }
+          elseif ($s2 > $s1) {
+            $winner_side = 'team2';
+          }
         }
       }
 
@@ -204,12 +228,13 @@ final class ScoreUpdateService {
       if ($game_team1_id === $team2_id) {
         // API liefert Heim/Auswärts anders als lokal gespeichert
         [$s1, $s2] = [$s2, $s1];
+        [$api_pen1, $api_pen2] = [$api_pen2, $api_pen1];
         $winner_side = match($winner_side) {
           'team1' => 'team2', 'team2' => 'team1', default => NULL,
         };
       }
 
-      $this->saveScore((int) $local_game->game_id, $s1, $s2, $winner_side, $tournament_id);
+      $this->saveScore((int) $local_game->game_id, $s1, $s2, $winner_side, $tournament_id, $api_pen1, $api_pen2);
 
       $this->logger()->info('Score aktualisiert: @t1 @s1:@s2 @t2 (Spiel #@gid)', [
         '@t1' => $match['team1_name'], '@s1' => $s1,
@@ -239,7 +264,7 @@ final class ScoreUpdateService {
   // Private Hilfsmethoden                                                //
   // ================================================================== //
 
-  private function saveScore(int $game_id, int $score1, int $score2, ?string $winner_side, int $tournament_id): void {
+  private function saveScore(int $game_id, int $score1, int $score2, ?string $winner_side, int $tournament_id, ?int $penalty_score1 = NULL, ?int $penalty_score2 = NULL): void {
     $winner_team_id = NULL;
     if ($winner_side !== NULL) {
       $game = $this->db->select('soccerbet_games', 'g')
@@ -255,10 +280,12 @@ final class ScoreUpdateService {
 
     $this->db->update('soccerbet_games')
       ->fields([
-        'team1_score'    => $score1,
-        'team2_score'    => $score2,
-        'winner_team_id' => $winner_team_id,
-        'changed'        => \Drupal::time()->getRequestTime(),
+        'team1_score'     => $score1,
+        'team2_score'     => $score2,
+        'penalty_score_1' => $penalty_score1,
+        'penalty_score_2' => $penalty_score2,
+        'winner_team_id'  => $winner_team_id,
+        'changed'         => \Drupal::time()->getRequestTime(),
       ])
       ->condition('game_id', $game_id)
       ->execute();
@@ -322,7 +349,7 @@ final class ScoreUpdateService {
 
   private function loadLocalGames(int $tournament_id): array {
     return $this->db->select('soccerbet_games', 'g')
-      ->fields('g', ['game_id','team_id_1','team_id_2','team1_score','team2_score','winner_team_id','phase','api_id'])
+      ->fields('g', ['game_id','team_id_1','team_id_2','team1_score','team2_score','penalty_score_1','penalty_score_2','winner_team_id','phase','api_id'])
       ->condition('g.tournament_id', $tournament_id)
       ->execute()->fetchAll();
   }
