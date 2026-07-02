@@ -38,10 +38,89 @@ final class ApiImportService implements ApiImportInterface {
     return 'Jahr z.B. <code>2024</code> (= Saison 2024/25). Bei EM/WM das Turnierjahr.';
   }
 
+  /** Alle unterstützten Import-Scopes → API-stage-Filter. */
+  public const SCOPES = [
+    'teams'       => '',           // nur Teams, keine Spiele
+    'group'       => 'GROUP_STAGE',
+    'round_of_32' => 'LAST_32',
+    'round_of_16' => 'LAST_16',
+    'quarter'     => 'QUARTER_FINALS',
+    'semi'        => 'SEMI_FINALS',
+    'third_place' => 'THIRD_PLACE',
+    'final'       => 'FINAL',
+  ];
+
   /**
-   * Importiert Teams und Spiele via konfiguriertem API-Client.
+   * Importiert Teams und Spiele einer definierten Phase.
+   * Bestehende Datensätze werden nie überschrieben.
    *
-   * @param bool $group_only  TRUE = nur Gruppenspiele importieren (keine KO-Spiele)
+   * @param string $scope Einer von self::SCOPES – bestimmt was importiert wird.
+   */
+  public function importScope(int $tournament_id, string $league, string $season, string $scope): array {
+    $stats = [
+      'teams_created'  => 0,
+      'teams_skipped'  => 0,
+      'teams_no_flag'  => [],
+      'games_created'  => 0,
+      'games_skipped'  => 0,
+      'games_ko_skip'  => 0,
+      'errors'         => [],
+      'scope'          => $scope,
+    ];
+
+    if (!array_key_exists($scope, self::SCOPES)) {
+      $stats['errors'][] = sprintf('Unbekannter Import-Scope "%s".', $scope);
+      return $stats;
+    }
+
+    $client = $this->clientFactory->getClient();
+    $api_stage = self::SCOPES[$scope];
+
+    // Bei Teams-Import: Gruppenphase abrufen (dort sind alle Teams sichtbar)
+    $matches = $client->getMatches($league, $season, $scope === 'teams' ? 'GROUP_STAGE' : $api_stage);
+    if (empty($matches)) {
+      $stats['errors'][] = sprintf(
+        'Keine Spiele von %s für Scope %s (%s/%s) erhalten.',
+        $client->getLabel(), $scope, $league, $season
+      );
+      return $stats;
+    }
+
+    // Fallback-Filterung wenn API stage-Filter nicht griff
+    if ($api_stage !== '' && $scope !== 'teams') {
+      $target_phase = $scope; // Scope-Key = interne Phase
+      $matches = array_values(array_filter($matches, function ($m) use ($target_phase) {
+        return $this->detectPhase($m) === $target_phase;
+      }));
+      if (empty($matches)) {
+        $stats['errors'][] = sprintf('Keine Spiele der Phase %s in der API gefunden.', $scope);
+        return $stats;
+      }
+    }
+
+    $team_map = $this->importTeams($tournament_id, $matches, $stats);
+
+    if ($scope !== 'teams') {
+      $this->importGames($tournament_id, $matches, $team_map, $stats);
+    }
+
+    $this->logger()->info(
+      'API-Import (@api) Turnier @tid Scope @sc: @tc Teams, @gc Spiele.',
+      [
+        '@api' => $client->getLabel(),
+        '@tid' => $tournament_id,
+        '@sc'  => $scope,
+        '@tc'  => $stats['teams_created'],
+        '@gc'  => $stats['games_created'],
+      ]
+    );
+
+    return $stats;
+  }
+
+  /**
+   * @deprecated seit 1.1.12 – nutze importScope() stattdessen.
+   * Bleibt aus Kompatibilität für externe Aufrufer bestehen.
    */
   public function importAll(int $tournament_id, string $league, string $season, bool $group_only = TRUE): array {
     $stats = [
@@ -139,6 +218,15 @@ final class ApiImportService implements ApiImportInterface {
       ->condition('t.tournament_id', $tournament_id)
       ->execute()->fetchAllAssoc('team_name');
 
+    // Sekundärer Index nach Flag-Code, damit API-Umbenennungen (z.B.
+    // "Czech Republic" → "Czechia") kein Duplikat erzeugen.
+    $existing_by_flag = [];
+    foreach ($existing as $ex) {
+      if (!empty($ex->team_flag)) {
+        $existing_by_flag[$ex->team_flag] = $ex;
+      }
+    }
+
     $team_map = [];
 
     foreach ($api_teams as $ext_id => $api_team) {
@@ -168,6 +256,15 @@ final class ApiImportService implements ApiImportInterface {
             ->condition('team_id', $team_id)
             ->execute();
         }
+        continue;
+      }
+
+      // Kein Name-Match, aber Flag-Match → bestehendes Team wiederverwenden.
+      // Name wird bewusst nicht überschrieben (Strategie A).
+      if ($flag !== '' && isset($existing_by_flag[$flag])) {
+        $team_id = (int) $existing_by_flag[$flag]->team_id;
+        $team_map[$ext_id] = $team_id;
+        $stats['teams_skipped']++;
         continue;
       }
 
@@ -287,9 +384,14 @@ final class ApiImportService implements ApiImportInterface {
    * Phase aus normalisierten Match-Daten ableiten.
    */
   private function detectPhase(array $match): string {
-    // football-data.org liefert stage direkt
+    // football-data.org liefert stage direkt.
+    // LAST_32 kommt bei aufgestockten Formaten (z.B. WM 2026 mit 48 Teams)
+    // vor; LAST_16 ist der reguläre Name für das Achtelfinale, ROUND_OF_16
+    // wird von manchen Wettbewerben ebenfalls verwendet.
     $stage_map = [
       'GROUP_STAGE'    => 'group',
+      'LAST_32'        => 'round_of_32',
+      'LAST_16'        => 'round_of_16',
       'ROUND_OF_16'    => 'round_of_16',
       'QUARTER_FINALS' => 'quarter',
       'SEMI_FINALS'    => 'semi',

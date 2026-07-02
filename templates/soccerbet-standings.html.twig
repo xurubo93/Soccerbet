@@ -57,12 +57,18 @@
         </div>
         <div class="soccerbet-steps__buttons">
           {% if step_limit > 1 %}
+            <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: 1}) }}"
+               class="soccerbet-steps__btn soccerbet-steps__btn--edge"
+               title="{{ 'First round'|t }}">«</a>
             <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: step_limit - 1}) }}"
                class="soccerbet-steps__btn">← {{ 'Previous'|t }}</a>
           {% endif %}
           {% if step_limit < max_games %}
             <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: step_limit + 1}) }}"
                class="soccerbet-steps__btn">{{ 'Next'|t }} →</a>
+            <a href="{{ path('soccerbet.standings_step', {tournament_id: tournament.tournament_id, limit: max_games}) }}"
+               class="soccerbet-steps__btn soccerbet-steps__btn--edge"
+               title="{{ 'Last round'|t }}">»</a>
           {% endif %}
         </div>
       </nav>

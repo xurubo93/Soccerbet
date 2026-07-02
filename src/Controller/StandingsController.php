@@ -141,8 +141,9 @@ final class StandingsController extends ControllerBase {
     }
     unset($row);
 
-    $step_game  = $this->loadStepGame($tournament_id, $limit);
-    $step_tipps = $step_game ? $this->loadStepTipps($step_game, $tournament_id, $limit) : [];
+    $step_game   = $this->loadStepGame($tournament_id, $limit);
+    $step_tipps  = $step_game ? $this->loadStepTipps($step_game, $tournament_id, $limit) : [];
+    $winner_bets = $this->winnerBet->loadBetsForTournament($tournament_id);
 
     return [
       '#theme'        => 'soccerbet_standings',
@@ -154,6 +155,7 @@ final class StandingsController extends ControllerBase {
       '#max_games'    => $max_games,
       '#step_game'    => $step_game,
       '#step_tipps'   => $step_tipps,
+      '#winner_bets'  => $winner_bets,
       '#cache'        => ['max-age' => 300],
     ];
   }

@@ -213,6 +213,7 @@ final class TournamentManager {
         'end_date'        => (string) $values['end_date'],
         'group_count'     => (int) ($values['group_count'] ?? 0),
         'is_active'       => (int) ($values['is_active'] ?? 0),
+        'ko_phases'       => (string) ($values['ko_phases'] ?? ''),
         'uid'             => $this->currentUser->id(),
         'created'         => $now,
         'changed'         => $now,
@@ -238,6 +239,7 @@ final class TournamentManager {
         'end_date'        => (string) $values['end_date'],
         'group_count'     => (int) ($values['group_count'] ?? 0),
         'is_active'       => (int) ($values['is_active'] ?? 0),
+        'ko_phases'       => (string) ($values['ko_phases'] ?? ''),
         'changed'         => \Drupal::time()->getRequestTime(),
       ])
       ->condition('tournament_id', $tournament_id)

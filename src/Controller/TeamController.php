@@ -71,6 +71,12 @@ final class TeamController extends ControllerBase {
         '#url'        => Url::fromRoute('soccerbet.admin.teams.create', ['tournament_id' => $tournament_id]),
         '#attributes' => ['class' => ['button', 'button--primary']],
       ],
+      'import_link' => [
+        '#type'       => 'link',
+        '#title'      => $this->t('↓ API import'),
+        '#url'        => Url::fromRoute('soccerbet.admin.tournament.import', ['tournament_id' => $tournament_id]),
+        '#attributes' => ['class' => ['button']],
+      ],
       'table' => [
         '#theme'  => 'table',
         '#header' => [

@@ -94,6 +94,24 @@ final class TournamentForm extends FormBase {
       '#default_value' => $tournament?->group_count ?? 4,
     ];
 
+    $current_ko_phases = $tournament && !empty($tournament->ko_phases)
+      ? array_flip(array_filter(explode(',', $tournament->ko_phases)))
+      : [];
+    $form['ko_phases'] = [
+      '#type'          => 'checkboxes',
+      '#title'         => $this->t('Knockout phases in this tournament'),
+      '#description'   => $this->t('Select all knockout phases played in this tournament. Match imports will only offer these phases.'),
+      '#options'       => [
+        'round_of_32' => $this->t('Round of 32'),
+        'round_of_16' => $this->t('Round of 16'),
+        'quarter'     => $this->t('Quarter-final'),
+        'semi'        => $this->t('Semi-final'),
+        'third_place' => $this->t('Third-place match'),
+        'final'       => $this->t('Final'),
+      ],
+      '#default_value' => array_keys($current_ko_phases),
+    ];
+
     $form['is_active'] = [
       '#type'          => 'checkbox',
       '#title'         => $this->t('Set as default tournament'),
@@ -129,6 +147,7 @@ final class TournamentForm extends FormBase {
       'end_date'        => $form_state->getValue('end_date'),
       'group_count'     => (int) $form_state->getValue('group_count'),
       'is_active'       => (int) $form_state->getValue('is_active'),
+      'ko_phases'       => implode(',', array_keys(array_filter($form_state->getValue('ko_phases') ?? []))),
     ];
 
     $tournament_id = $form_state->get('tournament_id');

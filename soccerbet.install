@@ -73,6 +73,13 @@ function soccerbet_schema(): array {
         'not null'    => FALSE,
         'description' => 'API-Saison (z.B. 2024).',
       ],
+      'ko_phases' => [
+        'type'        => 'varchar',
+        'length'      => 255,
+        'not null'    => FALSE,
+        'default'     => '',
+        'description' => 'Komma-separierte Liste der KO-Phasen dieses Turniers (round_of_32,round_of_16,quarter,semi,third_place,final).',
+      ],
     ],
     'primary key' => ['tournament_id'],
     'indexes' => [
@@ -939,6 +946,22 @@ function soccerbet_update_8007(): void {
     ]);
     $schema->addIndex('soccerbet_games', 'api_id', ['api_id'], [
       'fields' => ['api_id' => ['type' => 'int', 'unsigned' => TRUE]],
+    ]);
+  }
+}
+
+/**
+ * Update 8017: ko_phases Spalte zu soccerbet_tournament hinzufügen.
+ */
+function soccerbet_update_8017(): void {
+  $schema = \Drupal::database()->schema();
+  if (!$schema->fieldExists('soccerbet_tournament', 'ko_phases')) {
+    $schema->addField('soccerbet_tournament', 'ko_phases', [
+      'type'        => 'varchar',
+      'length'      => 255,
+      'not null'    => FALSE,
+      'default'     => '',
+      'description' => 'Komma-separierte Liste der KO-Phasen dieses Turniers.',
     ]);
   }
 }

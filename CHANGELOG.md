@@ -5,7 +5,49 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [1.1.11] - 2026-07-01
+## [1.1.12] - 2026-07-02
+
+### Added
+
+- Tournament form: a checkbox group "Knockout phases in this
+  tournament" that lists all KO phases the tournament actually plays
+  (`round_of_32`, `round_of_16`, `quarter`, `semi`, `third_place`,
+  `final`). Stored in a new `ko_phases` column on
+  `soccerbet_tournament` (update 8017).
+- API import: new fine-grained "Import scope" dropdown replaces the
+  old "group stage only" checkbox. Options: teams only, group stage
+  matches, and one entry per KO phase configured for the tournament.
+  New public method `ApiImportService::importScope()`.
+- Admin lists: "↓ API import" secondary button next to "+ New team"
+  and "+ New match" — direct shortcut to the import form from both
+  the games and teams overview.
+- Standings round-by-round navigation: additional "«" (first round)
+  and "»" (last round) edge buttons alongside "Previous" / "Next".
+
+### Changed
+
+- API stage mapping: `LAST_32` → `round_of_32` and `LAST_16` →
+  `round_of_16` (were previously not mapped and fell through to the
+  group_name fallback). Fixes KO matches being imported as `group`.
+- Team import: fallback to `team_flag` match if the team name from
+  the API changed (e.g. "Czech Republic" → "Czechia"). The existing
+  team is reused and the name is *not* overwritten — no duplicate
+  rows are created.
+- German translation: "Round of 32" is now "Sechzehntelfinale"
+  (was: "Runde der letzten 32").
+- Games admin overview: phase details are now collapsed when every
+  match in that phase already has a result. Ongoing phases stay
+  open.
+- Standings step view (`standings/{tid}/step/{limit}`): the Bonus
+  tab now also lists the tournament winner bets — they were
+  missing because `winner_bets` was never passed to the template
+  in step mode.
+
+### Upgrade notes
+
+- After `drush updb` adds the new `ko_phases` column, edit each
+  tournament and select the KO phases it plays. Otherwise the API
+  import form only offers "Teams only" and "Group stage".
 
 ### Added
 

@@ -70,6 +70,12 @@ final class GameController extends ControllerBase {
         '#url'        => Url::fromRoute('soccerbet.admin.games.create', ['tournament_id' => $tournament_id]),
         '#attributes' => ['class' => ['button', 'button--primary']],
       ],
+      'import_link' => [
+        '#type'       => 'link',
+        '#title'      => $this->t('↓ API import'),
+        '#url'        => Url::fromRoute('soccerbet.admin.tournament.import', ['tournament_id' => $tournament_id]),
+        '#attributes' => ['class' => ['button']],
+      ],
     ];
 
     foreach (self::PHASE_ORDER as $phase) {
@@ -115,10 +121,19 @@ final class GameController extends ControllerBase {
         ];
       }
 
+      // Phase gilt als abgeschlossen wenn alle Spiele ein Ergebnis haben.
+      $phase_complete = TRUE;
+      foreach ($by_phase[$phase] as $g) {
+        if ($g->team1_score === NULL || $g->team2_score === NULL) {
+          $phase_complete = FALSE;
+          break;
+        }
+      }
+
       $build['phase_' . $phase] = [
         '#type'  => 'details',
         '#title' => $phase_labels[$phase] ?? $phase,
-        '#open'  => $phase === 'group',
+        '#open'  => !$phase_complete,
         'table'  => [
           '#theme'      => 'table',
           '#header'     => $header,

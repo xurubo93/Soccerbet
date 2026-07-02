@@ -101,11 +101,35 @@ final class OpenLigaDbImportForm extends FormBase {
       '#type'  => 'fieldset',
       '#title' => $this->t('Options'),
     ];
-    $form['options']['group_only'] = [
-      '#type'          => 'checkbox',
-      '#title'         => $this->t('Import group stage matches only'),
-      '#description'   => $this->t('KO rounds (round of 16, quarter-finals, …) will be skipped and can be created manually.'),
-      '#default_value' => TRUE,
+
+    // Import-Umfang: nur Optionen anbieten, die zum Turnier passen.
+    $ko_configured = !empty($tournament->ko_phases)
+      ? array_filter(explode(',', $tournament->ko_phases))
+      : [];
+    $ko_labels = [
+      'round_of_32' => $this->t('KO round: Round of 32'),
+      'round_of_16' => $this->t('KO round: Round of 16'),
+      'quarter'     => $this->t('KO round: Quarter-final'),
+      'semi'        => $this->t('KO round: Semi-final'),
+      'third_place' => $this->t('KO round: Third-place match'),
+      'final'       => $this->t('KO round: Final'),
+    ];
+    $scope_options = [
+      'teams' => $this->t('Teams only (must be done first)'),
+      'group' => $this->t('Group stage matches'),
+    ];
+    foreach ($ko_configured as $phase) {
+      if (isset($ko_labels[$phase])) {
+        $scope_options[$phase] = $ko_labels[$phase];
+      }
+    }
+    $form['options']['scope'] = [
+      '#type'          => 'select',
+      '#title'         => $this->t('Import scope'),
+      '#description'   => $this->t('Existing teams and matches are always skipped, never overwritten.'),
+      '#options'       => $scope_options,
+      '#default_value' => 'teams',
+      '#required'      => TRUE,
     ];
     $form['options']['save_league'] = [
       '#type'          => 'checkbox',
@@ -142,8 +166,8 @@ final class OpenLigaDbImportForm extends FormBase {
         ->execute();
     }
 
-    $group_only = (bool) $form_state->getValue('group_only');
-    $stats = $this->importService->importAll($tournament_id, $league, $season, $group_only);
+    $scope = (string) $form_state->getValue('scope');
+    $stats = $this->importService->importScope($tournament_id, $league, $season, $scope);
 
     if (!empty($stats['errors'])) {
       foreach ($stats['errors'] as $error) {
@@ -159,15 +183,13 @@ final class OpenLigaDbImportForm extends FormBase {
     }
 
     $this->messenger()->addStatus($this->t(
-      'Import complete: @tc teams (@ts skipped), @gc matches (@gs skipped)@ko.',
+      'Import (scope: @scope) complete: @tc teams (@ts skipped), @gc matches (@gs skipped).',
       [
-        '@tc' => $stats['teams_created'],
-        '@ts' => $stats['teams_skipped'],
-        '@gc' => $stats['games_created'],
-        '@gs' => $stats['games_skipped'],
-        '@ko' => ($stats['games_ko_skip'] ?? 0) > 0
-          ? ', ' . $stats['games_ko_skip'] . ' KO-Spiele nicht importiert'
-          : '',
+        '@scope' => $stats['scope'] ?? '?',
+        '@tc'    => $stats['teams_created'],
+        '@ts'    => $stats['teams_skipped'],
+        '@gc'    => $stats['games_created'],
+        '@gs'    => $stats['games_skipped'],
       ]
     ));
 

@@ -286,6 +286,58 @@ msgstr "Deine Weltmeister-Wette ist ausgeschieden."
 msgid "Update bet"
 msgstr "Tipp ändern"
 
+# ── Tournament form: KO phases ────────────────────────────────────────────────
+
+msgid "Knockout phases in this tournament"
+msgstr "KO-Phasen in diesem Turnier"
+
+msgid "Select all knockout phases played in this tournament. Match imports will only offer these phases."
+msgstr "Wähle alle KO-Phasen dieses Turniers aus. Beim Spielimport werden nur diese Phasen angeboten."
+
+# ── API import form: scope dropdown ───────────────────────────────────────────
+
+msgid "Import scope"
+msgstr "Import-Umfang"
+
+msgid "Existing teams and matches are always skipped, never overwritten."
+msgstr "Bereits vorhandene Teams und Spiele werden immer übersprungen, niemals überschrieben."
+
+msgid "Teams only (must be done first)"
+msgstr "Nur Teams (muss zuerst durchgeführt werden)"
+
+msgid "Group stage matches"
+msgstr "Spiele der Gruppenphase"
+
+msgid "KO round: Round of 32"
+msgstr "KO-Runde: Sechzehntelfinale"
+
+msgid "KO round: Round of 16"
+msgstr "KO-Runde: Achtelfinale"
+
+msgid "KO round: Quarter-final"
+msgstr "KO-Runde: Viertelfinale"
+
+msgid "KO round: Semi-final"
+msgstr "KO-Runde: Halbfinale"
+
+msgid "KO round: Third-place match"
+msgstr "KO-Runde: Spiel um Platz 3"
+
+msgid "KO round: Final"
+msgstr "KO-Runde: Finale"
+
+msgid "Import (scope: @scope) complete: @tc teams (@ts skipped), @gc matches (@gs skipped)."
+msgstr "Import (Umfang: @scope) abgeschlossen: @tc Teams (@ts übersprungen), @gc Spiele (@gs übersprungen)."
+
+msgid "↓ API import"
+msgstr "↓ API-Import"
+
+msgid "First round"
+msgstr "Erste Runde"
+
+msgid "Last round"
+msgstr "Letzte Runde"
+
 msgid "From result (no penalty shootout)"
 msgstr "Aus Ergebnis (kein Elfmetersch.)"
 
@@ -308,7 +360,7 @@ msgid "Group stage"
 msgstr "Gruppenphase"
 
 msgid "Round of 32"
-msgstr "Runde der letzten 32"
+msgstr "Sechzehntelfinale"
 
 msgid "Round of 16"
 msgstr "Achtelfinale"
