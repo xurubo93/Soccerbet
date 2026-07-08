@@ -165,7 +165,7 @@ final class StandingsController extends ControllerBase {
    */
   private function loadStepGame(int $tournament_id, int $limit): ?object {
     $q = \Drupal::database()->select('soccerbet_games', 'g');
-    $q->fields('g', ['game_id', 'team_id_1', 'team_id_2', 'game_date', 'team1_score', 'team2_score']);
+    $q->fields('g', ['game_id', 'team_id_1', 'team_id_2', 'game_date', 'team1_score', 'team2_score', 'penalty_score_1', 'penalty_score_2', 'winner_team_id', 'phase']);
     $q->addField('t1', 'team_name', 'team1_name');
     $q->addField('t1', 'team_flag', 'team1_flag');
     $q->addField('t2', 'team_name', 'team2_name');
@@ -201,6 +201,16 @@ final class StandingsController extends ControllerBase {
     $pts_tendency  = (int) $config->get('points_tendency');
     $game_id       = (int) $game->game_id;
 
+    // Aufsteiger-Tipps für dieses Spiel plus Flag-Codes vorbereiten.
+    $tipp_winner = \Drupal::database()->select('soccerbet_tipps', 't')
+      ->fields('t', ['tipper_id', 'winner_team_id'])
+      ->condition('t.game_id', $game_id)
+      ->execute()->fetchAllKeyed();
+    $team_flags = \Drupal::database()->select('soccerbet_teams', 'st')
+      ->fields('st', ['team_id', 'team_flag'])
+      ->condition('st.tournament_id', $tournament_id)
+      ->execute()->fetchAllKeyed();
+
     $result = [];
     foreach ($tipper_points as $tipper_id => $data) {
       $tipp = $data['tipp'][$game_id] ?? 'N.A.';
@@ -216,8 +226,14 @@ final class StandingsController extends ControllerBase {
         default                 => 'wrong',
       };
 
+      $tipp_str = str_replace(' : ', ':', $tipp);
+      $winner_id = (int) ($tipp_winner[$tipper_id] ?? 0);
+      if ($winner_id > 0 && !empty($team_flags[$winner_id])) {
+        $tipp_str = $team_flags[$winner_id] . ' ' . $tipp_str;
+      }
+
       $result[(int) $tipper_id] = [
-        'tipp'   => str_replace(' : ', ':', $tipp),
+        'tipp'   => $tipp_str,
         'status' => $status,
         'points' => $total,
       ];

@@ -103,12 +103,13 @@ final class LiveController extends ControllerBase {
   }
 
   /**
-   * Lädt gerade laufende Spiele (Anpfiff vor ≤ 180 min). Fenster passt zum
-   * Aktiv-Fenster in ScoreUpdateService::hasActiveGames().
+   * Lädt gerade laufende Spiele (Anpfiff vor ≤ 200 min). Fenster passt zum
+   * Aktiv-Fenster in ScoreUpdateService::hasActiveGames() und deckt auch
+   * Elfmeterschießen nach langer Verlängerung ab.
    */
   private function loadLiveGames(int $tournament_id): array {
     $now        = \Drupal::time()->getRequestTime();
-    $window_ago = gmdate('Y-m-d\TH:i:s', $now - 180 * 60); // 3h zurück
+    $window_ago = gmdate('Y-m-d\TH:i:s', $now - 200 * 60); // ~3:20h zurück
     $window_now = gmdate('Y-m-d\TH:i:s', $now);
 
     $q = $this->db->select('soccerbet_games', 'g');
@@ -149,7 +150,7 @@ final class LiveController extends ControllerBase {
     $tipps_by_tipper = [];
     if (!empty($game_ids)) {
       $tipps = $this->db->select('soccerbet_tipps', 'stp')
-        ->fields('stp', ['tipper_id', 'game_id', 'team1_tipp', 'team2_tipp'])
+        ->fields('stp', ['tipper_id', 'game_id', 'team1_tipp', 'team2_tipp', 'winner_team_id'])
         ->condition('stp.game_id', $game_ids, 'IN')
         ->execute()->fetchAll();
 
@@ -157,6 +158,12 @@ final class LiveController extends ControllerBase {
         $tipps_by_tipper[(int) $tipp->tipper_id][(int) $tipp->game_id] = $tipp;
       }
     }
+
+    // Flag-Codes pro Team-ID, damit wir den getippten Aufsteiger prefixen können.
+    $team_flags = $this->db->select('soccerbet_teams', 't')
+      ->fields('t', ['team_id', 'team_flag'])
+      ->condition('t.tournament_id', $tournament_id)
+      ->execute()->fetchAllKeyed();
 
     // Gesamtpunkte aus ScoringService – inkl. Bonus- und Sonderpunkten.
     $tipper_points_full = $this->scoring->getTipperPoints($tournament_id);
@@ -183,15 +190,25 @@ final class LiveController extends ControllerBase {
     // Spiele aufbereiten
     $games_out = [];
     foreach ($live_games as $game) {
+      $is_ko = !in_array($game->phase, ['group', ''], TRUE);
+      $winner_side = '';
+      if ($is_ko && !empty($game->winner_team_id)) {
+        $winner_side = ((int) $game->winner_team_id === (int) $game->team_id_1) ? 'team1' : 'team2';
+      }
       $games_out[] = [
-        'game_id'    => (string) $game->game_id,
-        'team1_name' => $game->team1_name,
-        'team1_flag' => $game->team1_flag,
-        'team2_name' => $game->team2_name,
-        'team2_flag' => $game->team2_flag,
-        'score1'     => $game->team1_score,
-        'score2'     => $game->team2_score,
-        'game_date'  => $game->game_date,
+        'game_id'        => (string) $game->game_id,
+        'team1_name'     => $game->team1_name,
+        'team1_flag'     => $game->team1_flag,
+        'team2_name'     => $game->team2_name,
+        'team2_flag'     => $game->team2_flag,
+        'score1'         => $game->team1_score,
+        'score2'         => $game->team2_score,
+        'penalty_score1' => $game->penalty_score_1,
+        'penalty_score2' => $game->penalty_score_2,
+        'phase'          => $game->phase,
+        'is_ko'          => $is_ko,
+        'winner_side'    => $winner_side,
+        'game_date'      => $game->game_date,
       ];
     }
 
@@ -250,6 +267,9 @@ final class LiveController extends ControllerBase {
           $t1 = (int) $tipp->team1_tipp;
           $t2 = (int) $tipp->team2_tipp;
           $tipp_str = $t1 . ':' . $t2;
+          if (!empty($tipp->winner_team_id) && !empty($team_flags[(int) $tipp->winner_team_id])) {
+            $tipp_str = $team_flags[(int) $tipp->winner_team_id] . ' ' . $tipp_str;
+          }
 
           if ($game->team1_score !== NULL) {
             $s1 = (int) $game->team1_score;
@@ -276,7 +296,10 @@ final class LiveController extends ControllerBase {
           }
         }
 
-        $tipp_points = $basis + $bonus;
+        // Aufsteiger-Bonus aus ScoringService übernehmen (KO-Runden mit
+        // unentschiedenem 120-Min-Stand und korrekt getipptem Aufsteiger).
+        $sonder = (int) ($tipper_points_full[$tipper_id]['sonderpunkte'][$gid] ?? 0);
+        $tipp_points = $basis + $bonus + $sonder;
         $live_tipps[(string) $gid] = [
           'tipp'   => $tipp_str,
           'status' => $status,

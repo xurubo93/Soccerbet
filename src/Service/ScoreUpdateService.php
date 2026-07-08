@@ -25,7 +25,7 @@ final class ScoreUpdateService {
   private const DEFAULT_INTERVAL = 120;
 
   /** Fenster ab Anpfiff, in dem ein Spiel als „aktiv" gilt (Sekunden). */
-  private const ACTIVE_WINDOW = 180 * 60;
+  private const ACTIVE_WINDOW = 200 * 60;
 
   public function __construct(
     private readonly Connection $db,
@@ -195,8 +195,10 @@ final class ScoreUpdateService {
       $api_winner_pending = $is_finished
         && !empty($match['winner_side'])
         && $local_game->winner_team_id === NULL;
+      // Elfer nachziehen, auch wenn sich der Zwischenstand ändert.
       $api_penalty_pending = $api_pen1 !== NULL
-        && ($local_game->penalty_score_1 ?? NULL) === NULL;
+        && ((int) ($local_game->penalty_score_1 ?? -1) !== (int) $api_pen1
+            || (int) ($local_game->penalty_score_2 ?? -1) !== (int) $api_pen2);
       if ($local_game->team1_score !== NULL
         && $local_game->team2_score !== NULL
         && (int) $local_game->team1_score === $s1

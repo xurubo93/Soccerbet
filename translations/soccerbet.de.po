@@ -338,6 +338,9 @@ msgstr "Erste Runde"
 msgid "Last round"
 msgstr "Letzte Runde"
 
+msgid "Your qualifier bet: <strong>@team</strong>"
+msgstr "Dein Aufsteiger-Tipp: <strong>@team</strong>"
+
 msgid "From result (no penalty shootout)"
 msgstr "Aus Ergebnis (kein Elfmetersch.)"
 

@@ -359,7 +359,7 @@ final class PlaceBetsForm extends FormBase {
     $container[$game_key]['matchup_close'] = ['#markup' => '</div>'];
 
     // KO-Runden: Aufsteiger-Tipp (nur sichtbar wenn Unentschieden getippt)
-    if ($ko_phase && !$played) {
+    if ($ko_phase && !$played && !$locked) {
       $t1 = $saved?->team1_tipp;
       $t2 = $saved?->team2_tipp;
       $show_winner = ($t1 !== NULL && $t2 !== NULL && (int) $t1 === (int) $t2);
@@ -371,7 +371,6 @@ final class PlaceBetsForm extends FormBase {
           $game->team_id_2 => $this->t($game->team2_name),
         ],
         '#default_value'      => $saved?->winner_team_id ?? $game->team_id_1,
-        '#disabled'           => $locked,
         '#attributes'         => [
           'class'         => ['soccerbet-winner-select'],
           'data-game-id'  => $game_id,
@@ -381,6 +380,23 @@ final class PlaceBetsForm extends FormBase {
           'style' => $show_winner ? '' : 'display: none',
         ],
       ];
+    }
+
+    // Gesperrter/gespielter KO-Tipp: gewählten Aufsteiger als reinen Text zeigen.
+    if ($ko_phase && ($played || $locked) && $saved && !empty($saved->winner_team_id)) {
+      $winner_id = (int) $saved->winner_team_id;
+      $winner_name = match ($winner_id) {
+        (int) $game->team_id_1 => $game->team1_name,
+        (int) $game->team_id_2 => $game->team2_name,
+        default                => NULL,
+      };
+      if ($winner_name !== NULL) {
+        $container[$game_key]['winner_info_' . $game_id] = [
+          '#markup' => '<div class="soccerbet-game__winner-info">'
+            . $this->t('Your qualifier bet: <strong>@team</strong>', ['@team' => $this->t($winner_name)])
+            . '</div>',
+        ];
+      }
     }
 
     // Gesperrt-Hinweis

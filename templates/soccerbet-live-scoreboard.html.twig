@@ -17,18 +17,21 @@
   <div class="soccerbet-live__scoreboard">
     {% for game in live_games %}
       <div class="soccerbet-live__match" data-game-id="{{ game.game_id }}">
-        <div class="soccerbet-live__match-team soccerbet-live__match-team--home">
+        <div class="soccerbet-live__match-team soccerbet-live__match-team--home{% if game.winner_side == 'team1' %} soccerbet-live__match-team--qualifier{% endif %}">
           {{ flag_helper.flag(game.team1_flag, game.team1_name|t, 36, soccerbet_module_path) }}
           <span>{{ game.team1_name|t }}</span>
         </div>
         <div class="soccerbet-live__match-score">
           {% if game.score1 is not null %}
             <strong>{{ game.score1 }} : {{ game.score2 }}</strong>
+            {% if game.penalty_score1 is not null and game.penalty_score2 is not null %}
+              <div class="soccerbet-live__match-penalty">({{ game.penalty_score1 }}:{{ game.penalty_score2 }} {{ 'i.E.'|t }})</div>
+            {% endif %}
           {% else %}
             <span class="soccerbet-live__match-score--pending">– : –</span>
           {% endif %}
         </div>
-        <div class="soccerbet-live__match-team soccerbet-live__match-team--away">
+        <div class="soccerbet-live__match-team soccerbet-live__match-team--away{% if game.winner_side == 'team2' %} soccerbet-live__match-team--qualifier{% endif %}">
           <span>{{ game.team2_name|t }}</span>
           {{ flag_helper.flag(game.team2_flag, game.team2_name|t, 36, soccerbet_module_path) }}
         </div>

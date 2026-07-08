@@ -86,6 +86,7 @@
 .soccerbet-game__meta { font-size:.8em; color:var(--sb-text-muted); margin-bottom:.6rem; text-align:center; }
 .soccerbet-game__result { font-weight:600; color:#28a745; }
 .soccerbet-game__locked-info { font-size:.8em; color:#dc3545; margin-top:.5rem; text-align:center; }
+.soccerbet-game__winner-info { font-size:.85em; color:var(--sb-text-muted); margin-top:.4rem; text-align:center; }
 
 /* Matchup: drei Spalten – Team1 | : | Team2 */
 .soccerbet-game__matchup {
@@ -226,6 +227,7 @@
 }
 .tipps-ov__score--pending { color: var(--sb-text-muted); font-weight: 400; }
 .tipps-ov__penalty { font-weight: 400; font-size: .72rem; color: var(--sb-text-muted); white-space: nowrap; }
+.tipps-ov__team--qualifier { font-weight: 800 !important; }
 .tipps-ov__pts { display: block; font-size: .75rem; color: rgba(0,0,0,.55); }
 
 /* Tipp-Zellen */
@@ -564,6 +566,10 @@
   flex-shrink: 0;
 }
 .soccerbet-live__match-score--pending { color: var(--sb-text-muted); }
+.soccerbet-live__match-penalty { font-size: .6em; font-weight: 400; color: var(--sb-text-muted); margin-top: 2px; }
+.soccerbet-live__match-team--qualifier { font-weight: 800; }
+.soccerbet-game-matchup__team--qualifier { font-weight: 800; }
+.soccerbet-game__penalty { font-size: .8em; color: var(--sb-text-muted); font-weight: 400; }
 
 /* ----------------------------------------------------------------
    Ranglisten-Tabelle

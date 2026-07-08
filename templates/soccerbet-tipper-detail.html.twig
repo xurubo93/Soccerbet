@@ -78,6 +78,10 @@
           {% set tipp    = tipper.tipp[game_id]         ?? 'N.A.' %}
           {% set score   = tipper.game_score[game_id]   ?? '—' %}
           {% set flags   = tipper.game_flags[game_id]   ?? {} %}
+          {% set penalty = tipper.game_penalty[game_id] ?? '' %}
+          {% set phase   = tipper.game_phase[game_id]   ?? '' %}
+          {% set winner  = tipper.game_winner_side[game_id] ?? '' %}
+          {% set is_ko   = phase not in ['', 'group'] %}
 
           <tr class="
             {% if base == 3 %}row--exact
@@ -86,22 +90,26 @@
             {% else %}row--wrong{% endif %}">
             <td class="col-game">
               <span class="soccerbet-game-matchup">
-                <span class="soccerbet-game-matchup__team">
+                <span class="soccerbet-game-matchup__team{% if is_ko and winner == 'team1' %} soccerbet-game-matchup__team--qualifier{% endif %}">
                   {{ flag_helper.flag(flags.team1_flag ?? '', flags.team1_name|t, 20, soccerbet_module_path) }}
                   <span>{{ flags.team1_name|t }}</span>
                 </span>
-                <span class="soccerbet-game-matchup__team">
+                <span class="soccerbet-game-matchup__team{% if is_ko and winner == 'team2' %} soccerbet-game-matchup__team--qualifier{% endif %}">
                   {{ flag_helper.flag(flags.team2_flag ?? '', flags.team2_name|t, 20, soccerbet_module_path) }}
                   <span>{{ flags.team2_name|t }}</span>
                 </span>
               </span>
             </td>
-            <td class="col-result">{{ score }}</td>
+            <td class="col-result">
+              {{ score }}
+              {% if penalty %}<br><span class="soccerbet-game__penalty">({{ penalty }} {{ 'i.E.'|t }})</span>{% endif %}
+            </td>
             <td class="col-tipp">
               {% if tipp == 'N.A.' %}
                 <span class="tipp--missing">{{ 'no bet'|t }}</span>
               {% else %}
-                {{ tipp }}
+                {% set winner_flag = tipper.tipp_winner_flag[game_id] ?? '' %}
+                {% if winner_flag %}{{ winner_flag }} {% endif %}{{ tipp }}
               {% endif %}
             </td>
             <td class="col-base">{{ base }}</td>

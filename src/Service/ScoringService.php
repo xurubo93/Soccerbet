@@ -78,7 +78,9 @@ final class ScoringService {
     // Query 2: Alle gespielten Spiele des Turniers (mit Limit)            //
     // ------------------------------------------------------------------ //
     $games_q = $this->db->select('soccerbet_games', 'sg');
-    $games_q->fields('sg', ['game_id', 'team1_score', 'team2_score', 'winner_team_id', 'game_date']);
+    $games_q->fields('sg', ['game_id', 'team1_score', 'team2_score', 'winner_team_id', 'game_date', 'penalty_score_1', 'penalty_score_2', 'phase']);
+    $games_q->addField('sg', 'team_id_1', 'team_id_1');
+    $games_q->addField('sg', 'team_id_2', 'team_id_2');
     $games_q->addField('t1', 'team_name', 'team1_name');
     $games_q->addField('t1', 'team_flag', 'team1_flag');
     $games_q->addField('t2', 'team_name', 'team2_name');
@@ -121,6 +123,12 @@ final class ScoringService {
       $tipps[(int) $row->tipper_id][(int) $row->game_id] = $row;
     }
 
+    // Flag-Codes pro Team-ID, damit wir den getippten Aufsteiger anzeigen können.
+    $team_flags = $this->db->select('soccerbet_teams', 't')
+      ->fields('t', ['team_id', 'team_flag'])
+      ->condition('t.tournament_id', $tournament_id)
+      ->execute()->fetchAllKeyed();
+
     // ------------------------------------------------------------------ //
     // Punkte berechnen                                                     //
     // ------------------------------------------------------------------ //
@@ -130,6 +138,15 @@ final class ScoringService {
       foreach ($games as $game_id => $game) {
         $tipper_points[$tipper_id]['game_desc'][$game_id]  = $game->team1_name . ' : ' . $game->team2_name;
         $tipper_points[$tipper_id]['game_score'][$game_id] = $game->team1_score . ' : ' . $game->team2_score;
+        $tipper_points[$tipper_id]['game_penalty'][$game_id] =
+          ($game->penalty_score_1 !== NULL && $game->penalty_score_2 !== NULL)
+            ? (int) $game->penalty_score_1 . ':' . (int) $game->penalty_score_2
+            : '';
+        $tipper_points[$tipper_id]['game_phase'][$game_id]   = (string) $game->phase;
+        $tipper_points[$tipper_id]['game_winner_side'][$game_id] =
+          !empty($game->winner_team_id)
+            ? ((int) $game->winner_team_id === (int) $game->team_id_1 ? 'team1' : 'team2')
+            : '';
         $tipper_points[$tipper_id]['game_flags'][$game_id] = [
           'team1_flag' => $game->team1_flag ?? '',
           'team1_name' => $game->team1_name,
@@ -147,6 +164,12 @@ final class ScoringService {
 
         $tipp = $tipps[$tipper_id][$game_id];
         $tipper_points[$tipper_id]['tipp'][$game_id] = $tipp->team1_tipp . ' : ' . $tipp->team2_tipp;
+
+        // Aufsteiger-Flag (3-stelliges Team-Kürzel) für Anzeige.
+        $tipper_points[$tipper_id]['tipp_winner_flag'][$game_id] =
+          (!empty($tipp->winner_team_id) && !empty($team_flags[(int) $tipp->winner_team_id]))
+            ? $team_flags[(int) $tipp->winner_team_id]
+            : '';
 
         // Basispunkte: exaktes Ergebnis oder richtige Tendenz
         $basispunkte = 0;

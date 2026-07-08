@@ -54,6 +54,12 @@ final class TippsController extends ControllerBase {
     $now_utc = gmdate('Y-m-d\TH:i:s', \Drupal::time()->getRequestTime());
     $games   = array_filter($games, fn($g) => !empty($g->game_date) && $g->game_date <= $now_utc);
 
+    // Flag-Codes pro Team-ID für Aufsteiger-Prefix.
+    $team_flags = \Drupal::database()->select('soccerbet_teams', 't')
+      ->fields('t', ['team_id', 'team_flag'])
+      ->condition('t.tournament_id', $tournament_id)
+      ->execute()->fetchAllKeyed();
+
     // Alle Tipps laden: [tipper_id][game_id] => tipp-Objekt
     $all_tipps = [];
     foreach ($tippers as $tipper) {
@@ -98,9 +104,23 @@ final class TippsController extends ControllerBase {
         ? '<span class="tipps-ov__score">' . $game->team1_score . ':' . $game->team2_score . $penalty_suffix . '</span>'
         : '<span class="tipps-ov__score tipps-ov__score--pending">—</span>';
 
+      // Aufsteiger in KO-Spielen fett markieren.
+      $is_ko = !in_array($game->phase, ['group', ''], TRUE);
+      $winner_id = (int) ($game->winner_team_id ?? 0);
+      $team1_class = 'tipps-ov__team';
+      $team2_class = 'tipps-ov__team';
+      if ($is_ko && $winner_id > 0) {
+        if ($winner_id === (int) $game->team_id_1) {
+          $team1_class .= ' tipps-ov__team--qualifier';
+        }
+        elseif ($winner_id === (int) $game->team_id_2) {
+          $team2_class .= ' tipps-ov__team--qualifier';
+        }
+      }
+
       $game_label = ($date ? '<span class="tipps-ov__date">' . $date . '</span>' : '')
-        . '<span class="tipps-ov__team">' . htmlspecialchars((string) $this->t($game->team1_name)) . '</span>'
-        . '<span class="tipps-ov__team">' . htmlspecialchars((string) $this->t($game->team2_name)) . '</span>'
+        . '<span class="' . $team1_class . '">' . htmlspecialchars((string) $this->t($game->team1_name)) . '</span>'
+        . '<span class="' . $team2_class . '">' . htmlspecialchars((string) $this->t($game->team2_name)) . '</span>'
         . $score_label;
 
       $row = [['data' => ['#markup' => $game_label], 'class' => ['col-game']]];
@@ -114,6 +134,10 @@ final class TippsController extends ControllerBase {
         }
 
         $label = $tipp->team1_tipp . ':' . $tipp->team2_tipp;
+        $winner_id = (int) ($tipp->winner_team_id ?? 0);
+        if ($winner_id > 0 && !empty($team_flags[$winner_id])) {
+          $label = htmlspecialchars($team_flags[$winner_id]) . ' ' . $label;
+        }
 
         if (!$has_result) {
           $row[] = ['data' => ['#markup' => $label], 'class' => ['col-tipp']];

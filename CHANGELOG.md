@@ -5,6 +5,39 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.13] - 2026-07-08
+
+### Added
+
+- The bet cell in the live standings, the "browse rounds" step
+  table, the tipper detail table and the All Bets overview now
+  prefixes the tipper's qualifier bet with the 3-letter team code
+  (e.g. `GER 1:1`).
+- Locked / already played KO bets show a plain-text line "Your
+  qualifier bet: **XYZ**" so tippers can see who they picked even
+  after the deadline.
+- Penalty shootout result is now also shown next to the score in the
+  tipper detail table and in the "browse rounds" scoreboard (was
+  already visible in the All Bets overview).
+- Live scoreboard shows the penalty shootout score in parentheses
+  as soon as the API reports one, so ongoing shootouts are visible
+  in real time.
+- The qualifier team of a finished KO match is now rendered in bold
+  in the live scoreboard, the step scoreboard, the tipper detail
+  table and the All Bets overview.
+
+### Changed
+
+- Live update window extended from 180 to 200 minutes so extra time
+  plus penalty shootouts stay in the live view until they finish.
+- Live score bracket next to each bet now includes the KO qualifier
+  bonus (`sonderpunkte`) from `ScoringService`. Previously the total
+  in the row footer already contained the bonus, but the per-bet
+  bracket only showed base plus live bonus.
+- Score update skip check no longer suppresses penalty updates when
+  the API reports a new penalty score but the DB already has an
+  older one — the shootout progresses live now.
+
 ## [1.1.12] - 2026-07-02
 
 ### Added

@@ -90,16 +90,22 @@
     {# Scoreboard für das aktuelle Step-Spiel – Live-Stil #}
     {% if step_mode and step_game %}
       {% import '@soccerbet/soccerbet-flag.html.twig' as flag_helper %}
+      {% set step_is_ko    = step_game.phase not in ['', 'group'] %}
+      {% set step_winner_1 = step_is_ko and step_game.winner_team_id and step_game.winner_team_id == step_game.team_id_1 %}
+      {% set step_winner_2 = step_is_ko and step_game.winner_team_id and step_game.winner_team_id == step_game.team_id_2 %}
       <div class="soccerbet-live__scoreboard soccerbet-standings__scoreboard">
         <div class="soccerbet-live__match">
-          <div class="soccerbet-live__match-team soccerbet-live__match-team--home">
+          <div class="soccerbet-live__match-team soccerbet-live__match-team--home{% if step_winner_1 %} soccerbet-live__match-team--qualifier{% endif %}">
             {{ flag_helper.flag(step_game.team1_flag, step_game.team1_name|t, 36, soccerbet_module_path) }}
             <span>{{ step_game.team1_name|t }}</span>
           </div>
           <div class="soccerbet-live__match-score">
             <strong>{{ step_game.score1 }} : {{ step_game.score2 }}</strong>
+            {% if step_game.penalty_score_1 is not null and step_game.penalty_score_2 is not null %}
+              <div class="soccerbet-live__match-penalty">({{ step_game.penalty_score_1 }}:{{ step_game.penalty_score_2 }} {{ 'i.E.'|t }})</div>
+            {% endif %}
           </div>
-          <div class="soccerbet-live__match-team soccerbet-live__match-team--away">
+          <div class="soccerbet-live__match-team soccerbet-live__match-team--away{% if step_winner_2 %} soccerbet-live__match-team--qualifier{% endif %}">
             <span>{{ step_game.team2_name|t }}</span>
             {{ flag_helper.flag(step_game.team2_flag, step_game.team2_name|t, 36, soccerbet_module_path) }}
           </div>
