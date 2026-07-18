@@ -264,13 +264,18 @@ final class WinnerBetService {
     if (!$final || $final->team1_score === NULL) {
       return NULL;
     }
+    // KO-Entscheidung nach Verlängerung/Elfmeterschießen: expliziter Sieger.
+    // Bei einem 120-Min-Remis steht der Weltmeister nur hier, nicht im Score.
+    if (!empty($final->winner_team_id)) {
+      return (int) $final->winner_team_id;
+    }
     if ((int) $final->team1_score > (int) $final->team2_score) {
       return (int) $final->team_id_1;
     }
     if ((int) $final->team2_score > (int) $final->team1_score) {
       return (int) $final->team_id_2;
     }
-    return NULL; // Unentschieden (sollte im Finale nicht vorkommen)
+    return NULL; // Remis ohne eingetragenen Sieger → noch offen
   }
 
   /**
@@ -280,7 +285,7 @@ final class WinnerBetService {
     static $cache = [];
     if (!array_key_exists($tournament_id, $cache)) {
       $cache[$tournament_id] = $this->db->select('soccerbet_games', 'g')
-        ->fields('g', ['game_date', 'team1_score', 'team2_score', 'team_id_1', 'team_id_2'])
+        ->fields('g', ['game_date', 'team1_score', 'team2_score', 'team_id_1', 'team_id_2', 'winner_team_id'])
         ->condition('g.tournament_id', $tournament_id)
         ->condition('g.phase', 'final')
         ->execute()->fetchObject() ?: NULL;
