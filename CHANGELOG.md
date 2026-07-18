@@ -5,6 +5,27 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.14] - 2026-07-18
+
+### Fixed
+
+- **WinnerBetService:** The tournament winner bet is now scored when the
+  final is decided in extra time or a penalty shootout. `resolveWinnerTeamId()`
+  determined the champion from the score only, so a final that ended level
+  after 120 minutes resolved to "no winner" and no tipper received bonus
+  points. It now prefers `winner_team_id` (falling back to the score), and
+  `loadFinalGame()` loads that field — consistent with `loadEliminatedTeams()`.
+- **TippsController:** The "All Bets" overview only filtered games by kickoff,
+  not by `published`. Bets of every player for a game excluded from scoring
+  (`published = 0`) were therefore still visible. The overview now also
+  requires `published = 1`, consistent with the live standings, the ranking
+  and the "browse rounds" view.
+
+### Upgrade
+
+Pure bugfix release. No schema changes, no `drush updb` required.
+Run `lando drush cr` after updating.
+
 ## [1.1.13] - 2026-07-08
 
 ### Added
