@@ -54,31 +54,8 @@ final class StandingsController extends ControllerBase {
     $past_tournaments = $this->loadPastTournaments($tournament_id);
     $winner_bets      = $this->winnerBet->loadBetsForTournament($tournament_id);
 
-    // Bonus-Punkte zum Gesamtscore addieren (nur wenn Turnier beendet)
-    $bonus_by_tipper = [];
-    foreach ($winner_bets as $bet) {
-      if ($bet->display_points !== NULL) {
-        $bonus_by_tipper[(int) $bet->tipper_id] = (int) $bet->display_points;
-      }
-    }
-    if (!empty($bonus_by_tipper)) {
-      foreach ($rows as &$row) {
-        if (isset($bonus_by_tipper[$row['tipper_id']])) {
-          $row['total'] += $bonus_by_tipper[$row['tipper_id']];
-        }
-      }
-      unset($row);
-      // Nach neuem Total neu sortieren und Ränge vergeben
-      usort($rows, fn($a, $b) => $b['total'] - $a['total']);
-      $rank = 1;
-      foreach ($rows as $i => &$row) {
-        if ($i > 0 && $row['total'] < $rows[$i - 1]['total']) {
-          $rank = $i + 1;
-        }
-        $row['rank'] = $rank;
-      }
-      unset($row);
-    }
+    // Turniersieger-Bonus zum Gesamtscore addieren und neu ranken.
+    $rows = $this->applyWinnerBonus($rows, $this->winnerBonusMap($winner_bets));
 
     $avatars = $this->loadAvatarUrls($rows);
     foreach ($rows as &$row) {
@@ -109,6 +86,7 @@ final class StandingsController extends ControllerBase {
       '#played_games'       => $played_games,
       '#past_tournaments'   => $past_tournaments,
       '#winner_bets'        => $winner_bets,
+      '#winner_bet_by_tipper' => [],
       '#own_bet_eliminated' => $own_bet_eliminated,
       '#cache'              => [
         'tags'     => ['soccerbet_standings:' . $tournament_id],
@@ -132,8 +110,18 @@ final class StandingsController extends ControllerBase {
       return $this->noTournamentMessage();
     }
 
-    $rows      = $this->scoring->getRanking($tournament_id, $limit);
-    $max_games = $this->scoring->getPlayedGamesCount($tournament_id);
+    $rows        = $this->scoring->getRanking($tournament_id, $limit);
+    $max_games   = $this->scoring->getPlayedGamesCount($tournament_id);
+    $winner_bets = $this->winnerBet->loadBetsForTournament($tournament_id);
+
+    // Turniersieger-Bonus nur im letzten Schritt (nach dem Finale) einrechnen
+    // und dort auch sichtbar machen. In früheren Schritten wäre der Bonus
+    // verwirrend, weil das Finale noch nicht lief.
+    $winner_bet_by_tipper = [];
+    if ($limit >= $max_games) {
+      $rows = $this->applyWinnerBonus($rows, $this->winnerBonusMap($winner_bets));
+      $winner_bet_by_tipper = $this->winnerBetDisplayByTipper($winner_bets);
+    }
 
     $avatars = $this->loadAvatarUrls($rows);
     foreach ($rows as &$row) {
@@ -143,7 +131,6 @@ final class StandingsController extends ControllerBase {
 
     $step_game   = $this->loadStepGame($tournament_id, $limit);
     $step_tipps  = $step_game ? $this->loadStepTipps($step_game, $tournament_id, $limit) : [];
-    $winner_bets = $this->winnerBet->loadBetsForTournament($tournament_id);
 
     return [
       '#theme'        => 'soccerbet_standings',
@@ -156,6 +143,7 @@ final class StandingsController extends ControllerBase {
       '#step_game'    => $step_game,
       '#step_tipps'   => $step_tipps,
       '#winner_bets'  => $winner_bets,
+      '#winner_bet_by_tipper' => $winner_bet_by_tipper,
       '#cache'        => ['max-age' => 300],
     ];
   }
@@ -266,12 +254,21 @@ final class StandingsController extends ControllerBase {
     $avatar_url = $avatars[$tipper_data['uid']] ?? NULL;
     $stars      = $this->scoring->getStarsForTipper($tipper_id);
 
+    // Turniersieger-Tipp: sichtbar machen und in den Gesamtscore einrechnen
+    // (ab Finalanpfiff, sonst display_points === NULL).
+    $winner_bets   = $this->winnerBet->loadBetsKeyedByTipper($tournament_id);
+    $winner_display = $this->winnerBetDisplayByTipper($winner_bets)[$tipper_id] ?? NULL;
+    if ($winner_display !== NULL) {
+      $tipper_data['total'] += $winner_display['points'];
+    }
+
     return [
       '#theme'       => 'soccerbet_tipper_detail',
       '#tipper'      => $tipper_data,
       '#tournament'  => $tournament,
       '#avatar_url'  => $avatar_url,
       '#stars'       => $stars,
+      '#winner_bet'  => $winner_display,
       '#cache'       => ['max-age' => 60],
     ];
   }
@@ -303,7 +300,13 @@ final class StandingsController extends ControllerBase {
           $t->top3 = $cached->data;
         }
         else {
-          $t->top3 = array_slice($this->scoring->getRanking($tid), 0, 3);
+          // Turniersieger-Bonus einrechnen, damit das Podium mit der
+          // tatsächlichen Endrangliste übereinstimmt (nicht ohne WM-Tipp).
+          $ranking = $this->applyWinnerBonus(
+            $this->scoring->getRanking($tid),
+            $this->winnerBonusMap($this->winnerBet->loadBetsForTournament($tid)),
+          );
+          $t->top3 = array_slice($ranking, 0, 3);
           \Drupal::cache()->set($cid, $t->top3, Cache::PERMANENT, ['soccerbet_standings:' . $tid]);
         }
         $result[] = $t;
@@ -313,6 +316,81 @@ final class StandingsController extends ControllerBase {
     // Neueste zuerst (loadAll liefert bereits DESC, aber nach Merge neu sortieren)
     usort($result, fn($a, $b) => strcmp((string) $b->start_date, (string) $a->start_date));
     return $result;
+  }
+
+  /**
+   * Baut aus den Turniersieger-Tipps eine Map tipper_id => Bonuspunkte.
+   * Nur gewertete Tipps (display_points != NULL, d.h. ab Finalanpfiff).
+   *
+   * @param array<int, object> $winner_bets
+   * @return array<int, int>
+   */
+  private function winnerBonusMap(array $winner_bets): array {
+    $map = [];
+    foreach ($winner_bets as $bet) {
+      if ($bet->display_points !== NULL) {
+        $map[(int) $bet->tipper_id] = (int) $bet->display_points;
+      }
+    }
+    return $map;
+  }
+
+  /**
+   * Addiert den Turniersieger-Bonus auf die Gesamtpunkte und vergibt Ränge
+   * neu (gleiche Punkte teilen sich den Rang). Ohne Bonus bleiben die Rows
+   * unverändert.
+   *
+   * @param array<int, array> $rows            Ranking-Rows aus getRanking().
+   * @param array<int, int>   $bonus_by_tipper Map tipper_id => Bonuspunkte.
+   * @return array<int, array>
+   */
+  private function applyWinnerBonus(array $rows, array $bonus_by_tipper): array {
+    if (empty($bonus_by_tipper)) {
+      return $rows;
+    }
+    foreach ($rows as &$row) {
+      if (isset($bonus_by_tipper[$row['tipper_id']])) {
+        $row['total'] += $bonus_by_tipper[$row['tipper_id']];
+      }
+    }
+    unset($row);
+
+    usort($rows, fn($a, $b) => $b['total'] - $a['total']);
+    $rank = 1;
+    foreach ($rows as $i => &$row) {
+      if ($i > 0 && $row['total'] < $rows[$i - 1]['total']) {
+        $rank = $i + 1;
+      }
+      $row['rank'] = $rank;
+    }
+    unset($row);
+
+    return $rows;
+  }
+
+  /**
+   * Baut aus den Turniersieger-Tipps eine Anzeige-Map je Tipper. Nur gewertete
+   * Tipps (display_points != NULL, d.h. ab Finalanpfiff) – vorher bleibt der
+   * getippte Weltmeister geheim.
+   *
+   * @param array<int, object> $winner_bets
+   * @return array<int, array{team: string, points: int, is_correct: bool, is_pending: bool, is_eliminated: bool}>
+   */
+  private function winnerBetDisplayByTipper(array $winner_bets): array {
+    $map = [];
+    foreach ($winner_bets as $bet) {
+      if ($bet->display_points === NULL) {
+        continue;
+      }
+      $map[(int) $bet->tipper_id] = [
+        'team'          => $bet->team_name,
+        'points'        => (int) $bet->display_points,
+        'is_correct'    => (bool) $bet->is_correct,
+        'is_pending'    => (bool) $bet->is_pending,
+        'is_eliminated' => (bool) $bet->is_eliminated,
+      ];
+    }
+    return $map;
   }
 
   /**

@@ -60,6 +60,15 @@
 .soccerbet-live__winner-bet--wrong   { background:#f8d7da; color:#721c24; }
 .soccerbet-live__winner-bet--none    { color:var(--sb-text-muted); }
 
+/* --- Turniersieger-Tipp in Step-Rangliste / Detail / Alle-Tipps --------- */
+.soccerbet-winner-bet-line { display:block; margin-top:.25em; font-size:.8em; white-space:nowrap; }
+.soccerbet-winner-bet-line.is-correct { color:#155724; font-weight:700; }
+.soccerbet-winner-bet-line.is-pending { color:#856404; }
+.soccerbet-winner-bet-line.is-wrong   { color:var(--sb-text-muted); }
+.row--winner-bet td { border-top:2px solid #ced4da; }
+.row--pending { background:#fff3cd; }
+.tipps-ov__winner-cell { font-weight:700; white-space:nowrap; }
+
 /* --- Turniersieger-Tipp Formular ---------------------------------------- */
 .soccerbet-winner-bet { margin-bottom:1.5rem; }
 .soccerbet-winner-bet__info { margin-bottom:.75rem; font-size:.9em; }

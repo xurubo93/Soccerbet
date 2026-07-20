@@ -179,6 +179,17 @@
                     <span class="soccerbet-live__tipp-score">—</span>
                   </span>
                 {% endif %}
+                {% set wb = winner_bet_by_tipper[row.tipper_id] ?? null %}
+                {% if wb %}
+                  <span class="soccerbet-winner-bet-line
+                    {%- if wb.is_pending %} is-pending
+                    {%- elseif wb.is_correct %} is-correct
+                    {%- else %} is-wrong{% endif %}"
+                    title="{{ 'Tournament winner bet'|t }}">
+                    🏆 {{ wb.team|t }}
+                    <strong>{% if wb.is_correct %}+{{ wb.points }}{% elseif wb.is_pending %}{{ wb.points }}?{% else %}0{% endif %}</strong>
+                  </span>
+                {% endif %}
               </td>
             {% else %}
               <td class="col-exact">{{ row.ergebnisse }}</td>

@@ -70,7 +70,25 @@
         </tr>
       </thead>
       <tbody>
-        {% for game_id, game_desc in tipper.game_desc %}
+        {% if winner_bet %}
+          <tr class="row--winner-bet
+            {%- if winner_bet.is_pending %} row--pending
+            {%- elseif winner_bet.is_correct %} row--exact
+            {%- else %} row--wrong{% endif %}">
+            <td class="col-game"><strong>🏆 {{ 'Tournament winner'|t }}</strong></td>
+            <td class="col-result">
+              {%- if winner_bet.is_pending %}<span class="soccerbet-text-muted">{{ 'pending'|t }}</span>
+              {%- elseif winner_bet.is_correct %}<span class="soccerbet-bonus__correct">✓</span>
+              {%- else %}<span class="soccerbet-bonus__wrong">✗</span>{% endif %}
+            </td>
+            <td class="col-tipp">{{ winner_bet.team|t }}</td>
+            <td class="col-base">—</td>
+            <td class="col-bonus">—</td>
+            <td class="col-special">{{ winner_bet.points > 0 ? '+' ~ winner_bet.points : '—' }}</td>
+            <td class="col-total"><strong>{{ winner_bet.points }}</strong></td>
+          </tr>
+        {% endif %}
+        {% for game_id, game_desc in tipper.game_desc|reverse(true) %}
           {% set base    = tipper.basispunkte[game_id]  ?? 0 %}
           {% set bonus   = tipper.bonuspunkte[game_id]  ?? 0 %}
           {% set special = tipper.sonderpunkte[game_id] ?? 0 %}

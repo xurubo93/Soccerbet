@@ -617,6 +617,15 @@ msgstr "↓ Zum nächsten nicht getippten Spiel"
 msgid "Tournament winner bet"
 msgstr "Turniersieger-Tipp"
 
+msgid "Tournament winner"
+msgstr "Turniersieger"
+
+msgid "pending"
+msgstr "ausstehend"
+
+msgid "The tournament winner bet is closed (semifinal has been played)."
+msgstr "Der Turniersieger-Tipp ist geschlossen (Halbfinale wurde gespielt)."
+
 msgid "Which team will win the tournament?"
 msgstr "Welches Team gewinnt das Turnier?"
 

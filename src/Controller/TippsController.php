@@ -9,6 +9,7 @@ use Drupal\Core\Url;
 use Drupal\soccerbet\Service\ScoringService;
 use Drupal\soccerbet\Service\TipperManager;
 use Drupal\soccerbet\Service\TournamentManager;
+use Drupal\soccerbet\Service\WinnerBetService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,6 +21,7 @@ final class TippsController extends ControllerBase {
     private readonly TournamentManager $tournamentManager,
     private readonly TipperManager $tipperManager,
     private readonly ScoringService $scoringService,
+    private readonly WinnerBetService $winnerBet,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -27,6 +29,7 @@ final class TippsController extends ControllerBase {
       $container->get('soccerbet.tournament_manager'),
       $container->get('soccerbet.tipper_manager'),
       $container->get('soccerbet.scoring'),
+      $container->get('soccerbet.winner_bet'),
     );
   }
 
@@ -58,6 +61,8 @@ final class TippsController extends ControllerBase {
       $games,
       fn($g) => !empty($g->game_date) && $g->game_date <= $now_utc && (int) $g->published === 1
     );
+    // Letztes Spiel oben – sonst muss man immer nach unten scrollen.
+    $games = array_reverse($games);
 
     // Flag-Codes pro Team-ID für Aufsteiger-Prefix.
     $team_flags = \Drupal::database()->select('soccerbet_teams', 't')
@@ -165,6 +170,14 @@ final class TippsController extends ControllerBase {
       $rows[] = $row;
     }
 
+    // Zusätzliche Zeile für den Turniersieger-Tipp (ab Finalanpfiff sichtbar,
+    // vorher bleibt der getippte Weltmeister geheim). Ganz oben, passend zur
+    // umgekehrten Reihenfolge (letztes Spiel zuerst).
+    $winner_row = $this->buildWinnerBetRow($tournament_id, $tippers);
+    if ($winner_row !== NULL) {
+      array_unshift($rows, $winner_row);
+    }
+
     $back_url = Url::fromRoute('soccerbet.standings', ['tournament_id' => $tournament_id])->toString();
 
     return [
@@ -186,6 +199,58 @@ final class TippsController extends ControllerBase {
       ],
       '#cache'      => ['max-age' => 0],
     ];
+  }
+
+  /**
+   * Baut die Tabellenzeile für den Turniersieger-Tipp, spaltengleich zu den
+   * Spielzeilen. Gibt NULL zurück, solange kein Tipp gewertet wird
+   * (display_points === NULL, d.h. vor Finalanpfiff).
+   *
+   * @param object[] $tippers  Tipper in Spaltenreihenfolge des Headers.
+   */
+  private function buildWinnerBetRow(int $tournament_id, array $tippers): ?array {
+    $bets = $this->winnerBet->loadBetsKeyedByTipper($tournament_id);
+    $display = [];
+    foreach ($bets as $tid => $bet) {
+      if ($bet->display_points !== NULL) {
+        $display[(int) $tid] = $bet;
+      }
+    }
+    if (empty($display)) {
+      return NULL;
+    }
+
+    $row = [[
+      'data'  => ['#markup' => '🏆 ' . $this->t('Tournament winner')],
+      'class' => ['col-game', 'tipps-ov__winner-cell'],
+    ]];
+
+    foreach ($tippers as $tipper) {
+      $bet = $display[(int) $tipper->tipper_id] ?? NULL;
+      if ($bet === NULL) {
+        $row[] = ['data' => '—', 'class' => ['col-tipp', 'tipps-ov__cell--none']];
+        continue;
+      }
+      $team = htmlspecialchars((string) $this->t($bet->team_name));
+      $pts  = (int) $bet->display_points;
+
+      if ($bet->is_pending) {
+        $css      = 'tipps-ov__cell--tendency';
+        $pts_html = '<br><span class="tipps-ov__pts">(' . $pts . '?)</span>';
+      }
+      elseif ($bet->is_correct) {
+        $css      = 'tipps-ov__cell--exact';
+        $pts_html = '<br><span class="tipps-ov__pts">(+' . $pts . ')</span>';
+      }
+      else {
+        // Falsch getippt oder ausgeschieden → 0 Punkte.
+        $css      = 'tipps-ov__cell--wrong';
+        $pts_html = '<br><span class="tipps-ov__pts">(0)</span>';
+      }
+      $row[] = ['data' => ['#markup' => $team . $pts_html], 'class' => ['col-tipp', $css]];
+    }
+
+    return $row;
   }
 
   /**
