@@ -42,11 +42,30 @@ final class WinnerBetService {
 
   /**
    * Gibt die Punkte für einen phase_index zurück.
+   *
+   * Es gibt genau so viele punktebringende Phasen wie Einträge in
+   * winner_bet_points. Ab dem Halbfinale (phase_index jenseits der Staffel)
+   * sind 0 Punkte erreichbar – ein dann noch abgegebener Tipp darf das
+   * Ergebnis nicht mehr verändern.
    */
   public function getPointsForPhaseIndex(int $phase_index): int {
     $points = $this->configFactory->get('soccerbet.settings')->get('winner_bet_points') ?? [10, 7, 5, 3, 1];
-    $index  = min($phase_index, count($points) - 1);
-    return (int) ($points[$index] ?? 0);
+    if ($phase_index < 0 || $phase_index >= count($points)) {
+      return 0;
+    }
+    return (int) ($points[$phase_index] ?? 0);
+  }
+
+  /**
+   * Gibt TRUE zurück, wenn mindestens ein Halbfinale bereits ein Ergebnis hat.
+   * Ab diesem Zeitpunkt ist der Turniersieger-Tipp 0 Punkte wert.
+   */
+  public function isSemifinalPlayed(int $tournament_id): bool {
+    return (bool) $this->db->select('soccerbet_games', 'g')
+      ->condition('g.tournament_id', $tournament_id)
+      ->condition('g.phase', 'semi')
+      ->isNotNull('g.team1_score')
+      ->countQuery()->execute()->fetchField();
   }
 
   /**
@@ -93,6 +112,11 @@ final class WinnerBetService {
   public function saveBet(int $tournament_id, int $tipper_id, int $team_id): void {
     $existing = $this->loadBet($tournament_id, $tipper_id);
     if ($existing && (int) $existing->team_id === $team_id) {
+      return;
+    }
+    // Ab dem Halbfinale keinen (neuen/geänderten) Tipp mehr annehmen – er wäre
+    // 0 Punkte wert und würde das Ergebnis sonst nachträglich verändern.
+    if ($this->isSemifinalPlayed($tournament_id)) {
       return;
     }
     $phase_index = $this->getCurrentPhaseIndex($tournament_id);

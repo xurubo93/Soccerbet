@@ -212,6 +212,8 @@ final class PlaceBetsForm extends FormBase {
     $existing_bet = $this->winnerBet->loadBet($tournament_id, $tipper_id);
     $phase_index  = $this->winnerBet->getCurrentPhaseIndex($tournament_id);
     $next_points  = $this->winnerBet->getPointsForPhaseIndex($phase_index);
+    // Ab dem Halbfinale ist der Tipp geschlossen (0 Punkte, keine Änderung).
+    $winner_closed = $this->winnerBet->isSemifinalPlayed($tournament_id);
 
     $form['winner_bet'] = [
       '#type'       => 'fieldset',
@@ -221,7 +223,9 @@ final class PlaceBetsForm extends FormBase {
     ];
     $form['winner_bet']['info'] = [
       '#markup' => '<p class="soccerbet-winner-bet__info">'
-        . $this->t('Currently possible points for correct bet: <strong>@pts</strong>', ['@pts' => $next_points])
+        . ($winner_closed
+            ? $this->t('The tournament winner bet is closed (semifinal has been played).')
+            : $this->t('Currently possible points for correct bet: <strong>@pts</strong>', ['@pts' => $next_points]))
         . ($existing_bet ? ' · ' . $this->t('Your current bet: <strong>@team</strong> (@pts points)', [
             '@team' => $team_options[(int) $existing_bet->team_id] ?? '?',
             '@pts'  => $this->winnerBet->getPointsForPhaseIndex((int) $existing_bet->phase_index),
@@ -233,6 +237,7 @@ final class PlaceBetsForm extends FormBase {
       '#title'         => $this->t('Which team will win the tournament?'),
       '#options'       => $team_options,
       '#default_value' => $existing_bet ? (int) $existing_bet->team_id : 0,
+      '#disabled'      => $winner_closed,
     ];
 
     // Mobiler Schnell-Link
