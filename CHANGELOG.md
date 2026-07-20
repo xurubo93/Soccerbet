@@ -5,6 +5,37 @@ All notable changes to this module are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.15] - 2026-07-20
+
+### Added
+
+- The earned tournament winner bet points are now **shown** where they were
+  previously only calculated: the bettor detail table (extra "Tournament
+  winner" row, now also included in the grand total), the "All Bets" overview
+  (extra row with each bettor's pick and points) and the last step of "browse
+  rounds" (winner pick and points beneath the match bet). Only visible from
+  the final's kickoff — the pick stays secret before that.
+- "All Bets" and the bettor detail table now list the **latest match first**
+  so the current round is on top without scrolling.
+
+### Fixed
+
+- **Tournament winner bet scoring after the semifinal:** a bet placed (or
+  changed) once the semifinal has been played is now worth **0 points** and
+  can no longer be submitted, so it cannot retroactively change the result.
+  There are as many point-earning phases as entries in `winner_bet_points`;
+  beyond that (from the semifinal on) the achievable points are 0, regardless
+  of how many phases were completed before. The place-bets form disables the
+  winner bet and shows a "closed" note once the semifinal is played.
+- **Standings podium & browse-rounds:** the "Top 3" podium under the standings
+  and the last step of "browse rounds" now include the tournament winner bet,
+  so they match the actual final ranking (previously computed without it).
+
+### Upgrade
+
+Pure bugfix/UX release. No schema changes, no `drush updb` required. Run
+`lando drush cr` and import translations after updating.
+
 ## [1.1.14] - 2026-07-18
 
 ### Fixed
